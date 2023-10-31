@@ -5,7 +5,7 @@ public class SimpleTest {
 
     @Test
     public void simpleTest(){
-        Assertions.assertEquals(2, 1+1);
+        Assertions.assertEquals(2, 1);
         System.out.println("Test completed");
     }
 }
