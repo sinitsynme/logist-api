@@ -1,4 +1,4 @@
-package ru.sinitsynme;
+package ru.sinitsynme.logistapi;
 
 public class Main {
     public static void main(String[] args) {
