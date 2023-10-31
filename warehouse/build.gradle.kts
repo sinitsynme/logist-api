@@ -15,7 +15,7 @@ repositories {
 dependencies {
     val mapstructVersion = "1.3.1.Final"
 
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.9")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
