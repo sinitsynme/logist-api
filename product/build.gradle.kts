@@ -29,3 +29,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.sinitsynme.logistapi.ProductApplication"
+    }
+}

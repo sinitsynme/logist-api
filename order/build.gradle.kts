@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version("2.7.2")
     id("io.spring.dependency-management") version("1.0.11.RELEASE")
     id("java")
+    id("java-library")
 }
 
 group = "ru.sinitsynme.logistapi"
@@ -28,4 +29,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.sinitsynme.logistapi.OrderApplication"
+    }
 }
