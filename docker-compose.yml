@@ -3,25 +3,31 @@ services:
   order:
     container_name: order
     build:
-      context: /order
+      context: ./order
     ports:
       - "8101:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - internal
   product:
     container_name: product
     build:
-      context: /product
+      context: ./product
     ports:
       - "8102:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - internal
   warehouse:
     container_name: warehouse
     build:
-      context: /warehouse
+      context: ./warehouse
     ports:
       - "8103:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - internal
 networks:
