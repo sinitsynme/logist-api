@@ -19,6 +19,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")

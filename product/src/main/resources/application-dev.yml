@@ -1,0 +1,12 @@
+management:
+  endpoint:
+    health:
+      enabled: true
+
+
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_URL}/logist-api-product
+    driver-class-name: org.postgresql.Driver
