@@ -35,6 +35,7 @@ jobs:
   docker-compose:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Docker Compose up
         run: ls & docker compose up -d
       - name: Docker Compose down
