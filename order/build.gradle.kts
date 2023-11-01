@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version("2.7.2")
     id("io.spring.dependency-management") version("1.0.11.RELEASE")
     id("java")
+    id("java-library")
 }
 
 group = "ru.sinitsynme.logistapi"
@@ -18,6 +19,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
@@ -28,4 +30,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.sinitsynme.logistapi.OrderApplication"
+    }
 }

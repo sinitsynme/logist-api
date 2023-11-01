@@ -1,0 +1,89 @@
+version: "3.8"
+services:
+  order:
+    container_name: order
+    build:
+      context: ./order
+    ports:
+      - "8101:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_USERNAME=logistapi
+      - DB_PASSWORD=logistapi
+    depends_on:
+      - mongo-order
+    networks:
+      - internal
+  mongo-order:
+    container_name: mongo-order
+    image: mongo:5.0.22
+    ports:
+      - '27020:27017'
+    restart: always
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_DATABASE=logist-api-order
+      - MONGO_INITDB_ROOT_USERNAME=logistapi
+      - MONGO_INITDB_ROOT_PASSWORD=logistapi
+    volumes:
+      - ./order/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - internal
+  product:
+    container_name: product
+    build:
+      context: ./product
+    ports:
+      - "8102:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_USERNAME=logistapi
+      - DB_PASSWORD=logistapi
+      - DB_URL=postgres-product:5432
+    depends_on:
+      - postgres-product
+    networks:
+      - internal
+  postgres-product:
+    container_name: postgres-product
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "logist-api-product"
+      POSTGRES_USER: "logistapi"
+      POSTGRES_PASSWORD: "logistapi"
+    ports:
+      - "5433:5432"
+    networks:
+      - internal
+  warehouse:
+    container_name: warehouse
+    build:
+      context: ./warehouse
+    ports:
+      - "8103:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_USERNAME=logistapi
+      - DB_PASSWORD=logistapi
+      - DB_URL=postgres-warehouse:5432
+    depends_on:
+      - postgres-warehouse
+    networks:
+      - internal
+  postgres-warehouse:
+    container_name: postgres-warehouse
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "logist-api-warehouse"
+      POSTGRES_USER: "logistapi"
+      POSTGRES_PASSWORD: "logistapi"
+    ports:
+      - "5434:5432"
+    networks:
+      - internal
+networks:
+  internal:
+
+

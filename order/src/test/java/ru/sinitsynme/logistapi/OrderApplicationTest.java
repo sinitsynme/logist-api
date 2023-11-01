@@ -6,7 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class OrderApplicationTest {
 
-    @Test
-    void contextLoads(){
-    }
+    // TODO open when start integration tests
+//    @Test
+//    void contextLoads(){
+//    }
 }

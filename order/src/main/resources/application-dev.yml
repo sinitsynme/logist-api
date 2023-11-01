@@ -1,0 +1,13 @@
+management:
+  endpoint:
+    health:
+      enabled: true
+
+spring:
+  data:
+    mongodb:
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      host: mongo-order
+      port: 27017
+      database: logist-api-order

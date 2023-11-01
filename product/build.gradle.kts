@@ -14,10 +14,15 @@ repositories {
 
 dependencies {
     val mapstructVersion = "1.3.1.Final"
+    val postgresqlVersion = "42.6.0"
 
     implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql:${postgresqlVersion}")
+
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
@@ -28,4 +33,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ru.sinitsynme.logistapi.ProductApplication"
+    }
 }
