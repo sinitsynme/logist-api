@@ -31,13 +31,7 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
-
-  docker-compose:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Docker Compose up
-        run: ls & docker compose up -d
-      - name: Docker Compose down
-        run: docker compose down
+    - name: Docker Compose up
+      run: docker compose up -d
+    - name: Docker Compose down
+      run: docker compose down
