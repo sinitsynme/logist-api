@@ -10,3 +10,9 @@ spring:
     password: ${DB_PASSWORD}
     url: jdbc:postgresql://${DB_URL}/logist-api-warehouse
     driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
