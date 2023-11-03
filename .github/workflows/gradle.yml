@@ -32,6 +32,6 @@ jobs:
       with:
         arguments: build
     - name: Docker Compose up
-      run: docker compose up
+      run: docker compose up -d
     - name: Docker Compose down
       run: docker compose down
