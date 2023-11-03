@@ -30,6 +30,7 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
