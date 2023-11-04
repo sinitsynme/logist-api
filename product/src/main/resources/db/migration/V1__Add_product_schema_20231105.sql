@@ -1,0 +1,11 @@
+create sequence hibernate_sequence start 1 increment 1;
+create table manufacturer (id int8 not null, contact_number varchar(255), name varchar(255), primary key (id));
+create table product (dtype varchar(31) not null, id uuid not null, description varchar(255), is_packaged boolean not null, name varchar(255), price numeric(19, 2), volume float8 not null, weight float8 not null, quantity_in_package int4, manufacturer_id int8, category_code varchar(255), child_product_id uuid, primary key (id));
+create table product_category (category_code varchar(255) not null, category_name varchar(255), primary key (category_code));
+create table product_category_product_list (product_category_category_code varchar(255) not null, product_list_id uuid not null);
+alter table product_category_product_list add constraint UK_kjtnwp1ybunrfyqi2jmvx1tvk unique (product_list_id);
+alter table product add constraint FK89igr5j06uw5ps04djxgom0l1 foreign key (manufacturer_id) references manufacturer;
+alter table product add constraint FKb0kalh53s68qe9ekh7vq5lhhj foreign key (category_code) references product_category;
+alter table product add constraint FKedaqeh4uirktgnv1rcklfoj99 foreign key (child_product_id) references product;
+alter table product_category_product_list add constraint FKp5t3rxwg248b4hd96ok6y9uhk foreign key (product_list_id) references product;
+alter table product_category_product_list add constraint FK1lwhxfjl5y3t55o2af532lnfp foreign key (product_category_category_code) references product_category;

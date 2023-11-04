@@ -10,3 +10,10 @@ spring:
     password: ${DB_PASSWORD}
     url: jdbc:postgresql://${DB_URL}/logist-api-product
     driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    #   open when want to fetch new migrations data
+    show-sql: false
