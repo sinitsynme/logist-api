@@ -16,7 +16,7 @@ import java.util.UUID;
 public class StoredProduct {
     @Id
     private UUID productId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
     private int quantity;

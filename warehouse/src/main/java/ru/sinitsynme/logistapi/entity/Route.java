@@ -21,14 +21,14 @@ public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @OrderColumn(name = "order_index")
     private List<Destination> destinationList;
     @OneToOne
     private Driver driver;
     @OneToOne
     private CargoTruck cargoTruck;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Warehouse warehouse;
     @Enumerated(EnumType.STRING)
     private RouteStatus routeStatus;

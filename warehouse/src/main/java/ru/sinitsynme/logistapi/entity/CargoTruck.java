@@ -21,7 +21,7 @@ public class CargoTruck {
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = CargoTruckType.class)
     @JoinColumn(name = "cargo_truck_type_id", nullable = false)
     private CargoTruckType type;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
     private String registrationNumber;

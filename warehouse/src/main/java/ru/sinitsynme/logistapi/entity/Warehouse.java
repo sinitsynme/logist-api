@@ -25,11 +25,11 @@ public class Warehouse {
     @OneToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-    @OneToMany(mappedBy = "warehouse")
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     private List<Driver> driverList;
-    @OneToMany(mappedBy = "warehouse")
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     private List<CargoTruck> cargoTruckList;
-    @OneToMany(mappedBy = "warehouse")
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     private List<StoredProduct> storedProducts;
 
     @Override

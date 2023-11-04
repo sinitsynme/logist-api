@@ -20,7 +20,7 @@ public class Destination {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private UUID orderId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
     private Date completedAt;
