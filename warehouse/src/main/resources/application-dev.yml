@@ -15,4 +15,5 @@ spring:
     hibernate:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+#   open when want to fetch new migrations data
+    show-sql: false
