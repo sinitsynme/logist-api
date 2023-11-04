@@ -13,10 +13,12 @@ repositories {
 
 
 dependencies {
-    val mapstructVersion = "1.3.1.Final"
-    val postgresqlVersion = "42.6.0"
+    val openApiVersion: String by project
+    val mapstructVersion: String by project
+    val postgresqlVersion: String by project
+    val lombokVersion: String by project
 
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -27,6 +29,8 @@ dependencies {
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

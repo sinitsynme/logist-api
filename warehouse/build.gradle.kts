@@ -13,20 +13,26 @@ repositories {
 
 
 dependencies {
-    val mapstructVersion = "1.3.1.Final"
-    val postgresqlVersion = "42.6.0"
+    val openApiVersion: String by project
+    val mapstructVersion: String by project
+    val postgresqlVersion: String by project
+    val lombokVersion: String by project
+    val flywayVersion: String by project
 
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
+    implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

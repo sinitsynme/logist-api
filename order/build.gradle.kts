@@ -14,16 +14,20 @@ repositories {
 
 
 dependencies {
-    val mapstructVersion = "1.3.1.Final"
+    val mapstructVersion: String by project
+    val lombokVersion: String by project
+    val openApiVersion: String by project
 
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
