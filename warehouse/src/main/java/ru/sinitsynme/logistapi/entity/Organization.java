@@ -23,6 +23,8 @@ public class Organization {
     @SequenceGenerator(name = "organization_sequence", allocationSize = 1)
     private Long id;
 
+    private String name;
+
     @OneToMany(mappedBy = "organization", fetch = LAZY)
     private List<Warehouse> warehouses;
 }
