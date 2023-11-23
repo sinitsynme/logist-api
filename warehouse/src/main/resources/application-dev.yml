@@ -3,6 +3,9 @@ management:
     health:
       enabled: true
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 
 spring:
   datasource:
