@@ -22,6 +22,7 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "warehouse_sequence", allocationSize = 1)
     private Long id;
+    @Column(nullable = false)
     private String name;
     private String contactNumber;
     private String email;

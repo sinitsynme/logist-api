@@ -27,6 +27,7 @@ public class CargoTruck {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
+    @Column(nullable = false)
     private String registrationNumber;
     private Date createdAt;
     private Date updatedAt;

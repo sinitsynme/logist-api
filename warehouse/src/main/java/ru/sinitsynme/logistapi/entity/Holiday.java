@@ -24,7 +24,9 @@ public class Holiday {
     private Driver driver;
     @Enumerated(EnumType.STRING)
     private HolidayType holidayType;
+    @Column(nullable = false)
     private Date periodFrom;
+    @Column(nullable = false)
     private Date periodTo;
 
     @Override
