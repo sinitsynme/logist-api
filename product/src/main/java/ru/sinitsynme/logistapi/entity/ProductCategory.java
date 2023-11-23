@@ -13,7 +13,6 @@ import java.util.Objects;
 @Table
 public class ProductCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String categoryCode;
     private String categoryName;
     @OneToMany(fetch = FetchType.LAZY)
