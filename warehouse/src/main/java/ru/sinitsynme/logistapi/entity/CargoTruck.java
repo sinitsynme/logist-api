@@ -7,6 +7,9 @@ import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,12 +21,13 @@ public class CargoTruck {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = CargoTruckType.class)
+    @ManyToOne(fetch = EAGER, targetEntity = CargoTruckType.class)
     @JoinColumn(name = "cargo_truck_type_id", nullable = false)
     private CargoTruckType type;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
+    @Column(nullable = false)
     private String registrationNumber;
     private Date createdAt;
     private Date updatedAt;

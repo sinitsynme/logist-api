@@ -18,9 +18,12 @@ public class Driver {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "driver_sequence", allocationSize = 1)
     private Long id;
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
     private String patronymic;
+    @Column(nullable = false)
     private String drivingLicenseNumber;
     @ManyToOne(targetEntity = Warehouse.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")

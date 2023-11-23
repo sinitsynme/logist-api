@@ -19,6 +19,7 @@ public class StoredProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
+    @Column(nullable = false)
     private int quantity;
     private int reservedQuantity;
 

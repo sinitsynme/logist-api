@@ -27,7 +27,7 @@ public class Product {
     @JoinColumn(name = "category_code")
     private ProductCategory productCategory;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
 
