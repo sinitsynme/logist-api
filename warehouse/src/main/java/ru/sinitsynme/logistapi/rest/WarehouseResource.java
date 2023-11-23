@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseResponseDto;
 
-@Tag(name="Управление складами")
+import java.util.List;
+
+@Tag(name = "Управление складами")
 @RestController
 @RequestMapping("/warehouse")
 public class WarehouseResource {
@@ -31,6 +33,15 @@ public class WarehouseResource {
     @GetMapping("/{id}")
     public ResponseEntity<WarehouseResponseDto> getWarehouse(@PathVariable Long id) {
         return ResponseEntity.ok(new WarehouseResponseDto(10L, "test", null, null, null, null));
+    }
+
+    @Operation(summary = "Получить список складов")
+    @GetMapping
+    public ResponseEntity<List<WarehouseResponseDto>> getWarehouse(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(List.of(
+                new WarehouseResponseDto(10L, "test", null, null, null, null),
+                new WarehouseResponseDto(10L, "test", null, null, null, null)
+        ));
     }
 
     @Operation(summary = "Удалить склад")
