@@ -1,3 +1,11 @@
 package ru.sinitsynme.logistapi.rest.dto;
 
-public record OrganizationRequestDto(String name) {}
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrganizationRequestDto {
+    private String name;
+}

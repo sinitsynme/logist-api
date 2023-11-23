@@ -18,6 +18,7 @@ dependencies {
     val postgresqlVersion: String by project
     val lombokVersion: String by project
     val flywayVersion: String by project
+    val lombokMapstructBindingVersion: String by project
 
     implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -27,12 +28,14 @@ dependencies {
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
-    implementation("org.mapstruct:mapstruct:${mapstructVersion}")
-
-    annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
-    compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+
+    implementation("org.mapstruct:mapstruct:${mapstructVersion}")
+    annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    implementation("org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

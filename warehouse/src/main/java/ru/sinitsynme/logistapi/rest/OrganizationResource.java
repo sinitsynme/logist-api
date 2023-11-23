@@ -2,11 +2,13 @@ package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sinitsynme.logistapi.entity.Organization;
+import ru.sinitsynme.logistapi.mapper.OrganizationMapper;
 import ru.sinitsynme.logistapi.rest.dto.OrganizationRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
+import ru.sinitsynme.logistapi.service.OrganizationService;
 
 import java.util.List;
 
@@ -15,11 +17,22 @@ import java.util.List;
 @RequestMapping("/organization")
 public class OrganizationResource {
 
+    private final OrganizationService organizationService;
+    private final OrganizationMapper organizationMapper;
+
+    public OrganizationResource(OrganizationService organizationService, OrganizationMapper organizationMapper) {
+        this.organizationService = organizationService;
+        this.organizationMapper = organizationMapper;
+    }
+
     @Operation(summary = "Создать предприятие")
     @PostMapping
     public ResponseEntity<OrganizationResponseDto> createOrganization(
             @RequestBody OrganizationRequestDto organizationRequestDto) {
-        return ResponseEntity.ok(new OrganizationResponseDto(1L, "test"));
+        Organization organization = organizationService.addOrganization(organizationRequestDto);
+        return ResponseEntity.ok(organizationMapper
+                .organizationToResponseDto(organization)
+        );
     }
 
     @Operation(summary = "Редактировать предприятие")
@@ -32,7 +45,9 @@ public class OrganizationResource {
     @Operation(summary = "Получить предприятие")
     @GetMapping("/{id}")
     public ResponseEntity<OrganizationResponseDto> getOrganization(@PathVariable Long id) {
-        return ResponseEntity.ok(new OrganizationResponseDto(1L, "test"));
+        Organization organization = organizationService.getOrganizationById(id);
+        return ResponseEntity.ok(organizationMapper
+                .organizationToResponseDto(organization));
     }
 
     @Operation(summary = "Получить список предприятий")
