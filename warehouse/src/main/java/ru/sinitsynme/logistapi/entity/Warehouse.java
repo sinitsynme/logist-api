@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -25,11 +28,14 @@ public class Warehouse {
     @OneToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = EAGER, targetEntity = Organization.class)
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
+    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
     private List<Driver> driverList;
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
     private List<CargoTruck> cargoTruckList;
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
     private List<StoredProduct> storedProducts;
 
     @Override
