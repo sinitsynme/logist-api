@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Warehouse;
 import ru.sinitsynme.logistapi.mapper.WarehouseMapper;
-import ru.sinitsynme.logistapi.rest.dto.AddressResponseDto;
-import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseResponseDto;
 import ru.sinitsynme.logistapi.service.WarehouseService;

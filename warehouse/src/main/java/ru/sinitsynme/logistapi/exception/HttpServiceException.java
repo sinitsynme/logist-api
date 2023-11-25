@@ -1,6 +1,5 @@
 package ru.sinitsynme.logistapi.exception;
 
-import lombok.Builder;
 import org.springframework.http.HttpStatus;
 
 public class HttpServiceException extends RuntimeException implements ServiceException {

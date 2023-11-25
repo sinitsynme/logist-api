@@ -13,7 +13,6 @@ import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
 import ru.sinitsynme.logistapi.service.OrganizationService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
