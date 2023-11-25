@@ -48,6 +48,7 @@ public class OrganizationResource {
                                                                     @PathVariable Long id) {
         Organization editedOrganization = organizationService.editOrganization(organizationRequestDto, id);
         logger.info("Edited organization {}", editedOrganization);
+
         OrganizationResponseDto responseDto = organizationMapper.organizationToResponseDto(editedOrganization);
         return ResponseEntity.ok(responseDto);
     }
@@ -77,7 +78,7 @@ public class OrganizationResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrganization(@PathVariable Long id) {
         organizationService.deleteOrganization(id);
-        logger.info("Deleted organization with ID {}", id);
+        logger.info("Deleted organization and all warehouses with ID {}", id);
 
         return ResponseEntity.ok().build();
     }

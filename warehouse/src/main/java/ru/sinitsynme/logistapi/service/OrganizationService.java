@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.sinitsynme.logistapi.OrganizationRepository;
+import ru.sinitsynme.logistapi.repository.OrganizationRepository;
 import ru.sinitsynme.logistapi.entity.Organization;
 import ru.sinitsynme.logistapi.exception.ExceptionSeverity;
 import ru.sinitsynme.logistapi.exception.service.NotFoundException;

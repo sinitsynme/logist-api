@@ -10,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.sinitsynme.logistapi.exception.HttpServiceException;
 import ru.sinitsynme.logistapi.exception.service.BadRequestException;
 import ru.sinitsynme.logistapi.exception.service.NotFoundException;
@@ -21,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.VALIDATION_FAILED_CODE;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessage.VALIDATION_ERROR;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -64,7 +64,8 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock), "Validation error",
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
+                VALIDATION_ERROR,
                 VALIDATION_FAILED_CODE);
         exceptionResponse.setValidationErrors(errors);
 

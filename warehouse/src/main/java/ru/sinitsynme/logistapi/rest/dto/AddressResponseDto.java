@@ -1,6 +1,16 @@
 package ru.sinitsynme.logistapi.rest.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
-public record AddressResponseDto(UUID id, double latitude, double longitude) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AddressResponseDto {
+    private UUID id;
+    private double latitude;
+    private double longitude;
 }
