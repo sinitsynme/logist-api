@@ -27,8 +27,8 @@ dependencies {
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
+    //TODO Fix lombok-mapstruct connection problem as in Warehouse
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
-
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
