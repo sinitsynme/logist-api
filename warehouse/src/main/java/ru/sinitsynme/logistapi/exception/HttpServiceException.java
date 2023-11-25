@@ -31,11 +31,11 @@ public class HttpServiceException extends RuntimeException implements ServiceExc
 
     @Override
     public String getCode() {
-        return getCode();
+        return code;
     }
 
     @Override
     public HttpStatus getHttpStatus() {
-        return getHttpStatus();
+        return httpStatus;
     }
 }
