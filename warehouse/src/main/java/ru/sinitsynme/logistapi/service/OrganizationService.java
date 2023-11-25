@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.sinitsynme.logistapi.exception.service.BadRequestException;
 import ru.sinitsynme.logistapi.repository.OrganizationRepository;
 import ru.sinitsynme.logistapi.entity.Organization;
 import ru.sinitsynme.logistapi.exception.ExceptionSeverity;
@@ -13,7 +14,9 @@ import ru.sinitsynme.logistapi.rest.dto.OrganizationRequestDto;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_EXISTS_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_NOT_FOUND_CODE;
 
 @Service
@@ -41,6 +44,15 @@ public class OrganizationService {
 
     public Organization addOrganization(OrganizationRequestDto organizationRequestDto) {
         Organization organization = organizationMapper.requestDtoToOrganization(organizationRequestDto);
+        if (organizationRepository.findByName(organization.getName()).isPresent()) {
+            throw new BadRequestException(
+                    String.format("Organization with name= %s exists", organization.getName()),
+                    new Throwable(),
+                    BAD_REQUEST,
+                    ORGANIZATION_EXISTS_CODE,
+                    ExceptionSeverity.ERROR
+            );
+        }
         return organizationRepository.save(organization);
     }
 

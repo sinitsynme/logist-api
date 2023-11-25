@@ -13,6 +13,8 @@ import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
 import ru.sinitsynme.logistapi.service.OrganizationService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +65,7 @@ public class OrganizationResource {
 
     @Operation(summary = "Получить список предприятий")
     @GetMapping
-    public ResponseEntity<List<OrganizationResponseDto>> getOrganizationPaged(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<List<OrganizationResponseDto>> getOrganizationPaged(@RequestParam @Valid @Min(0) int page, @RequestParam @Valid @Min(1) int size) {
 
         List<OrganizationResponseDto> organizationList = organizationService
                 .getPageOfOrganizations(page, size)

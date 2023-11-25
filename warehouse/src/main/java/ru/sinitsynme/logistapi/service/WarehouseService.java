@@ -15,6 +15,7 @@ import ru.sinitsynme.logistapi.repository.WarehouseRepository;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseRequestDto;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_NOT_FOUND_CODE;
@@ -63,11 +64,13 @@ public class WarehouseService {
 
     public Warehouse editWarehouse(WarehouseRequestDto warehouseRequestDto, Long warehouseId) {
 
-        long organizationId = warehouseRequestDto.getOrganizationId();
-        Organization organization = organizationService.getOrganizationById(organizationId);
-        Address address = addressService.saveAddress(warehouseRequestDto.getAddressRequestDto());
-
         Warehouse warehouseFromDb = getWarehouse(warehouseId);
+        UUID addressId = warehouseFromDb.getAddress().getId();
+        long organizationId = warehouseRequestDto.getOrganizationId();
+
+        Organization organization = organizationService.getOrganizationById(organizationId);
+        Address address = addressService.editAddress(warehouseRequestDto.getAddressRequestDto(), addressId);
+
         warehouseFromDb.setAddress(address);
         warehouseFromDb.setOrganization(organization);
         warehouseFromDb.setName(warehouseRequestDto.getName());

@@ -29,6 +29,13 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
+    public Address editAddress(AddressRequestDto requestDto, UUID id) {
+        Address address = getAddress(id);
+        address.setLatitude(requestDto.getLatitude());
+        address.setLongitude(requestDto.getLongitude());
+        return addressRepository.save(address);
+    }
+
     public Address getAddress(UUID id) {
         return addressRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(
