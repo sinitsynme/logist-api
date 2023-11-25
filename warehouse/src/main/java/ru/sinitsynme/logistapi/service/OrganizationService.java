@@ -1,17 +1,19 @@
 package ru.sinitsynme.logistapi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.OrganizationRepository;
 import ru.sinitsynme.logistapi.entity.Organization;
 import ru.sinitsynme.logistapi.exception.ExceptionSeverity;
-import ru.sinitsynme.logistapi.exception.HttpServiceException;
-import ru.sinitsynme.logistapi.exception.OrganizationNotFoundException;
+import ru.sinitsynme.logistapi.exception.service.NotFoundException;
 import ru.sinitsynme.logistapi.mapper.OrganizationMapper;
 import ru.sinitsynme.logistapi.rest.dto.OrganizationRequestDto;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_CREATION_ERROR;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_NOT_FOUND_CODE;
 
 @Service
@@ -27,9 +29,9 @@ public class OrganizationService {
 
     public Organization getOrganizationById(Long id) {
         return organizationRepository.findById(id).orElseThrow(() ->
-                new OrganizationNotFoundException(
+                new NotFoundException(
                         String.format("Organization with id = %d not found", id),
-                        new Throwable(),
+                        null,
                         NOT_FOUND,
                         ORGANIZATION_NOT_FOUND_CODE,
                         ExceptionSeverity.WARN
@@ -38,20 +40,34 @@ public class OrganizationService {
     }
 
     public Organization addOrganization(OrganizationRequestDto organizationRequestDto) {
-        try {
-            return organizationRepository.save(
-                    organizationMapper.requestDtoToOrganization(organizationRequestDto)
-            );
-        } catch (Exception e) {
-            throw new HttpServiceException(
-                    String.format("Organization couldn't be created. Cause: %s",
-                            e.getMessage()
-                    ),
-                    e,
-                    BAD_REQUEST,
-                    ORGANIZATION_CREATION_ERROR,
+        Organization organization = organizationMapper.requestDtoToOrganization(organizationRequestDto);
+        return organizationRepository.save(organization);
+    }
+
+    public Organization editOrganization(OrganizationRequestDto requestDto, Long organizationId) {
+        Organization organizationFromDb = getOrganizationById(organizationId);
+        organizationFromDb.setName(requestDto.getName());
+
+        return organizationRepository.save(organizationFromDb);
+    }
+
+    public void deleteOrganization(Long organizationId) {
+        if (!organizationRepository.existsById(organizationId)) {
+            throw new NotFoundException(
+                    String.format("Organization with ID= %s not found", organizationId),
+                    new Throwable(),
+                    NOT_FOUND,
+                    ORGANIZATION_NOT_FOUND_CODE,
                     ExceptionSeverity.ERROR
             );
         }
+
+        organizationRepository.deleteById(organizationId);
+    }
+
+    public List<Organization> getPageOfOrganizations(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
+        Page<Organization> organizationPage = organizationRepository.findAll(pageRequest);
+        return organizationPage.getContent();
     }
 }

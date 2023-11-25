@@ -2,6 +2,8 @@ package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Organization;
@@ -10,13 +12,16 @@ import ru.sinitsynme.logistapi.rest.dto.OrganizationRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
 import ru.sinitsynme.logistapi.service.OrganizationService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name="Управление организациями")
 @RestController
 @RequestMapping("/organization")
 public class OrganizationResource {
 
+    private final Logger logger = LoggerFactory.getLogger(OrganizationResource.class);
     private final OrganizationService organizationService;
     private final OrganizationMapper organizationMapper;
 
@@ -28,8 +33,10 @@ public class OrganizationResource {
     @Operation(summary = "Создать предприятие")
     @PostMapping
     public ResponseEntity<OrganizationResponseDto> createOrganization(
-            @RequestBody OrganizationRequestDto organizationRequestDto) {
+            @RequestBody @Valid OrganizationRequestDto organizationRequestDto) {
         Organization organization = organizationService.addOrganization(organizationRequestDto);
+
+        logger.info("Created organization {}", organization);
         return ResponseEntity.ok(organizationMapper
                 .organizationToResponseDto(organization)
         );
@@ -37,9 +44,12 @@ public class OrganizationResource {
 
     @Operation(summary = "Редактировать предприятие")
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizationResponseDto> editOrganization(@RequestBody OrganizationRequestDto organizationRequestDto,
+    public ResponseEntity<OrganizationResponseDto> editOrganization(@RequestBody @Valid OrganizationRequestDto organizationRequestDto,
                                                                     @PathVariable Long id) {
-        return ResponseEntity.ok(new OrganizationResponseDto(1L, "test-edited"));
+        Organization editedOrganization = organizationService.editOrganization(organizationRequestDto, id);
+        logger.info("Edited organization {}", editedOrganization);
+        OrganizationResponseDto responseDto = organizationMapper.organizationToResponseDto(editedOrganization);
+        return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "Получить предприятие")
@@ -53,15 +63,22 @@ public class OrganizationResource {
     @Operation(summary = "Получить список предприятий")
     @GetMapping
     public ResponseEntity<List<OrganizationResponseDto>> getOrganizationPaged(@RequestParam int page, @RequestParam int size) {
-        return ResponseEntity.ok(List.of(
-                new OrganizationResponseDto(1L, "test"),
-                new OrganizationResponseDto(2L, "test")
-        ));
+
+        List<OrganizationResponseDto> organizationList = organizationService
+                .getPageOfOrganizations(page, size)
+                .stream()
+                .map(organizationMapper::organizationToResponseDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(organizationList);
     }
 
     @Operation(summary = "Удалить предприятие")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrganization(@PathVariable Long id) {
+        organizationService.deleteOrganization(id);
+        logger.info("Deleted organization with ID {}", id);
+
         return ResponseEntity.ok().build();
     }
 }
