@@ -26,6 +26,6 @@ public class Organization {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "organization", fetch = LAZY)
+    @OneToMany(mappedBy = "organization", fetch = LAZY, cascade = CascadeType.ALL)
     private List<Warehouse> warehouses;
 }

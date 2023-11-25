@@ -3,7 +3,6 @@ management:
     health:
       enabled: true
 
-
 spring:
   datasource:
     username: ${DB_USERNAME}
