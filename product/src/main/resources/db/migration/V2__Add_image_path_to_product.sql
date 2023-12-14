@@ -1,0 +1,1 @@
+alter table product add column if not exists path_to_image VARCHAR(255)
