@@ -1,7 +1,5 @@
 package ru.sinitsynme.logistapi.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.sinitsynme.logistapi.entity.Product;
@@ -17,5 +15,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Optional<Product> findByWarehouseCode(String warehouseCode);
     List<Product> findByNameStartingWith(String prefix);
 
-    Page<Product> findAllByCategoryCode(String categoryCode, Pageable pageable);
 }

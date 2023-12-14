@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
@@ -23,9 +22,9 @@ public class ProductRequestDto {
     @DecimalMin(value = "0.01", message = "Price be more than 0")
     private BigDecimal price;
     @DecimalMin(value = "0.001", message = "Weight should be more than 0 kg")
-    private double weightInKilos;
+    private double weight;
     @DecimalMin(value = "0.001", message = "Volume should be more than 0 dm3")
-    private double volumeInLitres;
+    private double volume;
     private boolean isPackaged;
     private int quantityInPackage;
 }

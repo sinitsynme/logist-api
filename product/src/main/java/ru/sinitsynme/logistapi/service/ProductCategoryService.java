@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.sinitsynme.logistapi.entity.Manufacturer;
 import ru.sinitsynme.logistapi.entity.ProductCategory;
 import ru.sinitsynme.logistapi.mapper.ProductCategoryMapper;
 import ru.sinitsynme.logistapi.repository.ProductCategoryRepository;
@@ -75,10 +74,11 @@ public class ProductCategoryService {
     }
 
     public void deleteProductCategory(String categoryCode) {
-        if (!productCategoryRepository.existsById(categoryCode)) {
+        if (!productCategoryRepository.existsByCategoryCode(categoryCode)) {
             throw notFoundException(categoryCode);
         }
-        productCategoryRepository.deleteById(categoryCode);
+        ProductCategory productCategory = getProductCategoryByCategoryCode(categoryCode);
+        productCategoryRepository.deleteById(productCategory.getId());
     }
 
     public List<ProductCategory> getPageOfProductCategories(int size, int page) {
@@ -100,7 +100,7 @@ public class ProductCategoryService {
     }
 
     private void checkIfCategoryIsPresentByCode(String categoryCode) {
-        if (productCategoryRepository.existsById(categoryCode)) {
+        if (productCategoryRepository.existsByCategoryCode(categoryCode)) {
             logger.warn("Product category with code {} exists", categoryCode);
             throw new BadRequestException(
                     String.format("Product category with code %s exists", categoryCode),

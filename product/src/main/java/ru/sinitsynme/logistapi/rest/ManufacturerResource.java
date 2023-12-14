@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class ManufacturerResource {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить производителя по ID")
     public ResponseEntity<ManufacturerResponseDto> findManufacturerById(
             @PathVariable("id") Long manufacturerId) {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(manufacturerId);
@@ -39,6 +41,7 @@ public class ManufacturerResource {
     }
 
     @GetMapping
+    @Operation(summary = "Получить список производителей")
     public ResponseEntity<List<ManufacturerResponseDto>> findPageOfManufacturer(
             @RequestParam @Valid @Min(1) int size,
             @RequestParam @Valid @Min(0) int page) {
@@ -52,6 +55,7 @@ public class ManufacturerResource {
     }
 
     @PostMapping
+    @Operation(summary = "Создать производителя")
     public ResponseEntity<ManufacturerResponseDto> createManufacturer(
             @RequestBody @Valid ManufacturerRequestDto requestDto) {
         Manufacturer manufacturer = manufacturerService.saveManufacturer(requestDto);
@@ -60,6 +64,7 @@ public class ManufacturerResource {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Редактировать производителя по ID")
     public ResponseEntity<ManufacturerResponseDto> editManufacturerById(
             @RequestBody @Valid ManufacturerRequestDto requestDto,
             @PathVariable("id") Long id) {
@@ -69,6 +74,7 @@ public class ManufacturerResource {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить производителя")
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable("id") long manufacturerId
     ) {

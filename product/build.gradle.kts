@@ -34,12 +34,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
-    //TODO Fix lombok-mapstruct connection problem as in Warehouse
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     implementation("org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}")
-
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

@@ -1,15 +1,13 @@
 package ru.sinitsynme.logistapi.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sinitsynme.logistapi.entity.Manufacturer;
 import ru.sinitsynme.logistapi.entity.ProductCategory;
 import ru.sinitsynme.logistapi.mapper.ProductCategoryMapper;
-import ru.sinitsynme.logistapi.rest.dto.ManufacturerRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ManufacturerResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductCategoryDto;
 import ru.sinitsynme.logistapi.service.ProductCategoryService;
 
@@ -34,6 +32,7 @@ public class ProductCategoryResource {
     }
 
     @GetMapping("/{categoryCode}")
+    @Operation(summary = "Найти категорию по коду")
     public ResponseEntity<ProductCategoryDto> findProductCategoryByCategoryCode(
             @PathVariable String categoryCode) {
         ProductCategory productCategory = productCategoryService.getProductCategoryByCategoryCode(categoryCode);
@@ -41,6 +40,7 @@ public class ProductCategoryResource {
     }
 
     @GetMapping("/name/{categoryName}")
+    @Operation(summary = "Найти категорию по имени")
     public ResponseEntity<ProductCategoryDto> findProductCategoryByCategoryName(
             @PathVariable String categoryName) {
         ProductCategory productCategory = productCategoryService.getProductCategoryByCategoryName(categoryName);
@@ -48,6 +48,7 @@ public class ProductCategoryResource {
     }
 
     @GetMapping
+    @Operation(summary = "Получить список категорий")
     public ResponseEntity<List<ProductCategoryDto>> findPageOfProductCategory(
             @RequestParam @Valid @Min(1) int size,
             @RequestParam @Valid @Min(0) int page) {
@@ -61,6 +62,7 @@ public class ProductCategoryResource {
     }
 
     @PostMapping
+    @Operation(summary = "Создать категорию")
     public ResponseEntity<ProductCategoryDto> createProductCategory(
             @RequestBody @Valid ProductCategoryDto requestDto) {
         ProductCategory productCategory = productCategoryService.saveProductCategory(requestDto);
@@ -69,6 +71,7 @@ public class ProductCategoryResource {
     }
 
     @PutMapping("/{categoryCode}")
+    @Operation(summary = "Редактировать категорию по коду")
     public ResponseEntity<ProductCategoryDto> editProductCategoryByCode(
             @RequestBody @Valid ProductCategoryDto requestDto,
             @PathVariable String categoryCode) {
@@ -78,6 +81,7 @@ public class ProductCategoryResource {
     }
 
     @DeleteMapping("/{categoryCode}")
+    @Operation(summary = "Удалить категорию по коду")
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable String categoryCode
     ) {

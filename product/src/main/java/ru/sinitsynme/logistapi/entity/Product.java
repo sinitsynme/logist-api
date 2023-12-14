@@ -26,7 +26,7 @@ public class Product {
     private String pathToImage;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_code")
+    @JoinColumn(name = "category_id")
     private ProductCategory productCategory;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

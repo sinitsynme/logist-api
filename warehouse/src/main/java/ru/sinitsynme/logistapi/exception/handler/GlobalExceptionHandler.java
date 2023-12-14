@@ -1,7 +1,10 @@
 package ru.sinitsynme.logistapi.exception.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.ExceptionResponse;
 import exception.HttpServiceException;
+import exception.service.BadRequestException;
+import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.sinitsynme.logistapi.exception.service.BadRequestException;
-import ru.sinitsynme.logistapi.exception.service.NotFoundException;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -27,10 +28,12 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessage.VALIDATI
 public class GlobalExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final ObjectMapper objectMapper;
     private final Clock clock;
 
     @Autowired
-    public GlobalExceptionHandler(Clock clock) {
+    public GlobalExceptionHandler(ObjectMapper objectMapper, Clock clock) {
+        this.objectMapper = objectMapper;
         this.clock = clock;
     }
 
