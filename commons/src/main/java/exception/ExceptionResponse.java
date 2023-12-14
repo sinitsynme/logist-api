@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.exception.handler;
+package exception;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

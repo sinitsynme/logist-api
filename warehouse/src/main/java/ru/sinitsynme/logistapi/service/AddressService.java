@@ -1,8 +1,8 @@
 package ru.sinitsynme.logistapi.service;
 
+import exception.ExceptionSeverity;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Address;
-import ru.sinitsynme.logistapi.exception.ExceptionSeverity;
 import ru.sinitsynme.logistapi.exception.service.NotFoundException;
 import ru.sinitsynme.logistapi.mapper.AddressMapper;
 import ru.sinitsynme.logistapi.repository.AddressRepository;

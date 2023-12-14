@@ -20,6 +20,8 @@ dependencies {
     val flywayVersion: String by project
     val lombokMapstructBindingVersion: String by project
 
+    implementation(project(":commons"))
+
     implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
