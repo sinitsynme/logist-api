@@ -6,6 +6,6 @@ create table product_category_product_list (product_category_category_code varch
 alter table product_category_product_list add constraint UK_kjtnwp1ybunrfyqi2jmvx1tvk unique (product_list_id);
 alter table product add constraint FK89igr5j06uw5ps04djxgom0l1 foreign key (manufacturer_id) references manufacturer;
 alter table product add constraint FKb0kalh53s68qe9ekh7vq5lhhj foreign key (category_code) references product_category;
-alter table product add constraint FKedaqeh4uirktgnv1rcklfoj99 foreign key (child_product_id) references product;
+alter table product add constraint child_product_id_constraint foreign key (child_product_id) references product;
 alter table product_category_product_list add constraint FKp5t3rxwg248b4hd96ok6y9uhk foreign key (product_list_id) references product;
 alter table product_category_product_list add constraint FK1lwhxfjl5y3t55o2af532lnfp foreign key (product_category_category_code) references product_category;

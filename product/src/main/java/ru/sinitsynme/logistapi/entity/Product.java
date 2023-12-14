@@ -13,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table
 public class Product {
 
@@ -35,7 +34,9 @@ public class Product {
     private BigDecimal price;
     private double weight; // in kilos
     private double volume; // in litres
+
     private boolean isPackaged;
+    private int quantityInPackage;
 
     @Override
     public boolean equals(Object o) {
