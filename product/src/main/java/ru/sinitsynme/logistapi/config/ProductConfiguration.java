@@ -11,7 +11,6 @@ import java.time.ZoneId;
 @Configuration
 @EnableConfigurationProperties({AppProperties.class})
 public class ProductConfiguration {
-
     private final AppProperties appProperties;
 
     @Autowired
