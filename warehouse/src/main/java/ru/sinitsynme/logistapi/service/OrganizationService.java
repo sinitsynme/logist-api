@@ -1,13 +1,13 @@
 package ru.sinitsynme.logistapi.service;
 
 import exception.ExceptionSeverity;
+import exception.service.BadRequestException;
+import exception.service.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Organization;
-import ru.sinitsynme.logistapi.exception.service.BadRequestException;
-import ru.sinitsynme.logistapi.exception.service.NotFoundException;
 import ru.sinitsynme.logistapi.mapper.OrganizationMapper;
 import ru.sinitsynme.logistapi.repository.OrganizationRepository;
 import ru.sinitsynme.logistapi.rest.dto.OrganizationRequestDto;

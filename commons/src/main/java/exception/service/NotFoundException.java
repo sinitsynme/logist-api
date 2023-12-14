@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.exception.service;
+package exception.service;
 
 import exception.ExceptionSeverity;
 import exception.HttpServiceException;
