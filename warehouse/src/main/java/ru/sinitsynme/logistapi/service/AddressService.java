@@ -11,7 +11,7 @@ import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORGANIZATION_NOT_FOUND_CODE;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ADDRESS_NOT_FOUND_CODE;
 
 @Service
 public class AddressService {
@@ -42,7 +42,7 @@ public class AddressService {
                         String.format("Address with id = %s not found", id),
                         null,
                         NOT_FOUND,
-                        ORGANIZATION_NOT_FOUND_CODE,
+                        ADDRESS_NOT_FOUND_CODE,
                         ExceptionSeverity.WARN
                 )
         );
