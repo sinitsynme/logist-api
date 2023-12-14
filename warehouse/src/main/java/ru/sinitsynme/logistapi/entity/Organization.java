@@ -15,7 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Entity
-@Table
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 public class Organization {
 
     @Id

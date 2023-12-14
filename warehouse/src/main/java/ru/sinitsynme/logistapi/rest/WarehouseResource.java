@@ -8,13 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Warehouse;
 import ru.sinitsynme.logistapi.mapper.WarehouseMapper;
-import ru.sinitsynme.logistapi.rest.dto.AddressResponseDto;
-import ru.sinitsynme.logistapi.rest.dto.OrganizationResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.WarehouseResponseDto;
 import ru.sinitsynme.logistapi.service.WarehouseService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +64,7 @@ public class WarehouseResource {
 
     @Operation(summary = "Получить список складов")
     @GetMapping
-    public ResponseEntity<List<WarehouseResponseDto>> getWarehouse(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<List<WarehouseResponseDto>> getWarehouse(@RequestParam @Min(value = 0) int page, @RequestParam @Min(value = 1) int size) {
         List<WarehouseResponseDto> organizationList = warehouseService
                 .getPageOfWarehouse(page, size)
                 .stream()

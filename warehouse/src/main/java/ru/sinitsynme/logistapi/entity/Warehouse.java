@@ -15,7 +15,6 @@ import static javax.persistence.FetchType.LAZY;
 @Setter
 @Builder
 @Entity
-@Table
 public class Warehouse {
 
     @Id
@@ -26,7 +25,7 @@ public class Warehouse {
     private String name;
     private String contactNumber;
     private String email;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
     @ManyToOne(fetch = EAGER, targetEntity = Organization.class)
