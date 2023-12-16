@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.entity.Product;
 import ru.sinitsynme.logistapi.mapper.ProductMapper;
-import ru.sinitsynme.logistapi.rest.dto.ProductPageRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
 import ru.sinitsynme.logistapi.service.ProductService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,10 +25,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/product")
 public class ProductResource {
-
-    //TODO pageOfProductsByCategoryCode
-    //TODO products starting with name
-
     private final ProductMapper productMapper;
     private final ProductService productService;
     private final Logger logger = LoggerFactory.getLogger(ProductResource.class);
@@ -38,12 +35,37 @@ public class ProductResource {
     }
 
     @GetMapping
+    @Operation(summary = "Получить список товаров")
     public ResponseEntity<List<ProductResponseDto>> getPageOfProducts(
-            @RequestBody @Valid ProductPageRequestDto pageRequestDto) {
-        return null;
+            @RequestParam @Valid @Min(0) int page,
+            @RequestParam @Valid @Min(1) int size,
+            @RequestParam(required = false) List<String> sortByFields,
+            @RequestParam(required = false) List<String> categoryCodes) {
+        List<ProductResponseDto> responseDtos = productService
+                .getProductsPage(page, size, categoryCodes, sortByFields)
+                .stream()
+                .map(productMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(responseDtos);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Получить список товаров по поисковому запросу")
+    public ResponseEntity<List<ProductResponseDto>> getPageOfProductsWithNameContaining(
+            @RequestParam @Valid @Min(0) int page,
+            @RequestParam @Valid @Min(1) int size,
+            @RequestParam @Valid @Size(min = 3, max = 100) String query) {
+        List<ProductResponseDto> responseDtos = productService
+                .getProductsPageWithNameContaining(page, size, query)
+                .stream()
+                .map(productMapper::toResponseDto)
+                .toList();
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить товар по ID")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable("id") UUID productId) {
         Product product = productService.getProductById(productId);
         return ResponseEntity.ok(productMapper.toResponseDto(product));
@@ -62,12 +84,13 @@ public class ProductResource {
             MediaType.APPLICATION_OCTET_STREAM_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
+    @Operation(summary = "Получить изображение товара")
     public ResponseEntity<Resource> getProductImage(@PathVariable("id") UUID productId) {
         return ResponseEntity.ok(productService.getProductImage(productId));
     }
 
     @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Добавить картинку к товару")
+    @Operation(summary = "Добавить изображение к товару")
     public ResponseEntity<?> addImageToProduct(
             @RequestPart MultipartFile productImageFile,
             @PathVariable("id") UUID productId) {
@@ -77,13 +100,19 @@ public class ProductResource {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Редактировать товар")
     public ResponseEntity<ProductResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto,
                                                           @PathVariable("id") UUID productId) {
-        return null;
+        Product product = productService.editProduct(productId, productRequestDto);
+        logger.info("Edited product with ID = {}", productId);
+        return ResponseEntity.ok(productMapper.toResponseDto(product));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить товар")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") UUID productId) {
-        return null;
+        productService.deleteProduct(productId);
+        logger.info("Deleted product with ID = {}", productId);
+        return ResponseEntity.ok().build();
     }
 }
