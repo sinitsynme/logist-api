@@ -19,7 +19,7 @@ public class Manufacturer {
     private Long id;
     private String name;
     private String contactNumber;
-    @OneToMany(mappedBy = "manufacturer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "manufacturer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Product> productList;
 
     @Override

@@ -1,8 +1,10 @@
 package ru.sinitsynme.logistapi.rest.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.DecimalMin;
@@ -13,11 +15,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRequestDto {
-    private String warehouseCode;
     @Size(min = 3, max = 100, message = "Name length should be more than 3 and less than 100")
     private String name;
     private String description;
-    private MultipartFile image;
+    private Long manufacturerId;
     private String categoryCode;
     @DecimalMin(value = "0.01", message = "Price be more than 0")
     private BigDecimal price;

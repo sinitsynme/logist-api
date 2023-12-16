@@ -1,4 +1,5 @@
 springdoc:
+  default-support-form-data: false
   swagger-ui:
     path: /swagger-ui
 

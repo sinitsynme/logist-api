@@ -8,7 +8,9 @@ import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,8 +55,11 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
                 ex.getMessage(), ex.getCode());
 
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
         logger.warn("Exception handled: {}", exceptionResponse.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exceptionResponse, httpHeaders, HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
