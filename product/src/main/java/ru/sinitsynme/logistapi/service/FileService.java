@@ -37,14 +37,12 @@ public class FileService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new GetFileFromRootException(
                         "Could not read file: " + filename);
 
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new GetFileFromRootException("Could not read file: " + filename, e);
         }
     }
@@ -97,9 +95,7 @@ public class FileService {
             return maskedFileName;
 
         } catch (IOException e) {
-            throw new IllegalFileUploadException("Failed to store file: " + e.getMessage() + " "
-                    + Arrays.toString(e.getStackTrace())
-                    , e);
+            throw new IllegalFileUploadException("Failed to store file: " + e.getMessage(), e);
         }
     }
 
