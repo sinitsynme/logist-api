@@ -23,6 +23,6 @@ spring:
     show-sql: false
 
 file-config:
-  base-directory: C:\logist-api-product\
+  base-directory: ${UPLOAD_BASE_DIR}
   max-image-size-mb: 8
   allowed-image-extensions-list: png,jpeg

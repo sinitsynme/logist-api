@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -96,7 +97,9 @@ public class FileService {
             return maskedFileName;
 
         } catch (IOException e) {
-            throw new IllegalFileUploadException("Failed to store file.", e);
+            throw new IllegalFileUploadException("Failed to store file: " + e.getMessage() + " "
+                    + Arrays.toString(e.getStackTrace())
+                    , e);
         }
     }
 
