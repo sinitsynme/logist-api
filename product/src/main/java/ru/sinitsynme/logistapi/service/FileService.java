@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 public class FileService {
@@ -47,7 +48,7 @@ public class FileService {
         }
     }
 
-    public void saveImage(MultipartFile multipartFile) {
+    public String saveImage(MultipartFile multipartFile) {
         if (multipartFile.getContentType() == null) {
             throw new IllegalFileUploadException("Broken file type!");
         }
@@ -70,25 +71,29 @@ public class FileService {
         }
 
         try {
-            saveFile(multipartFile);
+            return saveFile(multipartFile);
         } catch (IOException e) {
             throw new IllegalFileUploadException("Broken file contents!");
         }
     }
 
 
-    private void saveFile(MultipartFile file) throws IOException {
+    private String saveFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
             throw new IllegalFileUploadException("Image must have a file name!");
         }
 
-        Path saveDestination = Path.of(fileProperties.getBaseDirectory() + file.getOriginalFilename());
+        String maskedFileName = UUID.randomUUID() + file.getOriginalFilename();
+
+        Path saveDestination = Path.of(fileProperties.getBaseDirectory() + maskedFileName);
 
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, saveDestination,
                     StandardCopyOption.REPLACE_EXISTING);
 
-            logger.info("Uploaded file {}", file.getOriginalFilename());
+            logger.info("Uploaded file {}", maskedFileName);
+
+            return maskedFileName;
 
         } catch (IOException e) {
             throw new IllegalFileUploadException("Failed to store file.", e);

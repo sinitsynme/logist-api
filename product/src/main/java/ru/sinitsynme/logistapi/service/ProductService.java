@@ -89,7 +89,8 @@ public class ProductService {
         Product product = getProductById(productId);
         if (productImageFile != null) {
             try {
-                fileService.saveImage(productImageFile);
+                String newFileName = fileService.saveImage(productImageFile);
+                product.setPathToImage(newFileName);
             } catch (IllegalFileUploadException e) {
                 throw new BadRequestException(
                         "Error while uploading file: " + e.getMessage(),
@@ -98,7 +99,6 @@ public class ProductService {
                         ILLEGAL_FILE_UPLOAD_CODE,
                         ExceptionSeverity.WARN);
             }
-            product.setPathToImage(productImageFile.getOriginalFilename());
         }
 
         productRepository.save(product);

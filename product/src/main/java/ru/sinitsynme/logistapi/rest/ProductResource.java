@@ -66,7 +66,7 @@ public class ProductResource {
         return ResponseEntity.ok(productService.getProductImage(productId));
     }
 
-    @PutMapping("/{id}/image")
+    @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавить картинку к товару")
     public ResponseEntity<?> addImageToProduct(
             @RequestPart MultipartFile productImageFile,
