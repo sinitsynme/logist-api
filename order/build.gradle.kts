@@ -18,6 +18,8 @@ dependencies {
     val lombokVersion: String by project
     val openApiVersion: String by project
 
+    implementation(project(":commons"))
+
     implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")

@@ -1,8 +1,8 @@
-package ru.sinitsynme.logistapi.exception.service;
+package exception.service;
 
+import exception.ExceptionSeverity;
+import exception.HttpServiceException;
 import org.springframework.http.HttpStatus;
-import ru.sinitsynme.logistapi.exception.ExceptionSeverity;
-import ru.sinitsynme.logistapi.exception.HttpServiceException;
 
 public class BadRequestException extends HttpServiceException {
 

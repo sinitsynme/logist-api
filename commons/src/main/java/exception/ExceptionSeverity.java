@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.exception;
+package exception;
 
 public enum ExceptionSeverity {
     WARN,

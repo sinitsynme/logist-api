@@ -5,10 +5,13 @@ import exception.ExceptionResponse;
 import exception.HttpServiceException;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ILLEGAL_FILE_UPLOAD_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.VALIDATION_FAILED_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessage.VALIDATION_ERROR;
 
@@ -43,8 +47,11 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
                 ex.getMessage(), ex.getCode());
 
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
         logger.warn("Exception handled: {}", exceptionResponse.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exceptionResponse, httpHeaders, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -53,8 +60,24 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
                 ex.getMessage(), ex.getCode());
 
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
         logger.warn("Exception handled: {}", exceptionResponse.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exceptionResponse, httpHeaders, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SizeLimitExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionResponse> sizeLimitExceededException(SizeLimitExceededException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
+                ex.getMessage(), ILLEGAL_FILE_UPLOAD_CODE);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        logger.warn("Exception handled: {}", exceptionResponse.getMessage());
+        return new ResponseEntity<>(exceptionResponse, httpHeaders, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

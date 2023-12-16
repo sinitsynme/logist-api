@@ -1,6 +1,5 @@
 package ru.sinitsynme.logistapi.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +19,7 @@ public class Manufacturer {
     private Long id;
     private String name;
     private String contactNumber;
-    @OneToMany(mappedBy = "manufacturer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "manufacturer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Product> productList;
 
     @Override

@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.exception;
+package exception;
 
 import org.springframework.http.HttpStatus;
 

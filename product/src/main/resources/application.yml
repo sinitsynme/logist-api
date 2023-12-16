@@ -1,0 +1,7 @@
+springdoc:
+  default-support-form-data: false
+  swagger-ui:
+    path: /swagger-ui
+
+logist-api:
+  clock-zone-id: Europe/Moscow

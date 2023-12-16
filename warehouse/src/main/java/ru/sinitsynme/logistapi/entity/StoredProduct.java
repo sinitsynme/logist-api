@@ -16,6 +16,7 @@ import java.util.UUID;
 public class StoredProduct {
     @Id
     private UUID productId;
+    private String warehouseCode;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
@@ -40,6 +41,7 @@ public class StoredProduct {
     public String toString() {
         return "StoredProduct{" +
                 "productId=" + productId +
+                ", warehouseCode=" + warehouseCode +
                 ", warehouse=" + warehouse.getId() +
                 ", quantity=" + quantity +
                 ", reservedQuantity=" + reservedQuantity +

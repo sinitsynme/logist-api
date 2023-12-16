@@ -13,18 +13,19 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String name;
     private String description;
+    private String pathToImage;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_code")
+    @JoinColumn(name = "category_id")
     private ProductCategory productCategory;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -34,7 +35,9 @@ public class Product {
     private BigDecimal price;
     private double weight; // in kilos
     private double volume; // in litres
+
     private boolean isPackaged;
+    private int quantityInPackage;
 
     @Override
     public boolean equals(Object o) {
