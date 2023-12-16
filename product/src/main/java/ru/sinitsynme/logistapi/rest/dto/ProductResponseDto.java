@@ -12,7 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProductResponseDto {
     private UUID id;
-    private String warehouseCode;
     private String name;
     private String description;
     private ProductCategoryDto productCategory;
