@@ -34,10 +34,10 @@ jobs:
     - name: docker compose up -d
       run: docker compose up -d
     - name: Check product logs
-      run: docker logs product
+      run: docker compose logs product
     - name: Check order logs
-      run: docker logs order
+      run: docker compose logs order
     - name: Check warehouse logs
-      run: docker logs warehouse
+      run: docker compose logs warehouse
     - name: Docker Compose down
       run: docker compose down
