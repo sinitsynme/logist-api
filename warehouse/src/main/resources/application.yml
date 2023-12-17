@@ -15,5 +15,7 @@ eureka:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
 
-product:
-  url: ${PRODUCT_SERVICE_URL:localhost:}
+external-system:
+  product:
+    service-name: ${PRODUCT_SERVICE_NAME}
+    url: ${PRODUCT_SERVICE_URL}

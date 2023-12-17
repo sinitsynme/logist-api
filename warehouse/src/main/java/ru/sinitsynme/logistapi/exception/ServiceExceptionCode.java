@@ -7,5 +7,7 @@ public final class ServiceExceptionCode {
     public static final String ORGANIZATION_EXISTS_CODE = "-101";
     public static final String WAREHOUSE_NOT_FOUND_CODE = "-200";
     public static final String ADDRESS_NOT_FOUND_CODE = "-300";
+    public static final String EXTERNAL_RESOURCE_NOT_FOUND_CODE = "-1000";
+    public static final String SERVER_ERROR = "-10000";
 
 }

@@ -45,6 +45,12 @@ public class WarehouseService {
         this.addressService = addressService;
     }
 
+    public void increaseWarehouseProductCodeCounter(Long warehouseId) {
+        Warehouse warehouse = getWarehouse(warehouseId);
+        warehouse.setStoredProductsCodeCounter(warehouse.getStoredProductsCodeCounter() + 1);
+        warehouseRepository.save(warehouse);
+    }
+
     public Warehouse createWarehouse(WarehouseRequestDto warehouseRequestDto) {
         long organizationId = warehouseRequestDto.getOrganizationId();
 

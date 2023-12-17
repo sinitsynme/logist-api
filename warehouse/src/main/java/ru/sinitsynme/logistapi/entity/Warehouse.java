@@ -39,6 +39,10 @@ public class Warehouse {
     private List<StoredProduct> storedProducts;
     private int storedProductsCodeCounter;
 
+    public String getStoredProductsCodeCounterString() {
+        return String.valueOf(storedProductsCodeCounter);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
