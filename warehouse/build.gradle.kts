@@ -19,6 +19,7 @@ dependencies {
     val lombokVersion: String by project
     val flywayVersion: String by project
     val lombokMapstructBindingVersion: String by project
+    val eurekaClientVersion: String by project
 
     implementation(project(":commons"))
 
@@ -26,6 +27,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$eurekaClientVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:${postgresqlVersion}")

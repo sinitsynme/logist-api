@@ -17,12 +17,15 @@ dependencies {
     val mapstructVersion: String by project
     val lombokVersion: String by project
     val openApiVersion: String by project
+    val eurekaClientVersion: String by project
 
     implementation(project(":commons"))
 
-    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
+    implementation("org.springdoc:springdoc-openapi-ui:$openApiVersion")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$eurekaClientVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.mapstruct:mapstruct:${mapstructVersion}")

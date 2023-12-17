@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: logistapi-product
+
 springdoc:
   default-support-form-data: false
   swagger-ui:
@@ -5,3 +9,8 @@ springdoc:
 
 logist-api:
   clock-zone-id: Europe/Moscow
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
