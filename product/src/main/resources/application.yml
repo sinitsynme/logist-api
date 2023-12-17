@@ -23,5 +23,4 @@ yandex:
     aws-region: ${S3_AWS_REGION}
     endpoint: ${S3_ENDPOINT}
 
-feature-flags:
-  s3-on: ${FF_S3_ON}
+# feature-flags:

@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.config.FileProperties;
 import ru.sinitsynme.logistapi.config.ObjectStorageProperties;
@@ -16,6 +18,7 @@ import ru.sinitsynme.logistapi.exception.service.IllegalFileUploadException;
 import java.io.IOException;
 import java.util.UUID;
 
+@Service
 public class FileS3Service implements FileService {
 
     private final FileProperties fileProperties;
@@ -23,6 +26,7 @@ public class FileS3Service implements FileService {
     private final AmazonS3 s3Client;
     private final Logger logger = LoggerFactory.getLogger(FileS3Service.class);
 
+    @Autowired
     public FileS3Service(ObjectStorageProperties objectStorageProperties, FileProperties fileProperties) {
         this.fileProperties = fileProperties;
         this.objectStorageProperties = objectStorageProperties;
