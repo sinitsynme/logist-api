@@ -20,6 +20,7 @@ dependencies {
     val flywayVersion: String by project
     val lombokMapstructBindingVersion: String by project
     val eurekaClientVersion: String by project
+    val awsSdkVersion: String by project
 
     implementation(project(":commons"))
 
@@ -41,6 +42,9 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     compileOnly("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     implementation("org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}")
+
+    implementation("com.amazonaws:aws-java-sdk-s3:$awsSdkVersion")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

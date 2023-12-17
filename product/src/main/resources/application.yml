@@ -14,3 +14,14 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
+
+yandex:
+  object-storage:
+    access-key: ${S3_ACCESS_KEY}
+    secret-key: ${S3_SECRET_KEY}
+    bucket-name: ${S3_BUCKET_NAME}
+    aws-region: ${S3_AWS_REGION}
+    endpoint: ${S3_ENDPOINT}
+
+feature-flags:
+  s3-on: ${FF_S3_ON}
