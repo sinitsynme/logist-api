@@ -1,6 +1,18 @@
+spring:
+  application:
+    name: logistapi-warehouse
+
 springdoc:
   swagger-ui:
     path: /swagger-ui
 
 logist-api:
   clock-zone-id: Europe/Moscow
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
+
+product:
+  url: ${PRODUCT_SERVICE_URL:localhost:}

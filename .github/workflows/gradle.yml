@@ -31,7 +31,15 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
-    - name: Docker Compose up
+    - name: docker compose up -d
       run: docker compose up -d
+    - name: Check state
+      run: docker ps -a
+    - name: Check product logs
+      run: docker compose logs product
+    - name: Check order logs
+      run: docker compose logs order
+    - name: Check warehouse logs
+      run: docker compose logs warehouse
     - name: Docker Compose down
       run: docker compose down

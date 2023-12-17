@@ -43,7 +43,6 @@ public class WarehouseResource {
     }
 
     @Operation(summary = "Редактировать склад")
-
     @PutMapping("/{id}")
     public ResponseEntity<WarehouseResponseDto> editWarehouse(@RequestBody @Valid WarehouseRequestDto warehouseRequestDto,
                                                               @PathVariable Long id) {
