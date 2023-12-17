@@ -1,0 +1,1 @@
+alter table warehouse add column stored_products_code_counter int4 not null

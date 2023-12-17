@@ -37,6 +37,7 @@ public class Warehouse {
     private List<CargoTruck> cargoTruckList;
     @OneToMany(mappedBy = "warehouse", fetch = LAZY)
     private List<StoredProduct> storedProducts;
+    private int storedProductsCodeCounter;
 
     @Override
     public boolean equals(Object o) {

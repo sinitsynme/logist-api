@@ -11,4 +11,5 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConstructorBinding
 public class AppProperties {
     private String clockZoneId;
+    private int initialWarehouseCodeCounter;
 }

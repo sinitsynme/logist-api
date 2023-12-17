@@ -8,6 +8,7 @@ springdoc:
 
 logist-api:
   clock-zone-id: Europe/Moscow
+  initial-warehouse-code-counter: 1000000000
 
 eureka:
   client:
