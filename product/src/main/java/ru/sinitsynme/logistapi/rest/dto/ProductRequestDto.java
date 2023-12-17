@@ -26,6 +26,8 @@ public class ProductRequestDto {
     private double weight;
     @DecimalMin(value = "0.001", message = "Volume should be more than 0 dm3")
     private double volume;
+    @Schema(example = "false", type = "boolean")
     private boolean isPackaged;
+    @Schema(example = "1", type = "int")
     private int quantityInPackage;
 }
