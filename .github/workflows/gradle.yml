@@ -32,6 +32,6 @@ jobs:
       with:
         arguments: build
     - name: Docker Compose up
-      run: docker compose up -d
+      run: docker compose up -d && docker compose logs -f product warehouse order
     - name: Docker Compose down
       run: docker compose down
