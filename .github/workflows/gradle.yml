@@ -35,7 +35,5 @@ jobs:
       run: docker compose up -d
     - name: Check running containers
       run: docker ps -a
-    - name: Check logs
-      run: docker compose logs -f product order warehouse
     - name: Docker Compose down
       run: docker compose down
