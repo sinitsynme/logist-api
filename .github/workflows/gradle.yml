@@ -33,6 +33,8 @@ jobs:
         arguments: build
     - name: docker compose up -d
       run: docker compose up -d
+    - name: Check state
+      run: docker ps -a
     - name: Check product logs
       run: docker compose logs product
     - name: Check order logs
