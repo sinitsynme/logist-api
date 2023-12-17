@@ -6,7 +6,6 @@ import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -107,7 +106,7 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public Resource getProductImage(UUID productId) {
+    public String getLinkToProductImage(UUID productId) {
         Product product = getProductById(productId);
         String fileName = product.getPathToImage();
         if (fileName == null || fileName.isEmpty()) {
@@ -119,7 +118,7 @@ public class ProductService {
                     ExceptionSeverity.WARN);
         }
         try {
-            return fileService.getResource(fileName);
+            return fileService.getLinkToResource(fileName);
         } catch (GetFileFromRootException e) {
             throw new BadRequestException(
                     e.getMessage(),

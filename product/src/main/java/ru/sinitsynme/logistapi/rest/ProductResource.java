@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.entity.Product;
 import ru.sinitsynme.logistapi.mapper.ProductMapper;
+import ru.sinitsynme.logistapi.rest.dto.ProductImageLinkResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
 import ru.sinitsynme.logistapi.service.ProductService;
@@ -80,13 +81,13 @@ public class ProductResource {
         return ResponseEntity.ok(productMapper.toResponseDto(product));
     }
 
-    @GetMapping(value = "/{id}/image", produces = {
-            MediaType.APPLICATION_OCTET_STREAM_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-    })
-    @Operation(summary = "Получить изображение товара")
-    public ResponseEntity<Resource> getProductImage(@PathVariable("id") UUID productId) {
-        return ResponseEntity.ok(productService.getProductImage(productId));
+    @GetMapping("/{id}/image")
+    @Operation(summary = "Получить ссылку на изображение товара")
+    @ResponseBody
+    public ResponseEntity<ProductImageLinkResponseDto> getProductImage(@PathVariable("id") UUID productId) {
+        String link = productService.getLinkToProductImage(productId);
+        ProductImageLinkResponseDto responseDto = new ProductImageLinkResponseDto(link);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
