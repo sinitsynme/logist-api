@@ -2,3 +2,48 @@ service-names:
   product-service-name: ${PRODUCT_SERVICE_NAME}
   warehouse-service-name: ${WAREHOUSE_SERVICE_NAME}
   order-service-name: ${ORDER_SERVICE_NAME}
+
+
+management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+    web:
+      exposure:
+        include: "*"
+    gateway:
+      enabled: true
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: logistapi-product
+          uri: lb://${PRODUCT_SERVICE_NAME}
+          predicates:
+            - Path=/product/{segment}
+          filters:
+            - SetPath=/{segment}
+        - id: logistapi-order
+          uri: lb://${ORDER_SERVICE_NAME}
+          predicates:
+            - Path=/order/{segment}
+          filters:
+            - SetPath=/{segment}
+        - id: logistapi-warehouse
+          uri: lb://${WAREHOUSE_SERVICE_NAME}
+          predicates:
+            - Path=/warehouse/{segment}
+          filters:
+            - SetPath=/{segment}
+        - id: eureka-web-page
+          uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-other
+          uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
+          predicates:
+            - Path=/eureka/**
