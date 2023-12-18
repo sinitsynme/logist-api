@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Tag(name = "Управление адресами")
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/rest/api/v1/address")
 public class AddressResource {
 
     private final AddressService addressService;

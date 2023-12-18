@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Управление категориями товаров")
 @RestController
-@RequestMapping("/product/category")
+@RequestMapping("/rest/api/v1/product/category")
 public class ProductCategoryResource {
 
     private final ProductCategoryMapper productCategoryMapper;

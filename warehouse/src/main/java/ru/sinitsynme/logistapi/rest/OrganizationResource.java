@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Tag(name="Управление организациями")
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/rest/api/v1/organization")
 public class OrganizationResource {
 
     private final Logger logger = LoggerFactory.getLogger(OrganizationResource.class);
