@@ -46,8 +46,8 @@ public class StoredProductResource {
     @GetMapping("/id")
     @Operation(summary = "Получить товар со склада по ID")
     public ResponseEntity<StoredProductResponseDto> getProductFromWarehouse(
-            UUID productId,
-            @Valid @Min(1) Long warehouseId) {
+            @RequestParam UUID productId,
+            @RequestParam @Valid @Min(1) Long warehouseId) {
         StoredProduct storedProduct = service.getStoredProduct(productId, warehouseId);
         return ResponseEntity.ok(storedProductMapper.toResponseDto(storedProduct));
     }
