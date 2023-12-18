@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Tag(name = "Управление товарами на складах")
 @RestController
-@RequestMapping("/warehouse/product")
+@RequestMapping("/rest/api/v1/warehouse/product")
 public class StoredProductResource {
 
     private final Logger logger = LoggerFactory.getLogger(StoredProductResource.class);

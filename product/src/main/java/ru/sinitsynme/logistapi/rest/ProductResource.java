@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @Tag(name = "Управление товарами")
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/rest/api/v1/product")
 public class ProductResource {
     private final ProductMapper productMapper;
     private final ProductService productService;

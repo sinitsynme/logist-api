@@ -114,9 +114,21 @@ services:
     mem_limit: 512m
     ports:
       - "8761:8761"
-    environment:
-      - EUREKA_SERVER_HOST=eureka
-      - EUREKA_SERVER_PORT=8761
+    networks:
+      - internal
+  gateway:
+    env_file:
+      - var.env
+    build:
+      context: ./gateway
+    mem_limit: 512m
+    ports:
+      - "8000:8080"
+    depends_on:
+      - eureka
+      - order
+      - warehouse
+      - product
     networks:
       - internal
 networks:

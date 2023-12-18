@@ -13,9 +13,10 @@ repositories {
 
 dependencies {
     val gatewayVersion: String by project
+    val eurekaClientVersion: String by project
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-actuator")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$eurekaClientVersion")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:$gatewayVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Управление производителями")
 @RestController
-@RequestMapping("/manufacturer")
+@RequestMapping("/rest/api/v1/manufacturer")
 public class ManufacturerResource {
 
     private final ManufacturerMapper manufacturerMapper;

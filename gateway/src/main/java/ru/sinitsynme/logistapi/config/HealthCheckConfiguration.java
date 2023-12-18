@@ -1,4 +1,4 @@
-package config;
+package ru.sinitsynme.logistapi.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +20,14 @@ import static java.util.logging.Level.FINE;
 @Configuration
 public class HealthCheckConfiguration {
     private final Logger log = LoggerFactory.getLogger(HealthCheckConfiguration.class);
-
     private final WebClient webClient;
     private final ServiceNameProperties serviceNameProperties;
 
     @Autowired
-    public HealthCheckConfiguration(WebClient webClient,
-                                    ServiceNameProperties serviceNameProperties) {
-        this.webClient = webClient;
+    public HealthCheckConfiguration(
+            WebClient.Builder webClientBuilder,
+            ServiceNameProperties serviceNameProperties) {
+        this.webClient = webClientBuilder.build();
         this.serviceNameProperties = serviceNameProperties;
     }
 

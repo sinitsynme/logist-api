@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Управление складами")
 @RestController
-@RequestMapping("/warehouse")
+@RequestMapping("/rest/api/v1/warehouse")
 public class WarehouseResource {
 
     private final Logger logger = LoggerFactory.getLogger(WarehouseResource.class);

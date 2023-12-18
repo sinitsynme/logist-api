@@ -1,8 +1,13 @@
+
 service-names:
   product-service-name: ${PRODUCT_SERVICE_NAME}
   warehouse-service-name: ${WAREHOUSE_SERVICE_NAME}
   order-service-name: ${ORDER_SERVICE_NAME}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
 
 management:
   endpoint:
@@ -15,28 +20,43 @@ management:
       enabled: true
 
 
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
+    org.springframework.cloud.gateway: TRACE
+
 spring:
+  application:
+    name: logistapi-gateway
+
   cloud:
     gateway:
       routes:
+        - id: swagger-ui
+          uri: http://httpstat.us
+          predicates:
+            - Path=/swagger-ui**/**
+          filters:
+            - SetPath=/403
         - id: logistapi-product
           uri: lb://${PRODUCT_SERVICE_NAME}
           predicates:
-            - Path=/product/{segment}
+            - Path=/product/**
           filters:
-            - SetPath=/{segment}
+            - StripPrefix=1
         - id: logistapi-order
           uri: lb://${ORDER_SERVICE_NAME}
           predicates:
-            - Path=/order/{segment}
+            - Path=/order/**
           filters:
-            - SetPath=/{segment}
+            - StripPrefix=1
         - id: logistapi-warehouse
           uri: lb://${WAREHOUSE_SERVICE_NAME}
           predicates:
-            - Path=/warehouse/{segment}
+            - Path=/warehouse/**
           filters:
-            - SetPath=/{segment}
+            - StripPrefix=1
         - id: eureka-web-page
           uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
           predicates:
@@ -47,3 +67,4 @@ spring:
           uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
           predicates:
             - Path=/eureka/**
+

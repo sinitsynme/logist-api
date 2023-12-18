@@ -21,7 +21,7 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.SERVER_ERRO
 
 @Component
 public class ProductClient {
-    private static final String GET_PRODUCT_PATH = "/product/{productId}";
+    private static final String GET_PRODUCT_PATH = "/rest/api/v1/product/{productId}";
 
     private final RestTemplate restTemplate;
     private final ProductServiceHostProvider hostProvider;
