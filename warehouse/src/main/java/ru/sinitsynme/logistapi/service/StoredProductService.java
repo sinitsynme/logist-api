@@ -88,10 +88,10 @@ public class StoredProductService {
                         (
                                 String.format(
                                         "Not enough product with ID = %s to reserve in warehouse with ID = %d. " +
-                                                "Available: %d; Requested: %d",
+                                                "Available to reserve: %d; Requested: %d",
                                         requestDto.getProductId(),
                                         requestDto.getWarehouseId(),
-                                        availableQuantity,
+                                        availableQuantity - reservedQuantity,
                                         requestedReservedQuantity),
                                 null,
                                 HttpStatus.BAD_REQUEST,
