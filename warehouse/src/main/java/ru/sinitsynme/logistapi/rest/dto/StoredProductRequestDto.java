@@ -12,7 +12,8 @@ import java.util.UUID;
 public class StoredProductRequestDto {
 
     private UUID productId;
+    @Min(value = 1, message = "Warehouse ID must be at least 1")
     private Long warehouseId;
-    @Min(value = 1)
+    @Min(value = 1, message = "Quantity must be at least 1")
     private int quantity;
 }
