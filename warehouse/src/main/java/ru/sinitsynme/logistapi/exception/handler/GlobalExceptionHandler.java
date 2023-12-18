@@ -5,6 +5,7 @@ import exception.ExceptionResponse;
 import exception.HttpServiceException;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
+import exception.service.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,16 @@ public class GlobalExceptionHandler {
 
         logger.warn("Exception handled: {}", exceptionResponse.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ServerErrorException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ExceptionResponse> serverErrorException(ServerErrorException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(clock),
+                ex.getMessage(), ex.getCode());
+
+        logger.error("Server error: {}", exceptionResponse.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -3,10 +3,12 @@ package ru.sinitsynme.logistapi.service;
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.sinitsynme.logistapi.config.AppProperties;
 import ru.sinitsynme.logistapi.entity.Address;
 import ru.sinitsynme.logistapi.entity.Organization;
 import ru.sinitsynme.logistapi.entity.Warehouse;
@@ -24,20 +26,29 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessage.WAREHOUS
 
 @Service
 public class WarehouseService {
-
+    private final AppProperties appProperties;
     private final WarehouseRepository warehouseRepository;
     private final WarehouseMapper warehouseMapper;
     private final OrganizationService organizationService;
     private final AddressService addressService;
 
-    public WarehouseService(WarehouseRepository warehouseRepository,
+    @Autowired
+    public WarehouseService(AppProperties appProperties,
+                            WarehouseRepository warehouseRepository,
                             WarehouseMapper warehouseMapper,
                             OrganizationService organizationService,
                             AddressService addressService) {
+        this.appProperties = appProperties;
         this.warehouseRepository = warehouseRepository;
         this.warehouseMapper = warehouseMapper;
         this.organizationService = organizationService;
         this.addressService = addressService;
+    }
+
+    public void increaseWarehouseProductCodeCounter(Long warehouseId) {
+        Warehouse warehouse = getWarehouse(warehouseId);
+        warehouse.setStoredProductsCodeCounter(warehouse.getStoredProductsCodeCounter() + 1);
+        warehouseRepository.save(warehouse);
     }
 
     public Warehouse createWarehouse(WarehouseRequestDto warehouseRequestDto) {
@@ -58,6 +69,7 @@ public class WarehouseService {
         Warehouse warehouse = warehouseMapper.requestDtoToWarehouse(warehouseRequestDto);
         warehouse.setOrganization(organization);
         warehouse.setAddress(address);
+        warehouse.setStoredProductsCodeCounter(appProperties.getInitialWarehouseCodeCounter());
 
         return warehouseRepository.save(warehouse);
     }

@@ -35,8 +35,13 @@ public class Warehouse {
     private List<Driver> driverList;
     @OneToMany(mappedBy = "warehouse", fetch = LAZY)
     private List<CargoTruck> cargoTruckList;
-    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
+    @OneToMany(mappedBy = "id.warehouse", fetch = LAZY)
     private List<StoredProduct> storedProducts;
+    private int storedProductsCodeCounter;
+
+    public String getStoredProductsCodeCounterString() {
+        return String.valueOf(storedProductsCodeCounter);
+    }
 
     @Override
     public boolean equals(Object o) {

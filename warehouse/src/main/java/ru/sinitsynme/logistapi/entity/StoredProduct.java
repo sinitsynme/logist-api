@@ -14,14 +14,15 @@ import java.util.UUID;
 @Entity
 @Table
 public class StoredProduct {
-    @Id
-    private UUID productId;
+
+    @EmbeddedId
+    private StoredProductId id;
+
     private String warehouseCode;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id", nullable = false)
-    private Warehouse warehouse;
+
     @Column(nullable = false)
     private int quantity;
+
     private int reservedQuantity;
 
     @Override
@@ -29,20 +30,19 @@ public class StoredProduct {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StoredProduct that = (StoredProduct) o;
-        return quantity == that.quantity && reservedQuantity == that.reservedQuantity && Objects.equals(productId, that.productId) && Objects.equals(warehouse.getId(), that.warehouse.getId());
+        return quantity == that.quantity && reservedQuantity == that.reservedQuantity && Objects.equals(id, that.id) && Objects.equals(warehouseCode, that.warehouseCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, warehouse.getId(), quantity, reservedQuantity);
+        return Objects.hash(id, warehouseCode, quantity, reservedQuantity);
     }
 
     @Override
     public String toString() {
         return "StoredProduct{" +
-                "productId=" + productId +
-                ", warehouseCode=" + warehouseCode +
-                ", warehouse=" + warehouse.getId() +
+                "id=" + id +
+                ", warehouseCode='" + warehouseCode + '\'' +
                 ", quantity=" + quantity +
                 ", reservedQuantity=" + reservedQuantity +
                 '}';
