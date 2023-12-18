@@ -5,7 +5,6 @@ import exception.service.BadRequestException;
 import exception.service.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +17,7 @@ import static exception.ExceptionSeverity.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.EXTERNAL_RESOURCE_NOT_FOUND_CODE;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.SERVER_ERROR;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.SERVER_ERROR_CODE;
 
 @Component
 public class ProductClient {
@@ -61,7 +60,7 @@ public class ProductClient {
                     e.getMessage(),
                     e,
                     INTERNAL_SERVER_ERROR,
-                    SERVER_ERROR,
+                    SERVER_ERROR_CODE,
                     ERROR
             );
         }

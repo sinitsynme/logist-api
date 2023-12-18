@@ -14,7 +14,7 @@ public interface StoredProductMapper {
 
     @Mapping(
             expression = "java(storedProduct.getQuantity() - storedProduct.getReservedQuantity())",
-            target = "availableQuantity"
+            target = "availableForReserveQuantity"
     )
     @Mapping(expression = "java(storedProduct.getId().getWarehouse().getId())", target = "warehouseId")
     @Mapping(expression = "java(storedProduct.getId().getProductId())", target = "productId")

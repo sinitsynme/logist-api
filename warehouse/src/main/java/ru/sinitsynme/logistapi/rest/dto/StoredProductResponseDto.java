@@ -12,5 +12,5 @@ import java.util.UUID;
 public class StoredProductResponseDto {
     private UUID productId;
     private Long warehouseId;
-    private int availableQuantity;
+    private int availableForReserveQuantity;
 }
