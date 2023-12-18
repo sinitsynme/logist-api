@@ -1,0 +1,4 @@
+service-names:
+  product-service-name: ${PRODUCT_SERVICE_NAME}
+  warehouse-service-name: ${WAREHOUSE_SERVICE_NAME}
+  order-service-name: ${ORDER_SERVICE_NAME}
