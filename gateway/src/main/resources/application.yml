@@ -32,6 +32,10 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:8081"
       routes:
         - id: swagger-ui
           uri: http://httpstat.us
