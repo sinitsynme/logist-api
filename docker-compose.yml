@@ -111,6 +111,9 @@ services:
   eureka:
     build:
       context: ./eureka-server
+    environment:
+      - EUREKA_SERVER_HOST=eureka
+      - EUREKA_SERVER_PORT=8761
     mem_limit: 512m
     ports:
       - "8761:8761"

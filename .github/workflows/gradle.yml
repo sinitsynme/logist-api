@@ -35,11 +35,9 @@ jobs:
       run: docker compose up -d
     - name: Check state
       run: docker ps -a
-    - name: Check product logs
-      run: docker compose logs product
-    - name: Check order logs
-      run: docker compose logs order
-    - name: Check warehouse logs
-      run: docker compose logs warehouse
+    - name: Wait 30 sec
+      run: sleep 30
+    - name: Check state again
+      run: docker ps -a
     - name: Docker Compose down
       run: docker compose down
