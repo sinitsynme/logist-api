@@ -13,4 +13,6 @@ public class StoredProductResponseDto {
     private UUID productId;
     private Long warehouseId;
     private int availableForReserveQuantity;
+    private int quantity;
+    private int reservedQuantity;
 }

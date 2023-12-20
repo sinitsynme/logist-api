@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,31 +38,27 @@ public class ProductResource {
 
     @GetMapping
     @Operation(summary = "Получить список товаров")
-    public ResponseEntity<List<ProductResponseDto>> getPageOfProducts(
+    public ResponseEntity<Page<ProductResponseDto>> getPageOfProducts(
             @RequestParam @Valid @Min(0) int page,
             @RequestParam @Valid @Min(1) int size,
             @RequestParam(required = false) List<String> sortByFields,
             @RequestParam(required = false) List<String> categoryCodes) {
-        List<ProductResponseDto> responseDtos = productService
+        Page<ProductResponseDto> responseDtos = productService
                 .getProductsPage(page, size, categoryCodes, sortByFields)
-                .stream()
-                .map(productMapper::toResponseDto)
-                .toList();
+                .map(productMapper::toResponseDto);
 
         return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Получить список товаров по поисковому запросу")
-    public ResponseEntity<List<ProductResponseDto>> getPageOfProductsWithNameContaining(
+    public ResponseEntity<Page<ProductResponseDto>> getPageOfProductsWithNameContaining(
             @RequestParam @Valid @Min(0) int page,
             @RequestParam @Valid @Min(1) int size,
             @RequestParam @Valid @Size(min = 3, max = 100) String query) {
-        List<ProductResponseDto> responseDtos = productService
+        Page<ProductResponseDto> responseDtos = productService
                 .getProductsPageWithNameContaining(page, size, query)
-                .stream()
-                .map(productMapper::toResponseDto)
-                .toList();
+                .map(productMapper::toResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
 

@@ -36,6 +36,13 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins: "http://localhost:8081"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
       routes:
         - id: swagger-ui
           uri: http://httpstat.us

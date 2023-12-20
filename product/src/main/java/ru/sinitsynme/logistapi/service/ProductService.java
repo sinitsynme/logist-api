@@ -135,7 +135,7 @@ public class ProductService {
                 .orElseThrow(() -> notFoundException(productId));
     }
 
-    public List<Product> getProductsPage(int page, int size, List<String> categoryCodes, List<String> sortByFields) {
+    public Page<Product> getProductsPage(int page, int size, List<String> categoryCodes, List<String> sortByFields) {
         Sort sort;
         if (sortByFields == null || sortByFields.isEmpty()) sort = Sort.by("name");
         else sort = Sort.by(sortByFields.toArray(new String[0]));
@@ -151,14 +151,14 @@ public class ProductService {
 
         } else productsPage = productRepository.findAll(pageRequest);
 
-        return productsPage.getContent();
+        return productsPage;
     }
 
-    public List<Product> getProductsPageWithNameContaining(int page, int size, String query) {
+    public Page<Product> getProductsPageWithNameContaining(int page, int size, String query) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
 
         Page<Product> productsPage = productRepository.findByNameContainingIgnoreCase(query, pageRequest);
-        return productsPage.getContent();
+        return productsPage;
     }
 
     private void addManufacturerAndCategoryToProduct(Product product, Long manufacturerId, String categoryCode) {
