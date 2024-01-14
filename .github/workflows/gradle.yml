@@ -21,6 +21,10 @@ jobs:
   y-tracker:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
     - name: Yandex Tracker link
       uses: evrone-erp/yandex-tracker-action@v1
       with:
