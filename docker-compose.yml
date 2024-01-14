@@ -45,7 +45,6 @@ services:
       - DB_USERNAME=logistapi
       - DB_PASSWORD=logistapi
       - DB_URL=postgres-product:5432
-      - UPLOAD_BASE_DIR=
       - SERVER_PORT=8081
     env_file:
       - var.env
