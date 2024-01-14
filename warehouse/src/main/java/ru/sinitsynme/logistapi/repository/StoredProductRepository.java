@@ -2,8 +2,8 @@ package ru.sinitsynme.logistapi.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import ru.sinitsynme.logistapi.entity.StoredProduct;
 import ru.sinitsynme.logistapi.entity.StoredProductId;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface StoredProductRepository extends PagingAndSortingRepository<StoredProduct, StoredProductId> {
+public interface StoredProductRepository extends JpaRepository<StoredProduct, StoredProductId> {
 
     Page<StoredProduct> findByIdProductId(String productId, Pageable pageable);
 

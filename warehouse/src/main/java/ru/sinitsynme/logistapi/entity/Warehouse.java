@@ -1,13 +1,13 @@
 package ru.sinitsynme.logistapi.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Warehouse {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "warehouse_sequence")
     @SequenceGenerator(name = "warehouse_sequence", allocationSize = 1)
     private Long id;
     @Column(nullable = false)

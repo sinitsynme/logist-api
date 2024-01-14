@@ -1,9 +1,9 @@
 package ru.sinitsynme.logistapi.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import ru.sinitsynme.logistapi.entity.enums.RouteStatus;
 
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
