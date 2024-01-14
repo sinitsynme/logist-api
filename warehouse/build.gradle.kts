@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version("2.7.2")
+    id("org.springframework.boot") version("3.1.7")
     id("io.spring.dependency-management") version("1.0.11.RELEASE")
     id("java")
 }
@@ -11,6 +11,13 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    val springCloudVersion: String by project
+
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
+}
 
 dependencies {
     val openApiVersion: String by project
@@ -23,12 +30,12 @@ dependencies {
 
     implementation(project(":commons"))
 
-    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$eurekaClientVersion")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:${postgresqlVersion}")

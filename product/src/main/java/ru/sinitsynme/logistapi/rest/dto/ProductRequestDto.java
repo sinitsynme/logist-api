@@ -1,14 +1,12 @@
 package ru.sinitsynme.logistapi.rest.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data

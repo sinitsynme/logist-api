@@ -17,6 +17,22 @@ permissions:
   contents: read
 
 jobs:
+#  FIXME Waiting for add of X-Cloud-Org-ID in action to move tasks
+  y-tracker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Move tasks to review
+      uses: evrone-erp/yandex-tracker-action@v1
+      with:
+        token: ${{secrets.GITHUB_TOKEN}}
+        yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
+        yandex_oauth2_token: ${{ secrets.YANDEX_OAUTH2_TOKEN }}
+        task_url: true
+        to: 'inReview'
 
   build:
     runs-on: ubuntu-latest

@@ -1,8 +1,8 @@
 package ru.sinitsynme.logistapi.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
 @Table
 public class Driver {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "driver_sequence")
     @SequenceGenerator(name = "driver_sequence", allocationSize = 1)
     private Long id;
     @Column(nullable = false)

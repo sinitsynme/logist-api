@@ -1,12 +1,10 @@
 package ru.sinitsynme.logistapi.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.List;
 
 @ConfigurationProperties(prefix = "service-names")
-@ConstructorBinding
 public class ServiceNameProperties {
     private String productServiceName;
     private String warehouseServiceName;

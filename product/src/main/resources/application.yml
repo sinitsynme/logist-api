@@ -1,11 +1,19 @@
 spring:
   application:
     name: logistapi-product
+  flyway:
+    locations:
+      - classpath:/db/migration
 
 springdoc:
   default-support-form-data: false
   swagger-ui:
     path: /swagger-ui
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
 
 logist-api:
   clock-zone-id: Europe/Moscow
@@ -22,5 +30,9 @@ yandex:
     bucket-name: ${S3_BUCKET_NAME}
     aws-region: ${S3_AWS_REGION}
     endpoint: ${S3_ENDPOINT}
+
+file-config:
+  max-image-size-mb: 8
+  allowed-image-extensions-list: png,jpeg
 
 # feature-flags:

@@ -13,10 +13,9 @@ dependencies {
     val openApiVersion: String by project
     val lombokVersion: String by project
 
-    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

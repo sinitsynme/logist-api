@@ -1,11 +1,11 @@
 package ru.sinitsynme.logistapi.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.sinitsynme.logistapi.entity.enums.HolidayType;
 
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;

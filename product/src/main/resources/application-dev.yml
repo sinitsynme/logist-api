@@ -22,7 +22,3 @@ spring:
     #   open when want to fetch new migrations data
     show-sql: false
 
-file-config:
-  base-directory: ${UPLOAD_BASE_DIR}
-  max-image-size-mb: 8
-  allowed-image-extensions-list: png,jpeg

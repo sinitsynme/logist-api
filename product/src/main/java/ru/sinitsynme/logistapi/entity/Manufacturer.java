@@ -1,9 +1,9 @@
 package ru.sinitsynme.logistapi.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ import java.util.Objects;
 public class Manufacturer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manufacturer_sequence")
     @SequenceGenerator(name = "manufacturer_sequence", allocationSize = 1)
     private Long id;
     private String name;
