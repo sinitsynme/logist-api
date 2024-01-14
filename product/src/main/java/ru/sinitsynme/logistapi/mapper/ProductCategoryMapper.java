@@ -1,7 +1,6 @@
 package ru.sinitsynme.logistapi.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.sinitsynme.logistapi.entity.ProductCategory;
 import ru.sinitsynme.logistapi.rest.dto.ProductCategoryDto;

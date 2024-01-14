@@ -57,7 +57,7 @@ public class FileS3Service implements FileService {
                     + fileProperties.getAllowedImageExtensions());
         }
 
-        if (file.getSize() / 1024 / 1024 > 8) {
+        if (file.getSize() / 1024 / 1024 > fileProperties.getMaxImageSizeMb()) {
             throw new IllegalFileUploadException("Image size must be up to 8 MB!");
         }
 

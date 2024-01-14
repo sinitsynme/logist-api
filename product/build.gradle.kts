@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version("2.7.2")
+    id("org.springframework.boot") version("3.2.1")
     id("io.spring.dependency-management") version("1.0.11.RELEASE")
     id("java")
 }
@@ -21,10 +21,11 @@ dependencies {
     val lombokMapstructBindingVersion: String by project
     val eurekaClientVersion: String by project
     val awsSdkVersion: String by project
+    val jaxbApiVersion: String by project
 
     implementation(project(":commons"))
 
-    implementation("org.springdoc:springdoc-openapi-ui:${openApiVersion}")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -34,6 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql:${flywayVersion}")
 
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
@@ -44,7 +46,7 @@ dependencies {
     implementation("org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}")
 
     implementation("com.amazonaws:aws-java-sdk-s3:$awsSdkVersion")
-
+    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
