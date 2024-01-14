@@ -31,11 +31,11 @@ public class Warehouse {
     @ManyToOne(fetch = EAGER, targetEntity = Organization.class)
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
-    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
+    @OneToMany(mappedBy = "warehouse", fetch = LAZY, cascade = CascadeType.REMOVE)
     private List<Driver> driverList;
-    @OneToMany(mappedBy = "warehouse", fetch = LAZY)
+    @OneToMany(mappedBy = "warehouse", fetch = LAZY, cascade = CascadeType.REMOVE)
     private List<CargoTruck> cargoTruckList;
-    @OneToMany(mappedBy = "id.warehouse", fetch = LAZY)
+    @OneToMany(mappedBy = "id.warehouse", fetch = LAZY, cascade = CascadeType.REMOVE)
     private List<StoredProduct> storedProducts;
     private int storedProductsCodeCounter;
 
