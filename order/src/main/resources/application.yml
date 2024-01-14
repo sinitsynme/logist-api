@@ -2,6 +2,10 @@ spring:
   application:
     name: logistapi-order
 
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
 
 eureka:
   client:
