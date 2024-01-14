@@ -18,6 +18,17 @@ permissions:
 
 jobs:
 
+  y-tracker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Yandex Tracker link
+      uses: evrone-erp/yandex-tracker-action@v1
+      with:
+        token: ${{secrets.GITHUB_TOKEN}}
+        yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
+        yandex_oauth2_token: ${{ secrets.YANDEX_OAUTH2_TOKEN }}
+        task_url: true
+
   build:
     runs-on: ubuntu-latest
     steps:
