@@ -10,6 +10,8 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - DB_USERNAME=logistapi
       - DB_PASSWORD=logistapi
+      - DB_HOST=mongo-order
+      - DB_PORT=27017
       - SERVER_PORT=8080
     env_file:
       - var.env

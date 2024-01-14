@@ -8,6 +8,6 @@ spring:
     mongodb:
       username: ${DB_USERNAME}
       password: ${DB_PASSWORD}
-      host: mongo-order
-      port: 27017
+      host: ${DB_HOST}
+      port: ${DB_PORT}
       database: logist-api-order
