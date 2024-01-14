@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version("2.7.2")
+    id("org.springframework.boot") version("3.1.7")
     id("io.spring.dependency-management") version("1.0.11.RELEASE")
     id("java")
 }
@@ -11,13 +11,21 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    val springCloudVersion: String by project
+
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
+}
+
 dependencies {
     val gatewayVersion: String by project
     val eurekaClientVersion: String by project
 
     implementation("org.springframework.boot:spring-boot-actuator")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$eurekaClientVersion")
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway:$gatewayVersion")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
