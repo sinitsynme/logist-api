@@ -11,6 +11,11 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    runtimeOnly {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
+}
 
 dependencies {
     val openApiVersion: String by project

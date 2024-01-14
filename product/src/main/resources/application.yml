@@ -10,6 +10,11 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+
 logist-api:
   clock-zone-id: Europe/Moscow
 
