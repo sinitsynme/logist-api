@@ -109,6 +109,43 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+  auth-server:
+    build:
+      context: ./auth-server
+    mem_limit: 512m
+    ports:
+      - "8400-8402:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_USERNAME=logistapi
+      - DB_PASSWORD=logistapi
+      - DB_NAME=logist-api-users
+      - DB_URL=postgres-users:5432
+      - SERVER_PORT=8083
+    env_file:
+      - var.env
+    depends_on:
+      postgres-warehouse:
+        condition: service_healthy
+      eureka:
+        condition: service_started
+    networks:
+      - internal
+  postgres-users:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "logist-api-users"
+      POSTGRES_USER: "logistapi"
+      POSTGRES_PASSWORD: "logistapi"
+    ports:
+      - "5435:5432"
+    networks:
+      - internal
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d logist-api-users -U logistapi" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
   eureka:
     build:
       context: ./eureka-server

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: logistapi-auth
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_URL}/${DB_NAME}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    #   open when want to fetch new migrations data
+    show-sql: false
+  flyway:
+    locations:
+      - classpath:/db/migration
+
+bcrypt:
+  encryption-rounds: 10
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
