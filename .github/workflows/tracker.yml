@@ -22,7 +22,7 @@ jobs:
 
     - name: Move to InReview
       if: github.event.action != 'closed'
-      uses: evrone-erp/yandex-tracker-action@v1
+      uses: evrone-erp/yandex-tracker-action@v1.2.0
       with:
         token: ${{secrets.GITHUB_TOKEN}}
         yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
@@ -33,7 +33,7 @@ jobs:
 
     - name: Move to ReadyToRelease
       if: github.event.pull_request.merged == true
-      uses: evrone-erp/yandex-tracker-action@v1
+      uses: evrone-erp/yandex-tracker-action@v1.2.0
       with:
         token: ${{secrets.GITHUB_TOKEN}}
         yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
