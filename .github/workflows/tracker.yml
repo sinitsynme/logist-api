@@ -9,7 +9,7 @@ on:
       - closed
 
 permissions:
-  contents: read
+  write-all
 
 jobs:
   y-tracker:
