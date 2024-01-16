@@ -1,0 +1,43 @@
+name: Yandex Tracker
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+permissions:
+  write-all
+
+jobs:
+  y-tracker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Move to InReview
+      if: github.event.action != 'closed'
+      uses: evrone-erp/yandex-tracker-action@v1.2.0
+      with:
+        token: ${{secrets.GITHUB_TOKEN}}
+        yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
+        is_yandex_cloud_org: true
+        yandex_oauth2_token: ${{ secrets.YANDEX_OAUTH2_TOKEN }}
+        task_url: true
+        to: 'inReview'
+
+    - name: Move to ReadyToRelease
+      if: github.event.pull_request.merged == true
+      uses: evrone-erp/yandex-tracker-action@v1.2.0
+      with:
+        token: ${{secrets.GITHUB_TOKEN}}
+        yandex_org_id: ${{ secrets.YANDEX_ORG_ID }}
+        is_yandex_cloud_org: true
+        yandex_oauth2_token: ${{ secrets.YANDEX_OAUTH2_TOKEN }}
+        task_url: true
+        to: 'rc'
