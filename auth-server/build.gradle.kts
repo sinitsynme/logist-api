@@ -30,6 +30,9 @@ dependencies {
     val lombokVersion: String by project
     val flywayVersion: String by project
     val jjwtVersion: String by project
+    val javaOtpVersion: String by project
+
+    implementation(project(":commons"))
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
@@ -44,6 +47,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
     implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    implementation("com.eatthepath:java-otp:$javaOtpVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

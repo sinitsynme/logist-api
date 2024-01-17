@@ -12,6 +12,7 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "users")
 @Entity
 public class User implements UserDetails {
@@ -19,13 +20,20 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String email;
     private String phoneNumber;
     private byte[] password;
     private String firstName;
     private String middleName;
     private String lastName;
-    private Set<LogapiAuthority> authorities;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_authorities",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority"))
+    private Set<Authority> authorities;
+
     private boolean isAccountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
