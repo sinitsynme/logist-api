@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.exception.service;
 
+@Deprecated(forRemoval = true)
 public class GetFileFromRootException extends RuntimeException {
 
     public GetFileFromRootException() {
