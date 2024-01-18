@@ -36,14 +36,12 @@ public class SecurityConfiguration {
         this.bCryptProperties = bCryptProperties;
     }
 
-    //FIXME
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests -> requests
                         .requestMatchers("/authority**").authenticated()
-                        .requestMatchers("/auth/token", "/auth/token/validate", "/signup").permitAll()
-//                .requestMatchers("/authority").hasAnyAuthority("ROLE_ADMIN", "ROLE_HEAD_ADMIN")
+                        .requestMatchers("/token/**", "/signup").permitAll()
         );
         http.authenticationProvider(authenticationProvider());
         http.exceptionHandling(handling -> handling.authenticationEntryPoint((

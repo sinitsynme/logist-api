@@ -16,7 +16,7 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_AU
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.INVALID_AUTH_TEMPLATE;
 
 @RestController
-@RequestMapping("/auth/token")
+@RequestMapping("/token")
 public class AuthResource {
 
     private final AuthService authService;

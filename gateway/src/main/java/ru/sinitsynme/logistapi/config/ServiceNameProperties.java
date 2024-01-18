@@ -9,14 +9,19 @@ public class ServiceNameProperties {
     private String productServiceName;
     private String warehouseServiceName;
     private String orderServiceName;
+    private String authServiceName;
 
     public ServiceNameProperties() {
     }
 
-    public ServiceNameProperties(String productServiceName, String warehouseServiceName, String orderServiceName) {
+    public ServiceNameProperties(String productServiceName,
+                                 String warehouseServiceName,
+                                 String orderServiceName,
+                                 String authServiceName) {
         this.productServiceName = productServiceName;
         this.warehouseServiceName = warehouseServiceName;
         this.orderServiceName = orderServiceName;
+        this.authServiceName = authServiceName;
     }
 
     public String getProductServiceName() {
@@ -43,11 +48,20 @@ public class ServiceNameProperties {
         this.orderServiceName = orderServiceName;
     }
 
+    public String getAuthServiceName() {
+        return authServiceName;
+    }
+
+    public void setAuthServiceName(String authServiceName) {
+        this.authServiceName = authServiceName;
+    }
+
     public List<String> getAllServiceNames() {
         return List.of(
                 productServiceName,
                 orderServiceName,
-                warehouseServiceName
+                warehouseServiceName,
+                authServiceName
         );
     }
 }

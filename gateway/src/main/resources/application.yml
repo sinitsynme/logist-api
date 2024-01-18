@@ -1,8 +1,11 @@
+logist-api:
+  clock-zone-id: Europe/Moscow
 
 service-names:
   product-service-name: ${PRODUCT_SERVICE_NAME}
   warehouse-service-name: ${WAREHOUSE_SERVICE_NAME}
   order-service-name: ${ORDER_SERVICE_NAME}
+  auth-service-name: ${AUTH_SERVICE_NAME}
 
 eureka:
   client:
@@ -53,18 +56,21 @@ spring:
             - Path=/product/**
           filters:
             - StripPrefix=1
+            - AuthenticationFilter
         - id: logistapi-order
           uri: lb://${ORDER_SERVICE_NAME}
           predicates:
             - Path=/order/**
           filters:
             - StripPrefix=1
+            - AuthenticationFilter
         - id: logistapi-warehouse
           uri: lb://${WAREHOUSE_SERVICE_NAME}
           predicates:
             - Path=/warehouse/**
           filters:
             - StripPrefix=1
+            - AuthenticationFilter
         - id: eureka-web-page
           uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
           predicates:
@@ -75,4 +81,8 @@ spring:
           uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
           predicates:
             - Path=/eureka/**
+        - id: auth-server
+          uri: lb://${AUTH_SERVICE_NAME}
+          predicates:
+            - Path=/auth/**
 

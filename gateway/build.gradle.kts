@@ -23,7 +23,10 @@ dependencies {
     val gatewayVersion: String by project
     val eurekaClientVersion: String by project
 
+    implementation(project(":commons"))
+
     implementation("org.springframework.boot:spring-boot-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 
