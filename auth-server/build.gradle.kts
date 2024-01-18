@@ -47,6 +47,9 @@ dependencies {
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
     implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    implementation("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
+    implementation("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
+
     implementation("com.eatthepath:java-otp:$javaOtpVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

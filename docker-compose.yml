@@ -122,6 +122,7 @@ services:
       - DB_NAME=logist-api-users
       - DB_URL=postgres-users:5432
       - SERVER_PORT=8083
+      - JWT_SECRET=0G54doKjJG977WbvRJ31KhNQaNELCWVjNqnLVDULgI1KzXDMvkC2yZdKFJC1FHD
     env_file:
       - var.env
     depends_on:

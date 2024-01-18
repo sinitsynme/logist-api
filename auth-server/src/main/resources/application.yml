@@ -30,3 +30,7 @@ logist-api:
 
 toggle:
   otp-auth-turned-on: false
+
+jwt:
+  expiration-minutes: 60
+  secret: ${JWT_SECRET}
