@@ -171,6 +171,7 @@ services:
       - order
       - warehouse
       - product
+      - auth-server
     networks:
       - internal
 networks:

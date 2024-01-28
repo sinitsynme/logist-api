@@ -2,7 +2,6 @@ package ru.sinitsynme.logistapi.service;
 
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,8 @@ import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
 import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
 
-import javax.xml.transform.TransformerException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static ru.sinitsynme.logistapi.entity.BaseAuthorities.ROLE_CLIENT;
@@ -72,5 +71,17 @@ public class UserService {
                                 email
                         ))
                 );
+    }
+
+    public Set<Authority> getUserAuthorities(String email) {
+        User user = getUserByEmail(email);
+        return user.getAuthorities();
+    }
+
+    public Set<String> getUserAuthoritiesNames(String email) {
+        return getUserAuthorities(email)
+                .stream()
+                .map(Authority::getName)
+                .collect(Collectors.toSet());
     }
 }

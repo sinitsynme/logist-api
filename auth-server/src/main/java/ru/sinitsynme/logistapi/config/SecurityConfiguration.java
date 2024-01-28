@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,15 +18,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.sinitsynme.logistapi.config.provider.otp.OtpAuthDetailsSource;
 import ru.sinitsynme.logistapi.config.provider.otp.OtpAuthenticationProvider;
 import ru.sinitsynme.logistapi.otp.OtpService;
 import ru.sinitsynme.logistapi.repository.UserRepository;
+import security.JwtAuthenticationFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
@@ -40,15 +45,11 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/authority**").authenticated()
-                        .requestMatchers("/token/**", "/signup").permitAll()
+                .requestMatchers("/token/**", "/signup").permitAll()
+                .anyRequest().authenticated()
         );
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authenticationProvider(authenticationProvider());
-        http.exceptionHandling(handling -> handling.authenticationEntryPoint((
-                (request, response, authException) ->
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                authException.getMessage()))
-        ));
         http.sessionManagement(mng -> mng.sessionCreationPolicy(STATELESS));
 
         return http.build();
@@ -71,5 +72,10 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
     }
 }

@@ -27,7 +27,4 @@ public class SignUpResource {
         logger.info("User with email {} signed up with ROLE_CLIENT", signUpDto.getEmail());
         return ResponseEntity.ok().build();
     }
-
-
-
 }

@@ -2,6 +2,7 @@ package ru.sinitsynme.logistapi.service;
 
 import exception.ExceptionSeverity;
 import exception.service.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Authority;
@@ -15,6 +16,7 @@ public class AuthorityService {
 
     private final AuthorityRepository authorityRepository;
 
+    @Autowired
     public AuthorityService(AuthorityRepository authorityRepository) {
         this.authorityRepository = authorityRepository;
     }
@@ -29,5 +31,4 @@ public class AuthorityService {
                         ExceptionSeverity.WARN
                 ));
     }
-
 }
