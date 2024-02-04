@@ -28,9 +28,6 @@ eureka:
 logist-api:
   clock-zone-id: Europe/Moscow
 
-toggle:
-  otp-auth-turned-on: false
-
 jwt:
   expiration-minutes: 60
   secret: ${JWT_SECRET}

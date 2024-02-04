@@ -1,8 +1,6 @@
 package ru.sinitsynme.logistapi.exception;
 
 public class ServiceExceptionCodes {
-    public static final String OTP_IS_WRONG_CODE = "-101";
-    public static final String OTP_NOT_FOUND_OR_EXPIRED_CODE = "-100";
     public static final String AUTHORITY_NOT_FOUND_CODE = "-200";
     public static final String AUTHORITY_EXISTS_CODE = "-201";
     public static final String USER_NOT_FOUND_CODE = "-300";
