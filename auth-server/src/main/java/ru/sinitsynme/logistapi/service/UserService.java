@@ -43,7 +43,7 @@ public class UserService {
     public void saveUser(UserSignUpDto dto, List<String> authorityNames) {
         User user = userMapper.fromSignUpDto(dto);
 
-        if(userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new BadRequestException(
                     String.format(USER_EXISTS_TEMPLATE, dto.getEmail()),
                     null,
@@ -58,7 +58,14 @@ public class UserService {
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
 
-        persistUser(authorityNames, user);
+        Set<Authority> authorities = authorityNames.stream()
+                .map(authorityService::getByName)
+                .collect(Collectors.toSet());
+
+        user.setAuthorities(authorities);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()).getBytes());
+        userRepository.save(user);
     }
 
     public void updateUserPassword(String email, byte[] password) {
@@ -68,18 +75,22 @@ public class UserService {
     }
 
     public void disableUser(String email) {
-        User userFromDb = getUserByEmail(email);
-        userFromDb.setEnabled(false);
-        userRepository.save(userFromDb);
+        changeEnabledUserStatus(email, false);
+    }
+
+    public void enableUser(String email) {
+        changeEnabledUserStatus(email, true);
     }
 
     public void lockUserAccount(String email) {
-        User userFromDb = getUserByEmail(email);
-        userFromDb.setAccountNonLocked(false);
-        userRepository.save(userFromDb);
+        changeLockedUserStatus(email, false);
     }
 
-    public void updateUser(String email, UserUpdateDto updateDto, List<String> authorities) {
+    public void unlockUserAccount(String email) {
+        changeLockedUserStatus(email, true);
+    }
+
+    public void updateUser(String email, UserUpdateDto updateDto, List<String> authorityNames) {
         User userFromDb = getUserByEmail(email);
 
         userFromDb.setPassword(updateDto.getPassword());
@@ -92,7 +103,13 @@ public class UserService {
         userFromDb.setAccountNonLocked(updateDto.isAccountNonLocked());
         userFromDb.setAccountNonExpired(updateDto.isAccountNonExpired());
 
-        persistUser(authorities, userFromDb);
+        Set<Authority> authorities = authorityNames.stream()
+                .map(authorityService::getByName)
+                .collect(Collectors.toSet());
+
+        userFromDb.setAuthorities(authorities);
+
+        userRepository.save(userFromDb);
     }
 
     public Page<User> getUsersByAuthority(String authorityName, Pageable pageable) {
@@ -122,14 +139,15 @@ public class UserService {
                 .collect(Collectors.toSet());
     }
 
-    private void persistUser(List<String> authorityNames, User user) {
-        Set<Authority> authorities = authorityNames.stream()
-                .map(authorityService::getByName)
-                .collect(Collectors.toSet());
+    private void changeEnabledUserStatus(String email, boolean status) {
+        User userFromDb = getUserByEmail(email);
+        userFromDb.setEnabled(status);
+        userRepository.save(userFromDb);
+    }
 
-        user.setAuthorities(authorities);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()).getBytes());
-        userRepository.save(user);
+    private void changeLockedUserStatus(String email, boolean status) {
+        User userFromDb = getUserByEmail(email);
+        userFromDb.setAccountNonLocked(status);
+        userRepository.save(userFromDb);
     }
 }
