@@ -32,15 +32,18 @@ logging:
 spring:
   application:
     name: logistapi-gateway
-
   cloud:
     gateway:
+      discovery:
+        enabled: true
+        locator:
+          enabled: true
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "http://localhost:8081"
+            allowedOrigins: "*"
             allowedHeaders: "*"
             allowedMethods: "*"
       routes:
@@ -85,3 +88,4 @@ spring:
           filters:
             - StripPrefix=1
             - AuthenticationFilter
+
