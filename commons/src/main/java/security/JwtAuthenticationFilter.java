@@ -1,5 +1,6 @@
 package security;
 
+import exception.service.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,17 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwtToken = extractTokenWithoutSignature(authHeader);
 
-        String subject = JWT_CLAIMS_EXTRACTOR.getSubject(jwtToken);
-        List<String> authorityNames = JWT_CLAIMS_EXTRACTOR.getAuthorities(jwtToken);
-        List<SimpleGrantedAuthority> authorities = authorityNames
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        try {
+            String subject = JWT_CLAIMS_EXTRACTOR.getSubject(jwtToken);
+            List<String> authorityNames = JWT_CLAIMS_EXTRACTOR.getAuthorities(jwtToken);
+            List<SimpleGrantedAuthority> authorities = authorityNames
+                    .stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        filterChain.doFilter(request, response);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+        } catch (UnauthorizedException ex) {
+            logger.warn(ex.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 
     private boolean isHeaderBearer(String header) {

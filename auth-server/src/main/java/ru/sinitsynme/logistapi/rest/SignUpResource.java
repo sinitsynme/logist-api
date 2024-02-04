@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.sinitsynme.logistapi.config.annotations.MasterAccess;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
+import ru.sinitsynme.logistapi.rest.dto.AuthoritySignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
@@ -28,16 +29,19 @@ public class SignUpResource {
 
     @PostMapping("/client")
     public ResponseEntity<?> signUpAsClient(@RequestBody UserSignUpDto signUpDto) {
-        return signUp(signUpDto, BaseAuthorities.ROLE_CLIENT.name());
+        userService.saveUser(signUpDto, List.of(BaseAuthorities.ROLE_CLIENT.name()));
+        logger.info("User with email {} signed up with role: ROLE_CLIENT",
+                signUpDto.getEmail());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_HEAD_ADMIN'))")
-    public ResponseEntity<?> signUp(@RequestBody UserSignUpDto signUpDto, String authority) {
-        userService.saveUser(signUpDto, List.of(authority));
+    @MasterAccess
+    public ResponseEntity<?> signUp(@RequestBody AuthoritySignUpDto dto) {
+        userService.saveUser(dto.getSignUpDto(), List.of(dto.getAuthorityName()));
         logger.info("User with email {} signed up with role: {}",
-                signUpDto.getEmail(),
-                authority);
+                dto.getSignUpDto().getEmail(),
+                dto.getAuthorityName());
         return ResponseEntity.ok().build();
     }
 }

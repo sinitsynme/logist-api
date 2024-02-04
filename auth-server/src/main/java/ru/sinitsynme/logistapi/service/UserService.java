@@ -1,13 +1,16 @@
 package ru.sinitsynme.logistapi.service;
 
-import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
+import exception.service.ForbiddenException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Authority;
+import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
@@ -18,7 +21,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static exception.ExceptionSeverity.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.FORBIDDEN_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.USER_EXISTS_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.USER_EXISTS_TEMPLATE;
 
@@ -49,7 +55,7 @@ public class UserService {
                     null,
                     BAD_REQUEST,
                     USER_EXISTS_CODE,
-                    ExceptionSeverity.WARN
+                    WARN
             );
         }
 
@@ -70,6 +76,8 @@ public class UserService {
 
     public void updateUserPassword(String email, byte[] password) {
         User userFromDb = getUserByEmail(email);
+        checkIfMasterAccountIsModified(userFromDb);
+
         userFromDb.setPassword(passwordEncoder.encode(new String(password)).getBytes());
         userRepository.save(userFromDb);
     }
@@ -141,13 +149,57 @@ public class UserService {
 
     private void changeEnabledUserStatus(String email, boolean status) {
         User userFromDb = getUserByEmail(email);
+        checkIfMasterAccountIsModified(userFromDb);
+
         userFromDb.setEnabled(status);
         userRepository.save(userFromDb);
     }
 
     private void changeLockedUserStatus(String email, boolean status) {
         User userFromDb = getUserByEmail(email);
+        checkIfMasterAccountIsModified(userFromDb);
+
         userFromDb.setAccountNonLocked(status);
+        userRepository.save(userFromDb);
+    }
+
+    private void checkIfMasterAccountIsModified(User modifiedUser) {
+        if (modifiedUser.getAuthorities()
+                .stream()
+                .noneMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_HEAD_ADMIN.name()))) {
+            return;
+        }
+        checkMasterAuthority();
+    }
+
+    public void checkMasterAuthority() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!isMasterAction(principal)) {
+            throw new ForbiddenException(
+                    "This action can be done only by MASTER account",
+                    null,
+                    FORBIDDEN,
+                    FORBIDDEN_CODE,
+                    WARN
+            );
+        }
+    }
+
+    private boolean isMasterAction(UserDetails principal) {
+        return principal
+                .getAuthorities()
+                .stream()
+                .anyMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_HEAD_ADMIN.name()));
+    }
+
+    /**
+     WARN! Use only in configs when system is performing changes to master users!
+     */
+    public void updateMasterPasswordBySystem(String email, byte[] password) {
+        User userFromDb = getUserByEmail(email);
+
+        userFromDb.setPassword(passwordEncoder.encode(new String(password)).getBytes());
         userRepository.save(userFromDb);
     }
 }

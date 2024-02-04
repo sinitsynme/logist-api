@@ -2,13 +2,13 @@ package ru.sinitsynme.logistapi.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
+import ru.sinitsynme.logistapi.rest.dto.EmailRequestDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
-@RestController("/user")
+@RestController
+@RequestMapping("/user")
 public class UserResource {
 
     private final UserService userService;
@@ -18,8 +18,9 @@ public class UserResource {
         this.userService = userService;
     }
 
+    //FIXME - Not working by some reason endpoints - to be fixed!
     @PatchMapping("/block")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_HEAD_ADMIN')")
+    @AdminAccess
     public ResponseEntity<String> lockUserAccount(@RequestBody String email) {
         userService.lockUserAccount(email);
         return ResponseEntity.ok(String.format(
@@ -28,29 +29,29 @@ public class UserResource {
     }
 
     @PatchMapping("/unblock")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_HEAD_ADMIN')")
-    public ResponseEntity<String> unblockUserAccount(@RequestBody String email) {
-        userService.unlockUserAccount(email);
+    @AdminAccess
+    public ResponseEntity<String> unblockUserAccount(@RequestBody EmailRequestDto dto) {
+        userService.unlockUserAccount(dto.getEmail());
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully unblocked", email)
+                "User with email %s was successfully unblocked", dto.getEmail())
         );
     }
 
     @PatchMapping("/disable")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_HEAD_ADMIN')")
-    public ResponseEntity<String> disableUserAccount(@RequestBody String email) {
-        userService.disableUser(email);
+    @AdminAccess
+    public ResponseEntity<String> disableUserAccount(@RequestBody EmailRequestDto dto) {
+        userService.disableUser(dto.getEmail());
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully disabled", email)
+                "User with email %s was successfully disabled", dto.getEmail())
         );
     }
 
     @PatchMapping("/enable")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_HEAD_ADMIN')")
-    public ResponseEntity<String> enableUserAccount(@RequestBody String email) {
-        userService.enableUser(email);
+    @AdminAccess
+    public ResponseEntity<String> enableUserAccount(@RequestBody EmailRequestDto dto) {
+        userService.enableUser(dto.getEmail());
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully enabled", email)
+                "User with email %s was successfully enabled", dto.getEmail())
         );
     }
 }

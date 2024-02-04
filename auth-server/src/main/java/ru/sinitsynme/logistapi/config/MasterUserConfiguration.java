@@ -26,7 +26,8 @@ public class MasterUserConfiguration {
     private final UserService userService;
 
     @Autowired
-    public MasterUserConfiguration(MasterUserProperties masterUserProperties, UserService userService) {
+    public MasterUserConfiguration(MasterUserProperties masterUserProperties,
+                                   UserService userService) {
         this.masterUserProperties = masterUserProperties;
         this.userService = userService;
     }
@@ -34,6 +35,7 @@ public class MasterUserConfiguration {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return (args) -> {
+
             log.info("Starting to register master user");
 
             try {
@@ -47,10 +49,9 @@ public class MasterUserConfiguration {
 
                 log.info("Master user with email provided in config was found. The password will be updated to provided");
 
-                userService.updateUserPassword(user.getEmail(), masterUserProperties.getPassword().getBytes());
+                userService.updateMasterPasswordBySystem(user.getEmail(), masterUserProperties.getPassword().getBytes());
             } catch (UsernameNotFoundException | NotFoundException ex) {
                 log.info("Master user with email provided in config was not found");
-                disablePreviousMasterAccounts();
 
                 log.info("Saving new master user");
                 userService.saveUser(
@@ -63,21 +64,6 @@ public class MasterUserConfiguration {
         };
     }
 
-    private void disablePreviousMasterAccounts() {
-        log.info("Disabling and locking previous master accounts");
-
-        List<User> existingMasterUsers = userService.getUsersByAuthority(
-                BaseAuthorities.ROLE_HEAD_ADMIN.name(),
-                new PageRequestDto(0, 5, new String[]{}).toPageable()).getContent();
-
-        existingMasterUsers.forEach(user -> {
-            userService.disableUser(user.getEmail());
-            userService.lockUserAccount(user.getEmail());
-        });
-
-        log.info("Previous accounts were disabled in quantity of {}", existingMasterUsers.size());
-    }
-
     private UserSignUpDto buildMasterUserSignupDto() {
         return UserSignUpDto.builder()
                 .email(masterUserProperties.getEmail())
@@ -87,6 +73,5 @@ public class MasterUserConfiguration {
                 .middleName(MASTER)
                 .build();
     }
-
 
 }
