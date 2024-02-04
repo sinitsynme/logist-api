@@ -17,7 +17,7 @@ public class AuthorityResource {
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_HEAD_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_HEAD_ADMIN')")
     public ResponseEntity<String> testAdmin() {
         return ResponseEntity.ok("Access granted to ADMIN");
     }
