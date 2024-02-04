@@ -53,6 +53,4 @@ public class AuthResource {
         authService.validateToken(token);
         return ResponseEntity.ok().build();
     }
-
-
 }

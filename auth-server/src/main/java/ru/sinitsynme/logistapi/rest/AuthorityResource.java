@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/authority")
 public class AuthorityResource {
 
-    //TODO
-
     @GetMapping
     @PreAuthorize("hasRole('ROLE_CLIENT')")
     public ResponseEntity<String> test() {
