@@ -1,2 +1,6 @@
 jwt:
   expiration-minutes: 600
+
+master-user:
+  email: devadmin@gmail.com
+  password: devadmin

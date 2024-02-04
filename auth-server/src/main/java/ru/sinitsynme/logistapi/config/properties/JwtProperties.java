@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.config;
+package ru.sinitsynme.logistapi.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

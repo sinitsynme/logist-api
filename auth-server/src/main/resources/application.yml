@@ -28,6 +28,10 @@ eureka:
 logist-api:
   clock-zone-id: Europe/Moscow
 
+master-user:
+  email: ${MASTER_EMAIL}
+  password: ${MASTER_PASSWORD}
+
 jwt:
   expiration-minutes: 60
   secret: ${JWT_SECRET}

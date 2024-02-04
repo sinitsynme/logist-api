@@ -20,6 +20,8 @@ services:
       - eureka
     networks:
       - internal
+    profiles:
+      - qa
   mongo-order:
     image: mongo:5.0.22
     ports:
@@ -36,6 +38,8 @@ services:
       - ./order/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - internal
+    profiles:
+      - qa
   product:
     build:
       context: ./product
@@ -57,6 +61,9 @@ services:
         condition: service_started
     networks:
       - internal
+    profiles:
+      - test
+      - qa
   postgres-product:
     container_name: postgres-product
     image: postgres:13.3
@@ -68,6 +75,9 @@ services:
       - "5433:5432"
     networks:
       - internal
+    profiles:
+      - test
+      - qa
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d logist-api-product -U logistapi"]
       interval: 10s
@@ -94,6 +104,8 @@ services:
         condition: service_started
     networks:
       - internal
+    profiles:
+      - qa
   postgres-warehouse:
     image: postgres:13.3
     environment:
@@ -104,6 +116,8 @@ services:
       - "5434:5432"
     networks:
       - internal
+    profiles:
+      - qa
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d logist-api-warehouse -U logistapi"]
       interval: 10s
@@ -132,6 +146,9 @@ services:
         condition: service_started
     networks:
       - internal
+    profiles:
+      - test
+      - qa
   postgres-users:
     image: postgres:13.3
     environment:
@@ -147,6 +164,9 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    profiles:
+      - test
+      - qa
   eureka:
     build:
       context: ./eureka-server
@@ -158,6 +178,9 @@ services:
       - "8761:8761"
     networks:
       - internal
+    profiles:
+      - test
+      - qa
   gateway:
     env_file:
       - var.env
@@ -174,6 +197,9 @@ services:
       - auth-server
     networks:
       - internal
+    profiles:
+      - test
+      - qa
 networks:
   internal:
 

@@ -9,7 +9,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.sinitsynme.logistapi.config.JwtProperties;
+import ru.sinitsynme.logistapi.config.properties.JwtProperties;
 
 import javax.crypto.SecretKey;
 import java.time.Clock;

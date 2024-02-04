@@ -15,6 +15,7 @@ dependencies {
     val jjwtVersion: String by project
     val springSecurityVersion: String by project
     val jakartaServletApiVersion: String by project
+    val springDataVersion: String by project
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
@@ -25,6 +26,8 @@ dependencies {
 
     implementation("org.springframework.security:spring-security-core:$springSecurityVersion")
     implementation("org.springframework.security:spring-security-web:$springSecurityVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springDataVersion")
 
     compileOnly("jakarta.servlet:jakarta.servlet-api:$jakartaServletApiVersion")
 
