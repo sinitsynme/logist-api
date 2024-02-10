@@ -13,6 +13,7 @@ import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.config.annotations.SupportAccess;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserRoleRequestDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
 import java.util.Set;
@@ -64,6 +65,22 @@ public class UserResource {
     @SupportAccess
     public ResponseEntity<Set<String>> getUserAuthorities(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserAuthoritiesNames(id));
+    }
+
+    @Operation(summary = "Присвоить роль существующему пользователю")
+    @GetMapping("/{id}/roles/grant")
+    @AdminAccess
+    public ResponseEntity<?> grantRoleToUser(@PathVariable UUID id, UserRoleRequestDto requestDto) {
+        userService.grantAuthorityToUser(id, requestDto.getAuthorityName());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Отобрать роль у существующего пользователя")
+    @GetMapping("/{id}/roles/revoke")
+    @AdminAccess
+    public ResponseEntity<?> revokeRoleFromUser(@PathVariable UUID id, UserRoleRequestDto requestDto) {
+        userService.revokeAuthorityFromUser(id, requestDto.getAuthorityName());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Заблокировать пользователя")

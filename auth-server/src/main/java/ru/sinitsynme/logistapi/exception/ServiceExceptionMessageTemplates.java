@@ -31,6 +31,14 @@ public class ServiceExceptionMessageTemplates {
     public static final String USER_ALREADY_DISABLED_TEMPLATE
             = "User with id %s account disability wasn't changed";
 
+    public static final String USER_ALREADY_HAS_ROLE_TEMPLATE
+            = "User with id %s already has this role";
+
+    public static final String CLIENT_ROLE_IS_TRIED_TO_BE_REVOKED_TEMPLATE
+            = "Client role cannot be revoked from user with id %s. Block or disable user to revoke access";
+
+    public static final String USER_DOESNT_HAVE_ROLE_TEMPLATE
+            = "User with id %s doesn't have role %s";
 
     public static final String INVALID_AUTH_TEMPLATE
             = "Authentication for user with email '%s' was invalid due to cause '%s'";

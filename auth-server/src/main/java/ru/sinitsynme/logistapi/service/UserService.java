@@ -4,6 +4,8 @@ import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.ForbiddenException;
 import exception.service.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public UserService(AuthorityService authorityService,
                        UserRepository userRepository,
@@ -174,6 +177,56 @@ public class UserService {
                 .stream()
                 .map(Authority::getName)
                 .collect(Collectors.toSet());
+    }
+
+    public void grantAuthorityToUser(UUID id, String authorityName) {
+        User user = getUserById(id);
+        Authority authority = authorityService.getByName(authorityName);
+
+        if (user.getAuthorities().contains(authority)) {
+            throw new BadRequestException(
+                    String.format(USER_ALREADY_HAS_ROLE_TEMPLATE, id),
+                    null,
+                    BAD_REQUEST,
+                    USER_ALREADY_HAS_AUTHORITY_CODE,
+                    WARN
+            );
+        }
+
+        user.getAuthorities().add(authority);
+
+        userRepository.save(user);
+        log.info("User {} was granted with role {}", user.getId(), authorityName);
+    }
+
+    public void revokeAuthorityFromUser(UUID id, String authorityName) {
+        if (authorityName.equals(BaseAuthorities.ROLE_CLIENT.name())) {
+            throw new BadRequestException(
+                    String.format(CLIENT_ROLE_IS_TRIED_TO_BE_REVOKED_TEMPLATE, id),
+                    null,
+                    BAD_REQUEST,
+                    CLIENT_ROLE_IS_TRIED_TO_BE_REVOKED_CODE,
+                    WARN
+            );
+        }
+
+        User user = getUserById(id);
+        Authority authority = authorityService.getByName(authorityName);
+
+        if (!user.getAuthorities().contains(authority)) {
+            throw new BadRequestException(
+                    String.format(USER_DOESNT_HAVE_ROLE_TEMPLATE, id, authorityName),
+                    null,
+                    BAD_REQUEST,
+                    USER_DOESNT_HAVE_ROLE_CODE,
+                    WARN
+            );
+        }
+
+        user.getAuthorities().remove(authority);
+
+        userRepository.save(user);
+        log.info("Role {} was revoked from user {}", authorityName, user.getId());
     }
 
     private void changeEnabledUserStatus(UUID id, boolean status) {

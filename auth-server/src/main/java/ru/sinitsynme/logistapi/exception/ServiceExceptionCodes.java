@@ -10,6 +10,9 @@ public class ServiceExceptionCodes {
     public static final String USER_EXISTS_CODE = "-301";
     public static final String USER_ALREADY_BLOCKED_CODE = "-302";
     public static final String USER_ALREADY_DISABLED_CODE = "-303";
+    public static final String USER_ALREADY_HAS_AUTHORITY_CODE = "-304";
+    public static final String CLIENT_ROLE_IS_TRIED_TO_BE_REVOKED_CODE = "-305";
+    public static final String USER_DOESNT_HAVE_ROLE_CODE = "-306";
     public static final String INVALID_JWT_CODE = "-400";
     public static final String FORBIDDEN_CODE = "-403";
     public static final String INVALID_AUTH_CODE = "-500";
