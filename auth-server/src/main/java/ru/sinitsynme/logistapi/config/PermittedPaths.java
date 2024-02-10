@@ -16,6 +16,6 @@ public class PermittedPaths {
 
         // SERVICE PATHS
         "/token/**",
-        "/signup/client"
+        "/rest/api/v1/signup/client"
     };
 }

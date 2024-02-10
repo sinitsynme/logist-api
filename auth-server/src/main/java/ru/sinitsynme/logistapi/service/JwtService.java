@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.config.properties.JwtProperties;
+import ru.sinitsynme.logistapi.entity.User;
 
 import javax.crypto.SecretKey;
 import java.time.Clock;
@@ -24,6 +25,7 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_JW
 @Service
 public class JwtService {
     private static final String AUTHORITIES_CLAIM = "authorities";
+    private static final String USER_ID_CLAIM = "user_id";
     private final UserService userService;
     private final JwtProperties jwtProperties;
     private final Clock clock;
@@ -50,8 +52,9 @@ public class JwtService {
     }
 
     public String generateToken(String email) {
-        Collection<String> authorities = userService.getUserAuthoritiesNames(email);
-        Map<String, Object> claims = Map.of(AUTHORITIES_CLAIM, authorities);
+        User user = userService.getUserByEmail(email);
+        Collection<String> authorities = userService.getUserAuthoritiesNames(user.getId());
+        Map<String, Object> claims = Map.of(AUTHORITIES_CLAIM, authorities, USER_ID_CLAIM, user.getId());
 
         return createToken(email, claims);
     }

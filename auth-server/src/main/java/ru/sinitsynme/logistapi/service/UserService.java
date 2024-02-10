@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.service;
 
+import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.ForbiddenException;
 import exception.service.NotFoundException;
@@ -15,8 +16,8 @@ import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
-import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 
 import java.util.List;
 import java.util.Set;
@@ -69,6 +70,13 @@ public class UserService {
                 .map(authorityService::getByName)
                 .collect(Collectors.toSet());
 
+        if (authorities.stream()
+                .noneMatch(it -> it
+                        .getAuthority()
+                        .equals(BaseAuthorities.ROLE_CLIENT.name()))) {
+            authorities.add(authorityService.getByName(BaseAuthorities.ROLE_CLIENT.name()));
+        }
+
         user.setAuthorities(authorities);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()).getBytes());
@@ -114,6 +122,20 @@ public class UserService {
         return userRepository.findByAuthoritiesIn(Set.of(authority), pageable);
     }
 
+    public Page<User> getUsers(Pageable pageable) {
+        try {
+            return userRepository.findAll(pageable);
+        } catch (Exception ex) {
+            throw new BadRequestException(
+                    String.format("Something is wrong with pageable: %s", ex.getMessage()),
+                    ex,
+                    HttpStatus.BAD_REQUEST,
+                    "-1",
+                    ExceptionSeverity.WARN
+            );
+        }
+    }
+
     public User getUserByEmail(String email) {
         return userRepository
                 .findByEmail(email)
@@ -142,13 +164,13 @@ public class UserService {
                 );
     }
 
-    public Set<Authority> getUserAuthorities(String email) {
-        User user = getUserByEmail(email);
+    public Set<Authority> getUserAuthorities(UUID id) {
+        User user = getUserById(id);
         return user.getAuthorities();
     }
 
-    public Set<String> getUserAuthoritiesNames(String email) {
-        return getUserAuthorities(email)
+    public Set<String> getUserAuthoritiesNames(UUID id) {
+        return getUserAuthorities(id)
                 .stream()
                 .map(Authority::getName)
                 .collect(Collectors.toSet());

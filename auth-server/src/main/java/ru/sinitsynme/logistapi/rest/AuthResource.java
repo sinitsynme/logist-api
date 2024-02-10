@@ -10,7 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import ru.sinitsynme.logistapi.rest.dto.UserSignInDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignInDto;
 import ru.sinitsynme.logistapi.service.AuthService;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;

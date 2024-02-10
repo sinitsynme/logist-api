@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Tag(name = "Сервис регистрации")
 @RestController
-@RequestMapping("/signup")
+@RequestMapping("/rest/api/v1/signup")
 public class SignUpResource {
     private final Logger logger = LoggerFactory.getLogger(SignUpResource.class);
     private final UserService userService;
