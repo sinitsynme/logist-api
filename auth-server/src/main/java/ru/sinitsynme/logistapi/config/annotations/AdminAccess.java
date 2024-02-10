@@ -2,10 +2,13 @@ package ru.sinitsynme.logistapi.config.annotations;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_HEAD_ADMIN')")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 public @interface AdminAccess {
 }

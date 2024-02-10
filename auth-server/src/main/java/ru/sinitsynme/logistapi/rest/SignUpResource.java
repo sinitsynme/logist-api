@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sinitsynme.logistapi.config.annotations.MasterAccess;
+import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.rest.dto.AuthoritySignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
@@ -42,7 +42,7 @@ public class SignUpResource {
 
     @PostMapping
     @Operation(summary = "Зарегистрировать пользователя")
-    @MasterAccess
+    @AdminAccess
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> signUp(@RequestBody AuthoritySignUpDto dto) {
         userService.saveUser(dto.getSignUpDto(), List.of(dto.getAuthorityName()));

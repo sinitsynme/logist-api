@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
+import ru.sinitsynme.logistapi.config.annotations.SupportAccess;
 import ru.sinitsynme.logistapi.rest.dto.EmailRequestDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
@@ -23,7 +23,7 @@ public class UserResource {
     }
 
     @PatchMapping("/block")
-    @AdminAccess
+    @SupportAccess
     public ResponseEntity<String> lockUserAccount(@RequestBody String email) {
         userService.lockUserAccount(email);
         return ResponseEntity.ok(String.format(
@@ -32,7 +32,7 @@ public class UserResource {
     }
 
     @PatchMapping("/unblock")
-    @AdminAccess
+    @SupportAccess
     public ResponseEntity<String> unblockUserAccount(@RequestBody EmailRequestDto dto) {
         userService.unlockUserAccount(dto.getEmail());
         return ResponseEntity.ok(String.format(
@@ -41,7 +41,7 @@ public class UserResource {
     }
 
     @PatchMapping("/disable")
-    @AdminAccess
+    @SupportAccess
     public ResponseEntity<String> disableUserAccount(@RequestBody EmailRequestDto dto) {
         userService.disableUser(dto.getEmail());
         return ResponseEntity.ok(String.format(
@@ -50,7 +50,7 @@ public class UserResource {
     }
 
     @PatchMapping("/enable")
-    @AdminAccess
+    @SupportAccess
     public ResponseEntity<String> enableUserAccount(@RequestBody EmailRequestDto dto) {
         userService.enableUser(dto.getEmail());
         return ResponseEntity.ok(String.format(

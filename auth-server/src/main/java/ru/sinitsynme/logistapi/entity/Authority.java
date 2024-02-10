@@ -15,6 +15,7 @@ public class Authority implements GrantedAuthority {
     @Id
     private String name;
     private String description;
+    private boolean basic;
 
     @Override
     public String getAuthority() {

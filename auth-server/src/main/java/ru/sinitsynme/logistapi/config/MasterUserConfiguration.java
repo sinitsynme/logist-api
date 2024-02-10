@@ -1,6 +1,5 @@
 package ru.sinitsynme.logistapi.config;
 
-import dto.PageRequestDto;
 import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ public class MasterUserConfiguration {
             try {
                 User user = userService.getUserByEmail(masterUserProperties.getEmail());
                 if (user.getAuthorities().stream().anyMatch(it ->
-                        !it.getName().equals(BaseAuthorities.ROLE_HEAD_ADMIN.name()))
+                        !it.getName().equals(BaseAuthorities.ROLE_ADMIN.name()))
                 ) {
                     log.error("User with given email exists in another role. Application is stopped");
                     throw new IllegalArgumentException("User with given email is registered. Application is stopped");
@@ -56,7 +55,7 @@ public class MasterUserConfiguration {
                 log.info("Saving new master user");
                 userService.saveUser(
                         buildMasterUserSignupDto(),
-                        List.of(BaseAuthorities.ROLE_HEAD_ADMIN.name())
+                        List.of(BaseAuthorities.ROLE_ADMIN.name())
                 );
 
                 log.info("New master user was saved");

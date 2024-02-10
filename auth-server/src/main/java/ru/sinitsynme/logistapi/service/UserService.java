@@ -166,7 +166,7 @@ public class UserService {
     private void checkIfMasterAccountIsModified(User modifiedUser) {
         if (modifiedUser.getAuthorities()
                 .stream()
-                .noneMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_HEAD_ADMIN.name()))) {
+                .noneMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()))) {
             return;
         }
         checkMasterAuthority();
@@ -190,7 +190,7 @@ public class UserService {
         return principal
                 .getAuthorities()
                 .stream()
-                .anyMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_HEAD_ADMIN.name()));
+                .anyMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()));
     }
 
     /**
