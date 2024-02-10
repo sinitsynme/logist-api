@@ -1,6 +1,5 @@
 package ru.sinitsynme.logistapi.rest.dto.authority;
 
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;

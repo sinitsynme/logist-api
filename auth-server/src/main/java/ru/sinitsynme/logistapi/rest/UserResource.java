@@ -6,18 +6,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.config.annotations.SupportAccess;
-import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

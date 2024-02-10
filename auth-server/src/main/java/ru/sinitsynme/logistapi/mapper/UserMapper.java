@@ -2,8 +2,8 @@ package ru.sinitsynme.logistapi.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.sinitsynme.logistapi.entity.User;
-import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
 
 @Component
