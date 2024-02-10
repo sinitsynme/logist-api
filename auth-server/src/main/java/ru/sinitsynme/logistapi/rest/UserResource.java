@@ -11,9 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.config.annotations.SupportAccess;
+import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
+import ru.sinitsynme.logistapi.rest.dto.user.ChangePasswordRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserRoleRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
+import ru.sinitsynme.logistapi.service.PrincipalService;
 import ru.sinitsynme.logistapi.service.UserService;
 
 import java.util.Set;
@@ -26,11 +30,16 @@ import java.util.UUID;
 public class UserResource {
 
     private final UserService userService;
+    private final PrincipalService principalService;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserResource(UserService userService, UserMapper userMapper) {
+    public UserResource(
+            UserService userService,
+            PrincipalService principalService,
+            UserMapper userMapper) {
         this.userService = userService;
+        this.principalService = principalService;
         this.userMapper = userMapper;
     }
 
@@ -44,16 +53,24 @@ public class UserResource {
         return ResponseEntity.ok(userDataDtoPage);
     }
 
-    @Operation(summary = "Получить данные пользователя по ID")
+    @Operation(summary = "[OWNER] Получить данные пользователя по ID")
     @GetMapping("/{id}")
-    @SupportAccess
-    public ResponseEntity<UserDataDto> getUserData(@PathVariable UUID id) {
+    public ResponseEntity<UserDataDto> getUserDataById(@PathVariable UUID id) {
+        principalService.assertPrincipalAction(id);
         UserDataDto userDataDto = userMapper.toDataDto(userService.getUserById(id));
         return ResponseEntity.ok(userDataDto);
     }
 
-    @Operation(summary = "Получить данные пользователя по E-MAIL")
-    @GetMapping("/getByEmail/{email}")
+    @Operation(summary = "[SUPPORT+] Получить данные пользователя по ID")
+    @GetMapping("/admin-id/{id}")
+    @SupportAccess
+    public ResponseEntity<UserDataDto> getUserDataByIdAdmin(@PathVariable UUID id) {
+        UserDataDto userDataDto = userMapper.toDataDto(userService.getUserById(id));
+        return ResponseEntity.ok(userDataDto);
+    }
+
+    @Operation(summary = "[ADMIN] Получить данные пользователя по E-MAIL")
+    @GetMapping("/admin-email/{email}")
     @AdminAccess
     public ResponseEntity<UserDataDto> getUserDataByEmail(@PathVariable String email) {
         UserDataDto userDataDto = userMapper.toDataDto(userService.getUserByEmail(email));
@@ -70,7 +87,7 @@ public class UserResource {
     @Operation(summary = "Присвоить роль существующему пользователю")
     @GetMapping("/{id}/roles/grant")
     @AdminAccess
-    public ResponseEntity<?> grantRoleToUser(@PathVariable UUID id, UserRoleRequestDto requestDto) {
+    public ResponseEntity<?> grantRoleToUser(@PathVariable UUID id, @RequestBody UserRoleRequestDto requestDto) {
         userService.grantAuthorityToUser(id, requestDto.getAuthorityName());
         return ResponseEntity.ok().build();
     }
@@ -78,15 +95,54 @@ public class UserResource {
     @Operation(summary = "Отобрать роль у существующего пользователя")
     @GetMapping("/{id}/roles/revoke")
     @AdminAccess
-    public ResponseEntity<?> revokeRoleFromUser(@PathVariable UUID id, UserRoleRequestDto requestDto) {
+    public ResponseEntity<?> revokeRoleFromUser(@PathVariable UUID id, @RequestBody UserRoleRequestDto requestDto) {
         userService.revokeAuthorityFromUser(id, requestDto.getAuthorityName());
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "[OWNER] Обновить данные пользователя")
+    @PatchMapping("/{id}/data")
+    public ResponseEntity<UserDataDto> updateUserData(@PathVariable UUID id, @RequestBody UserUpdateDto updateDto) {
+        principalService.assertPrincipalAction(id);
+        User user = userService.updateUserData(id, updateDto);
+        return ResponseEntity.ok(userMapper.toDataDto(user));
+    }
+
+    @Operation(summary = "[ADMIN] Обновить данные пользователя")
+    @PatchMapping("/admin/{id}/data")
+    @AdminAccess
+    public ResponseEntity<UserDataDto> updateUserDataAdmin(@PathVariable UUID id, @RequestBody UserUpdateDto updateDto) {
+        User user = userService.updateUserData(id, updateDto);
+        return ResponseEntity.ok(userMapper.toDataDto(user));
+    }
+
+    @Operation(summary = "[OWNER] Обновить пароль пользователя")
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<?> updateUserPassword(
+            @PathVariable UUID id,
+            @RequestBody ChangePasswordRequestDto passwordRequestDto) {
+
+        principalService.assertPrincipalAction(id);
+        userService.updateUserPassword(id, passwordRequestDto.getPassword());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "[ADMIN] Обновить пароль пользователя")
+    @PatchMapping("/admin/{id}/password")
+    @AdminAccess
+    public ResponseEntity<UserDataDto> updateUserPasswordAdmin(
+            @PathVariable UUID id,
+            @RequestBody ChangePasswordRequestDto passwordRequestDto) {
+
+        userService.updateUserPassword(id, passwordRequestDto.getPassword());
+        return ResponseEntity.ok().build();
+    }
+
+
     @Operation(summary = "Заблокировать пользователя")
     @PatchMapping("/{id}/block")
     @SupportAccess
-    public ResponseEntity<String> lockUserAccount(@PathVariable UUID id) {
+    public ResponseEntity<?> lockUserAccount(@PathVariable UUID id) {
         userService.lockUserAccount(id);
         return ResponseEntity.ok(String.format(
                 "User with id %s was successfully blocked", id)
@@ -96,7 +152,7 @@ public class UserResource {
     @Operation(summary = "Разблокировать пользователя")
     @PatchMapping("/{id}/unblock")
     @SupportAccess
-    public ResponseEntity<String> unblockUserAccount(@PathVariable UUID id) {
+    public ResponseEntity<?> unblockUserAccount(@PathVariable UUID id) {
         userService.unlockUserAccount(id);
         return ResponseEntity.ok(String.format(
                 "User with id %s was successfully unblocked", id)
@@ -106,7 +162,7 @@ public class UserResource {
     @Operation(summary = "Деактивировать пользователя")
     @PatchMapping("/{id}/disable")
     @SupportAccess
-    public ResponseEntity<String> disableUserAccount(@PathVariable UUID id) {
+    public ResponseEntity<?> disableUserAccount(@PathVariable UUID id) {
         userService.disableUser(id);
         return ResponseEntity.ok(String.format(
                 "User with id %s was successfully disabled", id)
@@ -116,7 +172,7 @@ public class UserResource {
     @Operation(summary = "Активировать пользователя")
     @PatchMapping("/{id}/enable")
     @SupportAccess
-    public ResponseEntity<String> enableUserAccount(@PathVariable UUID id) {
+    public ResponseEntity<?> enableUserAccount(@PathVariable UUID id) {
         userService.enableUser(id);
         return ResponseEntity.ok(String.format(
                 "User with id %s was successfully enabled", id)

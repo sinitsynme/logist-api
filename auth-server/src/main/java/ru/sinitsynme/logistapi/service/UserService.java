@@ -6,6 +6,8 @@ import exception.service.ForbiddenException;
 import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,10 @@ import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
 import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -36,16 +41,20 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates
 public class UserService {
 
     private final AuthorityService authorityService;
+    private final PrincipalService principalService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
+    @Autowired
     public UserService(AuthorityService authorityService,
+                       @Lazy PrincipalService principalService,
                        UserRepository userRepository,
                        UserMapper userMapper,
                        PasswordEncoder passwordEncoder) {
         this.authorityService = authorityService;
+        this.principalService = principalService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -81,17 +90,22 @@ public class UserService {
         }
 
         user.setAuthorities(authorities);
-
         user.setPassword(passwordEncoder.encode(user.getPassword()).getBytes());
-        return userRepository.save(user);
+
+        userRepository.save(user);
+        log.info("User {} was successfully saved", user.getId());
+
+        return user;
     }
 
-    public void updateUserPassword(UUID id, byte[] password) {
+    public void updateUserPassword(UUID id, String password) {
         User userFromDb = getUserById(id);
         checkIfMasterAccountIsModified(userFromDb);
 
-        userFromDb.setPassword(passwordEncoder.encode(new String(password)).getBytes());
+        userFromDb.setPassword(passwordEncoder.encode(password).getBytes());
         userRepository.save(userFromDb);
+
+        log.info("Password of user {} was successfully updated", id);
     }
 
     public void disableUser(UUID id) {
@@ -110,15 +124,20 @@ public class UserService {
         changeLockedUserStatus(id, true);
     }
 
-    public void updateUserData(UUID id, UserDataDto updateDto) {
+    public User updateUserData(UUID id, UserUpdateDto updateDto) {
         User userFromDb = getUserById(id);
 
+        userFromDb.setEmail(updateDto.getEmail());
         userFromDb.setPhoneNumber(updateDto.getPhoneNumber());
         userFromDb.setFirstName(updateDto.getFirstName());
         userFromDb.setLastName(updateDto.getLastName());
         userFromDb.setMiddleName(updateDto.getMiddleName());
 
         userRepository.save(userFromDb);
+
+        log.info("User with id {} was successfully updated", userFromDb.getId());
+
+        return userFromDb;
     }
 
     public Page<User> getUsersByAuthority(Authority authority, Pageable pageable) {
@@ -245,6 +264,8 @@ public class UserService {
 
         userFromDb.setEnabled(status);
         userRepository.save(userFromDb);
+
+        log.info("Enabled status of user with id {} is now - {}", id, status);
     }
 
     private void changeLockedUserStatus(UUID id, boolean status) {
@@ -263,6 +284,8 @@ public class UserService {
 
         userFromDb.setAccountNonLocked(status);
         userRepository.save(userFromDb);
+
+        log.info("Locked status of user with id {} is now - {}", id, status);
     }
 
     private void checkIfMasterAccountIsModified(User modifiedUser) {
@@ -271,28 +294,7 @@ public class UserService {
                 .noneMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()))) {
             return;
         }
-        checkMasterAuthority();
-    }
-
-    public void checkMasterAuthority() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (!isMasterAction(principal)) {
-            throw new ForbiddenException(
-                    "This action can be done only by MASTER account",
-                    null,
-                    FORBIDDEN,
-                    FORBIDDEN_CODE,
-                    WARN
-            );
-        }
-    }
-
-    private boolean isMasterAction(UserDetails principal) {
-        return principal
-                .getAuthorities()
-                .stream()
-                .anyMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()));
+        principalService.checkMasterAuthority();
     }
 
     /**
