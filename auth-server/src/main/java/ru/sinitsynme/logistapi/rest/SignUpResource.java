@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
-import ru.sinitsynme.logistapi.rest.dto.AuthoritySignUpDto;
-import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
+import ru.sinitsynme.logistapi.entity.User;
+import ru.sinitsynme.logistapi.rest.dto.user.SignUpAuthorityDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Сервис регистрации")
 @RestController
@@ -33,22 +35,22 @@ public class SignUpResource {
 
     @PostMapping("/client")
     @Operation(summary = "Зарегистрировать пользователя в роли клиента")
-    public ResponseEntity<?> signUpAsClient(@RequestBody UserSignUpDto signUpDto) {
-        userService.saveUser(signUpDto, List.of(BaseAuthorities.ROLE_CLIENT.name()));
+    public ResponseEntity<UUID> signUpAsClient(@RequestBody UserSignUpDto signUpDto) {
+        User user = userService.saveUser(signUpDto, List.of(BaseAuthorities.ROLE_CLIENT.name()));
         logger.info("User with email {} signed up with role: ROLE_CLIENT",
                 signUpDto.getEmail());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(user.getId());
     }
 
     @PostMapping
     @Operation(summary = "Зарегистрировать пользователя")
     @AdminAccess
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<?> signUp(@RequestBody AuthoritySignUpDto dto) {
-        userService.saveUser(dto.getSignUpDto(), List.of(dto.getAuthorityName()));
+    public ResponseEntity<UUID> signUp(@RequestBody SignUpAuthorityDto dto) {
+        User user = userService.saveUser(dto.getSignUpDto(), List.of(dto.getAuthorityName()));
         logger.info("User with email {} signed up with role: {}",
                 dto.getSignUpDto().getEmail(),
                 dto.getAuthorityName());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(user.getId());
     }
 }

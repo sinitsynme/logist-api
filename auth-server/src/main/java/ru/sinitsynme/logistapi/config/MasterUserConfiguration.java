@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ru.sinitsynme.logistapi.config.properties.MasterUserProperties;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
-import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
 import java.util.List;

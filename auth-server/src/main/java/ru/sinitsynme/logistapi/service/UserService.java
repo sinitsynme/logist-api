@@ -2,11 +2,12 @@ package ru.sinitsynme.logistapi.service;
 
 import exception.service.BadRequestException;
 import exception.service.ForbiddenException;
+import exception.service.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Authority;
@@ -14,19 +15,19 @@ import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
-import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
-import ru.sinitsynme.logistapi.rest.dto.UserUpdateDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static exception.ExceptionSeverity.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.FORBIDDEN_CODE;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.USER_EXISTS_CODE;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.USER_EXISTS_TEMPLATE;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.*;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.*;
 
 @Service
 public class UserService {
@@ -46,7 +47,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void saveUser(UserSignUpDto dto, List<String> authorityNames) {
+    public User saveUser(UserSignUpDto dto, List<String> authorityNames) {
         User user = userMapper.fromSignUpDto(dto);
 
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
@@ -71,51 +72,40 @@ public class UserService {
         user.setAuthorities(authorities);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()).getBytes());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void updateUserPassword(String email, byte[] password) {
-        User userFromDb = getUserByEmail(email);
+    public void updateUserPassword(UUID id, byte[] password) {
+        User userFromDb = getUserById(id);
         checkIfMasterAccountIsModified(userFromDb);
 
         userFromDb.setPassword(passwordEncoder.encode(new String(password)).getBytes());
         userRepository.save(userFromDb);
     }
 
-    public void disableUser(String email) {
-        changeEnabledUserStatus(email, false);
+    public void disableUser(UUID id) {
+        changeEnabledUserStatus(id, false);
     }
 
-    public void enableUser(String email) {
-        changeEnabledUserStatus(email, true);
+    public void enableUser(UUID id) {
+        changeEnabledUserStatus(id, true);
     }
 
-    public void lockUserAccount(String email) {
-        changeLockedUserStatus(email, false);
+    public void lockUserAccount(UUID id) {
+        changeLockedUserStatus(id, false);
     }
 
-    public void unlockUserAccount(String email) {
-        changeLockedUserStatus(email, true);
+    public void unlockUserAccount(UUID id) {
+        changeLockedUserStatus(id, true);
     }
 
-    public void updateUser(String email, UserUpdateDto updateDto, List<String> authorityNames) {
-        User userFromDb = getUserByEmail(email);
+    public void updateUserData(UUID id, UserDataDto updateDto) {
+        User userFromDb = getUserById(id);
 
-        userFromDb.setPassword(updateDto.getPassword());
         userFromDb.setPhoneNumber(updateDto.getPhoneNumber());
         userFromDb.setFirstName(updateDto.getFirstName());
         userFromDb.setLastName(updateDto.getLastName());
         userFromDb.setMiddleName(updateDto.getMiddleName());
-        userFromDb.setEnabled(updateDto.isEnabled());
-        userFromDb.setCredentialsNonExpired(updateDto.isCredentialsNonExpired());
-        userFromDb.setAccountNonLocked(updateDto.isAccountNonLocked());
-        userFromDb.setAccountNonExpired(updateDto.isAccountNonExpired());
-
-        Set<Authority> authorities = authorityNames.stream()
-                .map(authorityService::getByName)
-                .collect(Collectors.toSet());
-
-        userFromDb.setAuthorities(authorities);
 
         userRepository.save(userFromDb);
     }
@@ -128,9 +118,27 @@ public class UserService {
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User with email %s doesn't exist",
-                                email
-                        ))
+                        new NotFoundException(
+                                String.format(USER_EMAIL_NOT_FOUND_TEMPLATE, email),
+                                null,
+                                HttpStatus.NOT_FOUND,
+                                USER_NOT_FOUND_CODE,
+                                WARN
+                        )
+                );
+    }
+
+    public User getUserById(UUID id) {
+        return userRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException(
+                                String.format(USER_ID_NOT_FOUND_TEMPLATE, id),
+                                null,
+                                HttpStatus.NOT_FOUND,
+                                USER_NOT_FOUND_CODE,
+                                WARN
+                        )
                 );
     }
 
@@ -146,17 +154,37 @@ public class UserService {
                 .collect(Collectors.toSet());
     }
 
-    private void changeEnabledUserStatus(String email, boolean status) {
-        User userFromDb = getUserByEmail(email);
+    private void changeEnabledUserStatus(UUID id, boolean status) {
+        User userFromDb = getUserById(id);
         checkIfMasterAccountIsModified(userFromDb);
+
+        if (userFromDb.isEnabled() == status) {
+            throw new BadRequestException(
+                    String.format(USER_ALREADY_DISABLED_TEMPLATE, id),
+                    null,
+                    BAD_REQUEST,
+                    USER_ALREADY_DISABLED_CODE,
+                    WARN
+            );
+        }
 
         userFromDb.setEnabled(status);
         userRepository.save(userFromDb);
     }
 
-    private void changeLockedUserStatus(String email, boolean status) {
-        User userFromDb = getUserByEmail(email);
+    private void changeLockedUserStatus(UUID id, boolean status) {
+        User userFromDb = getUserById(id);
         checkIfMasterAccountIsModified(userFromDb);
+
+        if (userFromDb.isAccountNonLocked() == status) {
+            throw new BadRequestException(
+                    String.format(USER_ALREADY_BLOCKED_TEMPLATE, id),
+                    null,
+                    BAD_REQUEST,
+                    USER_ALREADY_BLOCKED_CODE,
+                    WARN
+            );
+        }
 
         userFromDb.setAccountNonLocked(status);
         userRepository.save(userFromDb);
@@ -193,7 +221,7 @@ public class UserService {
     }
 
     /**
-     WARN! Use only in configs when system is performing changes to master users!
+     * WARN! Use only in configs when system is performing changes to master users!
      */
     public void updateMasterPasswordBySystem(String email, byte[] password) {
         User userFromDb = getUserByEmail(email);

@@ -1,24 +1,25 @@
-package ru.sinitsynme.logistapi.rest.dto;
+package ru.sinitsynme.logistapi.rest.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class UserSignUpDto {
+import java.util.UUID;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class UserDataDto {
+
+    private UUID id;
     private String email;
-    private byte[] password;
     private String firstName;
     private String middleName;
     private String lastName;
     private String phoneNumber;
+    private boolean disabled;
+    private boolean blocked;
 
-    public void setPassword(String password) {
-        this.password = password.getBytes();
-    }
 }

@@ -1,4 +1,4 @@
-package ru.sinitsynme.logistapi.rest.dto;
+package ru.sinitsynme.logistapi.rest.dto.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

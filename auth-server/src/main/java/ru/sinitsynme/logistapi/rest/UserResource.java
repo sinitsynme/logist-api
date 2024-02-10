@@ -1,60 +1,87 @@
 package ru.sinitsynme.logistapi.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.config.annotations.SupportAccess;
-import ru.sinitsynme.logistapi.rest.dto.EmailRequestDto;
+import ru.sinitsynme.logistapi.mapper.UserMapper;
+import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 import ru.sinitsynme.logistapi.service.UserService;
+
+import java.util.UUID;
 
 @Tag(name = "Управление пользователями")
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/user")
+@RequestMapping("rest/api/v1/user")
 public class UserResource {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserResource(UserService userService) {
+    public UserResource(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
-    @PatchMapping("/block")
+    @Operation(summary = "Получить данные пользователя по ID")
+    @GetMapping("/{id}")
     @SupportAccess
-    public ResponseEntity<String> lockUserAccount(@RequestBody String email) {
-        userService.lockUserAccount(email);
+    public ResponseEntity<UserDataDto> getUserData(@PathVariable UUID id) {
+        UserDataDto userDataDto = userMapper.toDataDto(userService.getUserById(id));
+        return ResponseEntity.ok(userDataDto);
+    }
+
+    @Operation(summary = "Получить данные пользователя по E-MAIL")
+    @GetMapping("/getByEmail/{email}")
+    @AdminAccess
+    public ResponseEntity<UserDataDto> getUserDataByEmail(@PathVariable String email) {
+        UserDataDto userDataDto = userMapper.toDataDto(userService.getUserByEmail(email));
+        return ResponseEntity.ok(userDataDto);
+    }
+
+    @Operation(summary = "Заблокировать пользователя")
+    @PatchMapping("/{id}/block")
+    @SupportAccess
+    public ResponseEntity<String> lockUserAccount(@PathVariable UUID id) {
+        userService.lockUserAccount(id);
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully blocked", email)
+                "User with id %s was successfully blocked", id)
         );
     }
 
-    @PatchMapping("/unblock")
+    @Operation(summary = "Разблокировать пользователя")
+    @PatchMapping("/{id}/unblock")
     @SupportAccess
-    public ResponseEntity<String> unblockUserAccount(@RequestBody EmailRequestDto dto) {
-        userService.unlockUserAccount(dto.getEmail());
+    public ResponseEntity<String> unblockUserAccount(@PathVariable UUID id) {
+        userService.unlockUserAccount(id);
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully unblocked", dto.getEmail())
+                "User with id %s was successfully unblocked", id)
         );
     }
 
-    @PatchMapping("/disable")
+    @Operation(summary = "Деактивировать пользователя")
+    @PatchMapping("/{id}/disable")
     @SupportAccess
-    public ResponseEntity<String> disableUserAccount(@RequestBody EmailRequestDto dto) {
-        userService.disableUser(dto.getEmail());
+    public ResponseEntity<String> disableUserAccount(@PathVariable UUID id) {
+        userService.disableUser(id);
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully disabled", dto.getEmail())
+                "User with id %s was successfully disabled", id)
         );
     }
 
-    @PatchMapping("/enable")
+    @Operation(summary = "Активировать пользователя")
+    @PatchMapping("/{id}/enable")
     @SupportAccess
-    public ResponseEntity<String> enableUserAccount(@RequestBody EmailRequestDto dto) {
-        userService.enableUser(dto.getEmail());
+    public ResponseEntity<String> enableUserAccount(@PathVariable UUID id) {
+        userService.enableUser(id);
         return ResponseEntity.ok(String.format(
-                "User with email %s was successfully enabled", dto.getEmail())
+                "User with id %s was successfully enabled", id)
         );
     }
 }

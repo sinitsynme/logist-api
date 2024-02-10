@@ -2,8 +2,9 @@ package ru.sinitsynme.logistapi.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.sinitsynme.logistapi.entity.User;
-import ru.sinitsynme.logistapi.rest.dto.UserSignUpDto;
-import ru.sinitsynme.logistapi.rest.dto.UserUpdateDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
+import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
 
 @Component
 public class UserMapper {
@@ -21,15 +22,24 @@ public class UserMapper {
 
     public User fromUpdateDto(UserUpdateDto dto) {
         return User.builder()
-                .password(dto.getPassword())
+                .email(dto.getEmail())
                 .phoneNumber(dto.getPhoneNumber())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .middleName(dto.getMiddleName())
-                .accountNonLocked(dto.isAccountNonLocked())
-                .isAccountNonExpired(dto.isAccountNonExpired())
-                .enabled(dto.isEnabled())
-                .credentialsNonExpired(dto.isCredentialsNonExpired())
+                .build();
+    }
+
+    public UserDataDto toDataDto(User user) {
+        return UserDataDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .middleName(user.getMiddleName())
+                .phoneNumber(user.getPhoneNumber())
+                .email(user.getEmail())
+                .blocked(!user.isAccountNonLocked())
+                .disabled(!user.isEnabled())
                 .build();
     }
 }
