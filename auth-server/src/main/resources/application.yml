@@ -17,6 +17,16 @@ spring:
     locations:
       - classpath:/db/migration
 
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+
 bcrypt:
   encryption-rounds: 10
 

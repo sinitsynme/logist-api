@@ -2,6 +2,8 @@ package ru.sinitsynme.logistapi.rest;
 
 import exception.ExceptionSeverity;
 import exception.service.UnauthorizedException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +17,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_AUTH_CODE;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.INVALID_AUTH_TEMPLATE;
 
+@Tag(name = "Сервис токенов")
 @RestController
 @RequestMapping("/token")
 public class AuthResource {
@@ -29,6 +32,7 @@ public class AuthResource {
     }
 
     @PostMapping
+    @Operation(summary = "Получить токен")
     public ResponseEntity<String> getToken(@RequestBody UserSignInDto dto) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -49,6 +53,7 @@ public class AuthResource {
     }
 
     @GetMapping("/validate")
+    @Operation(summary = "Валидировать токен")
     public ResponseEntity<?> validateToken(@RequestParam String token) {
         authService.validateToken(token);
         return ResponseEntity.ok().build();

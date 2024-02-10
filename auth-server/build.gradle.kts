@@ -30,11 +30,14 @@ dependencies {
     val lombokVersion: String by project
     val flywayVersion: String by project
     val jjwtVersion: String by project
+    val openApiVersion: String by project
 
     implementation(project(":commons"))
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")

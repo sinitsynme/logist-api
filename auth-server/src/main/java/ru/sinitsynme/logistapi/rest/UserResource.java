@@ -1,5 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +9,8 @@ import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.rest.dto.EmailRequestDto;
 import ru.sinitsynme.logistapi.service.UserService;
 
+@Tag(name = "Управление пользователями")
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/user")
 public class UserResource {
@@ -18,7 +22,6 @@ public class UserResource {
         this.userService = userService;
     }
 
-    //FIXME - Not working by some reason endpoints - to be fixed!
     @PatchMapping("/block")
     @AdminAccess
     public ResponseEntity<String> lockUserAccount(@RequestBody String email) {

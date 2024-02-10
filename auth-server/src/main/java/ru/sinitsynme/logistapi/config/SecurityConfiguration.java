@@ -27,18 +27,23 @@ public class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
     private final BCryptProperties bCryptProperties;
+    private final PermittedPaths permittedPaths;
 
     @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService, BCryptProperties bCryptProperties) {
+    public SecurityConfiguration(
+            UserDetailsService userDetailsService,
+            BCryptProperties bCryptProperties,
+            PermittedPaths permittedPaths) {
         this.userDetailsService = userDetailsService;
         this.bCryptProperties = bCryptProperties;
+        this.permittedPaths = permittedPaths;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/token/**", "/signup").permitAll()
+                .requestMatchers(permittedPaths.getPaths()).permitAll()
                 .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

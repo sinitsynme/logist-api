@@ -1,5 +1,8 @@
 package ru.sinitsynme.logistapi.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import ru.sinitsynme.logistapi.service.UserService;
 
 import java.util.List;
 
+@Tag(name = "Сервис регистрации")
 @RestController
 @RequestMapping("/signup")
 public class SignUpResource {
@@ -28,6 +32,7 @@ public class SignUpResource {
     }
 
     @PostMapping("/client")
+    @Operation(summary = "Зарегистрировать пользователя в роли клиента")
     public ResponseEntity<?> signUpAsClient(@RequestBody UserSignUpDto signUpDto) {
         userService.saveUser(signUpDto, List.of(BaseAuthorities.ROLE_CLIENT.name()));
         logger.info("User with email {} signed up with role: ROLE_CLIENT",
@@ -36,7 +41,9 @@ public class SignUpResource {
     }
 
     @PostMapping
+    @Operation(summary = "Зарегистрировать пользователя")
     @MasterAccess
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> signUp(@RequestBody AuthoritySignUpDto dto) {
         userService.saveUser(dto.getSignUpDto(), List.of(dto.getAuthorityName()));
         logger.info("User with email {} signed up with role: {}",
