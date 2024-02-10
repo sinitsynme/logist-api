@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Setter
 @NoArgsConstructor
 @Entity
+@ToString
 public class Authority implements GrantedAuthority {
 
     @Id

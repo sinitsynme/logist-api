@@ -120,8 +120,7 @@ public class UserService {
         userRepository.save(userFromDb);
     }
 
-    public Page<User> getUsersByAuthority(String authorityName, Pageable pageable) {
-        Authority authority = authorityService.getByName(authorityName);
+    public Page<User> getUsersByAuthority(Authority authority, Pageable pageable) {
         return userRepository.findByAuthoritiesIn(Set.of(authority), pageable);
     }
 
