@@ -102,7 +102,7 @@ public class UserResource {
 
     @Operation(summary = "[OWNER] Обновить данные пользователя")
     @PatchMapping("/{id}/data")
-    public ResponseEntity<UserDataDto> updateUserData(@PathVariable UUID id, @RequestBody UserUpdateDto updateDto) {
+    public ResponseEntity<UserDataDto> updateUserData(@PathVariable UUID id, @RequestBody @Valid UserUpdateDto updateDto) {
         principalService.assertPrincipalAction(id);
         User user = userService.updateUserData(id, updateDto);
         return ResponseEntity.ok(userMapper.toDataDto(user));
@@ -111,7 +111,7 @@ public class UserResource {
     @Operation(summary = "[ADMIN] Обновить данные пользователя")
     @PatchMapping("/admin/{id}/data")
     @AdminAccess
-    public ResponseEntity<UserDataDto> updateUserDataAdmin(@PathVariable UUID id, @RequestBody UserUpdateDto updateDto) {
+    public ResponseEntity<UserDataDto> updateUserDataAdmin(@PathVariable UUID id, @RequestBody @Valid UserUpdateDto updateDto) {
         User user = userService.updateUserData(id, updateDto);
         return ResponseEntity.ok(userMapper.toDataDto(user));
     }
@@ -120,7 +120,7 @@ public class UserResource {
     @PatchMapping("/{id}/password")
     public ResponseEntity<?> updateUserPassword(
             @PathVariable UUID id,
-            @RequestBody ChangePasswordRequestDto passwordRequestDto) {
+            @RequestBody @Valid ChangePasswordRequestDto passwordRequestDto) {
 
         principalService.assertPrincipalAction(id);
         userService.updateUserPassword(id, passwordRequestDto.getPassword());
@@ -132,7 +132,7 @@ public class UserResource {
     @AdminAccess
     public ResponseEntity<UserDataDto> updateUserPasswordAdmin(
             @PathVariable UUID id,
-            @RequestBody ChangePasswordRequestDto passwordRequestDto) {
+            @RequestBody @Valid ChangePasswordRequestDto passwordRequestDto) {
 
         userService.updateUserPassword(id, passwordRequestDto.getPassword());
         return ResponseEntity.ok().build();
