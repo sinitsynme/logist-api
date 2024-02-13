@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+import ru.sinitsynme.logistapi.rest.dto.token.JwtTokenPair;
 import ru.sinitsynme.logistapi.rest.dto.user.UserSignInDto;
 import ru.sinitsynme.logistapi.service.JwtService;
 
@@ -33,7 +34,7 @@ public class TokenResource {
 
     @PostMapping
     @Operation(summary = "Получить токен")
-    public ResponseEntity<String> getToken(@RequestBody UserSignInDto dto) {
+    public ResponseEntity<JwtTokenPair> getToken(@RequestBody UserSignInDto dto) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     dto.getEmail(),
@@ -49,13 +50,20 @@ public class TokenResource {
             );
         }
 
-        return ResponseEntity.ok(jwtService.generateAccessToken(dto.getEmail()));
+        return ResponseEntity.ok(jwtService.generateTokenPair(dto.getEmail()));
     }
 
     @GetMapping("/validate")
-    @Operation(summary = "Валидировать токен")
-    public ResponseEntity<?> validateToken(@RequestParam String token) {
-        jwtService.validateAccessToken(token);
+    @Operation(summary = "Валидировать access-токен")
+    public ResponseEntity<?> validateAccessToken(@RequestParam String accessToken) {
+        jwtService.validateAccessToken(accessToken);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Обновить токен через refresh-токен")
+    public ResponseEntity<JwtTokenPair> refreshTokenPair(@RequestParam String refreshToken) {
+        jwtService.validateRefreshToken(refreshToken);
+        return ResponseEntity.ok(jwtService.generateTokenPairByRefreshToken(refreshToken));
     }
 }

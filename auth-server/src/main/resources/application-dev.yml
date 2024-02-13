@@ -1,6 +1,8 @@
 jwt:
   access-token-expiration-minutes: 600
   refresh-token-expiration-days: 30
+  access-token-secret: <your_access_token_secret>
+  refresh-token-secret: <your_refresh_token_secret>
 
 master-user:
   email: devadmin@gmail.com

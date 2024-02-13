@@ -42,4 +42,7 @@ public class ServiceExceptionMessageTemplates {
 
     public static final String INVALID_AUTH_TEMPLATE
             = "Authentication for user with email '%s' was invalid due to cause '%s'";
+
+    public static final String INVALID_JWT_MESSAGE
+            = "JWT is invalid";
 }
