@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class JwtProperties {
     private String accessTokenSecret;
     private String refreshTokenSecret;
-    private int accessTokenExpirationMinutes;
-    private int refreshTokenExpirationDays;
+    private long accessTokenExpirationMinutes;
+    private long refreshTokenExpirationDays;
 
 }

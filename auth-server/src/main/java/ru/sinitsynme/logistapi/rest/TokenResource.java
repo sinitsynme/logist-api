@@ -11,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.rest.dto.user.UserSignInDto;
-import ru.sinitsynme.logistapi.service.AuthService;
+import ru.sinitsynme.logistapi.service.JwtService;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_AUTH_CODE;
@@ -22,12 +22,12 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates
 @RequestMapping("/token")
 public class TokenResource {
 
-    private final AuthService authService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public TokenResource(AuthService authService, AuthenticationManager authenticationManager) {
-        this.authService = authService;
+    public TokenResource(JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -49,13 +49,13 @@ public class TokenResource {
             );
         }
 
-        return ResponseEntity.ok(authService.generateToken(dto.getEmail()));
+        return ResponseEntity.ok(jwtService.generateAccessToken(dto.getEmail()));
     }
 
     @GetMapping("/validate")
     @Operation(summary = "Валидировать токен")
     public ResponseEntity<?> validateToken(@RequestParam String token) {
-        authService.validateToken(token);
+        jwtService.validateAccessToken(token);
         return ResponseEntity.ok().build();
     }
 }

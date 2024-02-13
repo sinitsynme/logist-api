@@ -29,17 +29,58 @@ public class JwtService {
     private final UserService userService;
     private final JwtProperties jwtProperties;
     private final Clock clock;
+    private final SecretKey accessTokenSignKey;
+    private final SecretKey refreshTokenSignKey;
 
     @Autowired
+
     public JwtService(UserService userService, JwtProperties jwtProperties, Clock clock) {
         this.userService = userService;
         this.jwtProperties = jwtProperties;
         this.clock = clock;
+
+        accessTokenSignKey = getSignKey(jwtProperties.getAccessTokenSecret());
+        refreshTokenSignKey = getSignKey(jwtProperties.getRefreshTokenSecret());
     }
 
-    public void validateToken(final String token) {
+    public void validateAccessToken(final String token) {
+        validateToken(token, accessTokenSignKey);
+    }
+
+    public void validateRefreshToken(final String token) {
+        validateToken(token, refreshTokenSignKey);
+    }
+
+    public String generateAccessToken(String email) {
+        User user = userService.getUserByEmail(email);
+        Collection<String> authorities = userService.getUserAuthoritiesNames(user.getId());
+        Map<String, Object> claims = Map.of(AUTHORITIES_CLAIM, authorities, USER_ID_CLAIM, user.getId());
+
+        return createToken(
+                email,
+                claims,
+                jwtProperties.getAccessTokenExpirationMinutes(),
+                ChronoUnit.MINUTES,
+                accessTokenSignKey
+        );
+    }
+
+    public String generateRefreshToken(String email) {
+        User user = userService.getUserByEmail(email);
+        Map<String, Object> claims = Map.of(USER_ID_CLAIM, user.getId());
+
+        return createToken(
+                email,
+                claims,
+                jwtProperties.getRefreshTokenExpirationDays(),
+                ChronoUnit.DAYS,
+                refreshTokenSignKey
+        );
+    }
+
+    private void validateToken(final String token, final SecretKey signingKey) {
         try {
-            Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token);
         } catch (JwtException ex) {
             throw new UnauthorizedException(
                     ex.getMessage(),
@@ -51,27 +92,24 @@ public class JwtService {
         }
     }
 
-    public String generateToken(String email) {
-        User user = userService.getUserByEmail(email);
-        Collection<String> authorities = userService.getUserAuthoritiesNames(user.getId());
-        Map<String, Object> claims = Map.of(AUTHORITIES_CLAIM, authorities, USER_ID_CLAIM, user.getId());
-
-        return createToken(email, claims);
-    }
-
-    private String createToken(String email, Map<String, Object> claims) {
+    private String createToken(
+            String email,
+            Map<String, Object> claims,
+            Long unitsUntilExpires,
+            ChronoUnit chronoUnit,
+            SecretKey signKey
+    ) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(Date.from(clock.instant()))
-                .setExpiration(Date.from(clock.instant().plus(jwtProperties.getExpirationMinutes(), ChronoUnit.MINUTES)))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .setExpiration(Date.from(clock.instant().plus(unitsUntilExpires, chronoUnit)))
+                .signWith(signKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-
-    private SecretKey getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
+    private SecretKey getSignKey(String secret) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
