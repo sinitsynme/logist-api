@@ -20,13 +20,13 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates
 @Tag(name = "Сервис токенов")
 @RestController
 @RequestMapping("/token")
-public class AuthResource {
+public class TokenResource {
 
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthResource(AuthService authService, AuthenticationManager authenticationManager) {
+    public TokenResource(AuthService authService, AuthenticationManager authenticationManager) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;
     }

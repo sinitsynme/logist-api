@@ -43,5 +43,7 @@ master-user:
   password: ${MASTER_PASSWORD}
 
 jwt:
-  expiration-minutes: 60
-  secret: ${JWT_SECRET}
+  access-token-expiration-minutes: 60
+  refresh-token-expiration-days: 14
+  access-token-secret: ${JWT_ACCESS_TOKEN_SECRET}
+  refresh-token-secret: ${JWT_REFRESH_TOKEN_SECRET}
