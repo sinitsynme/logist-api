@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -78,7 +79,8 @@ public class JwtService {
         User user = userService.getUserByEmail(userEmail);
         Optional<UserRefreshToken> optionalToken = userRefreshTokenRepository.findById(user.getId());
 
-        if (optionalToken.isEmpty() || !refreshToken.equals(optionalToken.get().getRefreshToken())) {
+        String sha256RefreshToken = DigestUtils.sha256Hex(refreshToken);
+        if (optionalToken.isEmpty() || !encoder.matches(sha256RefreshToken, optionalToken.get().getRefreshToken())) {
             throw new UnauthorizedException(
                     INVALID_JWT_MESSAGE,
                     null,
@@ -156,7 +158,9 @@ public class JwtService {
             userRefreshToken.setUserId(user.getId());
         }
 
-        userRefreshToken.setRefreshToken(refreshTokenPair.getFirst());
+        String sha256refreshToken = DigestUtils.sha256Hex(refreshTokenPair.getFirst());
+        userRefreshToken.setRefreshToken(encoder.encode(sha256refreshToken));
+
         userRefreshToken.setExpiresAt(refreshTokenPair.getSecond());
 
         userRefreshTokenRepository.save(userRefreshToken);

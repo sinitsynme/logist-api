@@ -31,6 +31,7 @@ dependencies {
     val flywayVersion: String by project
     val jjwtVersion: String by project
     val openApiVersion: String by project
+    val commonsCodecVersion: String by project
 
     implementation(project(":commons"))
 
@@ -51,6 +52,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
     implementation("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
     implementation("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
+
+    implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
