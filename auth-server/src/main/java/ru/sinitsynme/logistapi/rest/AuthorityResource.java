@@ -60,6 +60,7 @@ public class AuthorityResource {
 
     @Operation(summary = "Удалить роль")
     @DeleteMapping("/{authorityName}")
+    @AdminAccess
     public ResponseEntity<?> deleteAuthority(@PathVariable String authorityName) {
         authorityService.delete(authorityName);
         return ResponseEntity.ok().build();

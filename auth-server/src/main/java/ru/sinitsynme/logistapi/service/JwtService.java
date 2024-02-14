@@ -8,6 +8,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,10 +27,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_JWT_CODE;
@@ -46,6 +45,7 @@ public class JwtService {
     private final Clock clock;
     private final SecretKey accessTokenSignKey;
     private final SecretKey refreshTokenSignKey;
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     @Autowired
     public JwtService(
@@ -143,6 +143,15 @@ public class JwtService {
                         expiresAt,
                         ZoneId.of(appProperties.getClockZoneId()))
         );
+    }
+
+    public void deleteRefreshToken(UUID userId) {
+        userRefreshTokenRepository
+                .findById(userId)
+                .ifPresent((it) -> {
+                    userRefreshTokenRepository.delete(it);
+                    log.info("Refresh token for user with id {} is removed", userId);
+                });
     }
 
     private void saveRefreshToken(Pair<String, LocalDateTime> refreshTokenPair, String userEmail) {

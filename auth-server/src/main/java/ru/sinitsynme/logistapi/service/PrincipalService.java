@@ -3,12 +3,10 @@ package ru.sinitsynme.logistapi.service;
 import exception.service.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import static exception.ExceptionSeverity.WARN;
@@ -41,9 +39,10 @@ public class PrincipalService {
     }
 
     public void checkMasterAuthority() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
 
-        if (!isMasterAction(principal)) {
+        if (!isMasterAction(user)) {
             throw new ForbiddenException(
                     "This action can be done only by MASTER account",
                     null,
@@ -55,8 +54,8 @@ public class PrincipalService {
     }
 
 
-    private boolean isMasterAction(UserDetails principal) {
-        return principal
+    private boolean isMasterAction(User user) {
+        return user
                 .getAuthorities()
                 .stream()
                 .anyMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()));

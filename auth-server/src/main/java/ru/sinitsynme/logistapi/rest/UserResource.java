@@ -85,7 +85,7 @@ public class UserResource {
     }
 
     @Operation(summary = "Присвоить роль существующему пользователю")
-    @GetMapping("/{id}/roles/grant")
+    @PatchMapping("/{id}/roles/grant")
     @AdminAccess
     public ResponseEntity<?> grantRoleToUser(@PathVariable UUID id, @RequestBody UserRoleRequestDto requestDto) {
         userService.grantAuthorityToUser(id, requestDto.getAuthorityName());
@@ -93,7 +93,7 @@ public class UserResource {
     }
 
     @Operation(summary = "Отобрать роль у существующего пользователя")
-    @GetMapping("/{id}/roles/revoke")
+    @PatchMapping("/{id}/roles/revoke")
     @AdminAccess
     public ResponseEntity<?> revokeRoleFromUser(@PathVariable UUID id, @RequestBody UserRoleRequestDto requestDto) {
         userService.revokeAuthorityFromUser(id, requestDto.getAuthorityName());

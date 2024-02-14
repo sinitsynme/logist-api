@@ -2,7 +2,6 @@ package ru.sinitsynme.logistapi.service;
 
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
-import exception.service.ForbiddenException;
 import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +10,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Authority;
@@ -20,12 +17,9 @@ import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.repository.UserRepository;
-import ru.sinitsynme.logistapi.rest.dto.user.UserDataDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserSignUpDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static exception.ExceptionSeverity.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.*;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates.*;
 
@@ -42,6 +35,7 @@ public class UserService {
 
     private final AuthorityService authorityService;
     private final PrincipalService principalService;
+    private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -50,11 +44,13 @@ public class UserService {
     @Autowired
     public UserService(AuthorityService authorityService,
                        @Lazy PrincipalService principalService,
+                       @Lazy JwtService jwtService,
                        UserRepository userRepository,
                        UserMapper userMapper,
                        PasswordEncoder passwordEncoder) {
         this.authorityService = authorityService;
         this.principalService = principalService;
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -100,7 +96,7 @@ public class UserService {
 
     public void updateUserPassword(UUID id, String password) {
         User userFromDb = getUserById(id);
-        checkIfMasterAccountIsModified(userFromDb);
+        checkIfMasterAccountIsModified();
 
         userFromDb.setPassword(passwordEncoder.encode(password).getBytes());
         userRepository.save(userFromDb);
@@ -250,7 +246,6 @@ public class UserService {
 
     private void changeEnabledUserStatus(UUID id, boolean status) {
         User userFromDb = getUserById(id);
-        checkIfMasterAccountIsModified(userFromDb);
 
         if (userFromDb.isEnabled() == status) {
             throw new BadRequestException(
@@ -266,11 +261,13 @@ public class UserService {
         userRepository.save(userFromDb);
 
         log.info("Enabled status of user with id {} is now - {}", id, status);
+
+        if (!status) jwtService.deleteRefreshToken(id);
+
     }
 
     private void changeLockedUserStatus(UUID id, boolean status) {
         User userFromDb = getUserById(id);
-        checkIfMasterAccountIsModified(userFromDb);
 
         if (userFromDb.isAccountNonLocked() == status) {
             throw new BadRequestException(
@@ -286,14 +283,12 @@ public class UserService {
         userRepository.save(userFromDb);
 
         log.info("Locked status of user with id {} is now - {}", id, status);
+
+        if (!status) jwtService.deleteRefreshToken(id);
     }
 
-    private void checkIfMasterAccountIsModified(User modifiedUser) {
-        if (modifiedUser.getAuthorities()
-                .stream()
-                .noneMatch(it -> it.getAuthority().equals(BaseAuthorities.ROLE_ADMIN.name()))) {
-            return;
-        }
+    // FIXME - Working not as wanted
+    private void checkIfMasterAccountIsModified() {
         principalService.checkMasterAuthority();
     }
 
