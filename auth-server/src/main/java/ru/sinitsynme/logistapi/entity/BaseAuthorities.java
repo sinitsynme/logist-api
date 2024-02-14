@@ -1,6 +1,11 @@
 package ru.sinitsynme.logistapi.entity;
 
 public enum BaseAuthorities {
+    ROLE_DRIVER,
+    ROLE_WORKER,
+    ROLE_OWNER,
+    ROLE_SERVICE,
     ROLE_CLIENT,
-    ROLE_HEAD_ADMIN
+    ROLE_SUPPORT,
+    ROLE_ADMIN
 }

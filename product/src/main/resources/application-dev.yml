@@ -3,7 +3,6 @@ management:
     health:
       enabled: true
 
-
 spring:
   servlet:
     multipart:
