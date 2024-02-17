@@ -5,12 +5,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import ru.sinitsynme.logistapi.config.externalSystem.AuthServiceHostProperties;
 
 import java.time.Clock;
 import java.time.ZoneId;
 
 @Configuration
-@EnableConfigurationProperties({AppProperties.class})
+@EnableConfigurationProperties({AppProperties.class, AuthServiceHostProperties.class})
 public class WarehouseConfiguration {
 
     private final AppProperties appProperties;

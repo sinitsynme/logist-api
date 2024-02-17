@@ -16,3 +16,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 #   open when want to fetch new migrations data
     show-sql: false
+
+
+external-system:
+  auth:
+    username: warehouse@skladlain.ru
+    password: warehouse

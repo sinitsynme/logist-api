@@ -21,7 +21,7 @@ services:
     networks:
       - internal
     profiles:
-      - qa
+      - prod
   mongo-order:
     image: mongo:5.0.22
     ports:
@@ -39,7 +39,7 @@ services:
     networks:
       - internal
     profiles:
-      - qa
+      - prod
   product:
     build:
       context: ./product

@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -33,6 +34,7 @@ public class WarehouseResource {
 
     @Operation(summary = "Создать склад")
     @PostMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<WarehouseResponseDto> createWarehouse(
             @RequestBody @Valid WarehouseRequestDto warehouseRequestDto) {
         Warehouse warehouse = warehouseService.createWarehouse(warehouseRequestDto);
@@ -44,6 +46,7 @@ public class WarehouseResource {
 
     @Operation(summary = "Редактировать склад")
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<WarehouseResponseDto> editWarehouse(@RequestBody @Valid WarehouseRequestDto warehouseRequestDto,
                                                               @PathVariable Long id) {
         Warehouse editedWarehouse = warehouseService.editWarehouse(warehouseRequestDto, id);
@@ -75,6 +78,7 @@ public class WarehouseResource {
 
     @Operation(summary = "Удалить склад")
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> deleteWarehouse(@PathVariable Long id) {
         warehouseService.deleteWarehouse(id);
 

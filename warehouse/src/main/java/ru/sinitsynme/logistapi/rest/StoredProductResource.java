@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -33,6 +34,7 @@ public class StoredProductResource {
 
     @PostMapping
     @Operation(summary = "Добавить товары на склад")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> addProductToWarehouse(@RequestBody @Valid StoredProductRequestDto requestDto) {
         StoredProduct storedProduct = service.addStoredProductToWarehouse(requestDto);
         logger.info("Product {} added to warehouse {}, now quantity {}",
@@ -54,6 +56,7 @@ public class StoredProductResource {
 
     @PutMapping("/reserve")
     @Operation(summary = "Зарезервировать товар на складе")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> reserveProductInWarehouse(@RequestBody @Valid StoredProductRequestDto requestDto) {
         StoredProduct storedProduct = service.reserveProductInWarehouse(requestDto);
         logger.info("Products with ID = {} reserved at warehouse with ID = {} in quantity {}",
@@ -66,6 +69,7 @@ public class StoredProductResource {
 
     @PutMapping("/remove")
     @Operation(summary = "Удалить зарезервированный товар со склада")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> removeProductFromWarehouse(@RequestBody @Valid StoredProductRequestDto requestDto) {
         StoredProduct storedProduct = service.removeReservedProductFromWarehouse(requestDto);
         logger.info("Reserved products with ID = {} removed from warehouse with ID = {} in quantity {}",
