@@ -10,9 +10,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import ru.sinitsynme.logistapi.rest.dto.token.JwtTokenPair;
 import ru.sinitsynme.logistapi.rest.dto.user.UserSignInDto;
 import ru.sinitsynme.logistapi.service.JwtService;
+import security.token.JwtTokenPair;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCodes.INVALID_AUTH_CODE;
