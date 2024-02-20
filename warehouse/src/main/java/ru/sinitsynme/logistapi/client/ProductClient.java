@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import ru.sinitsynme.logistapi.config.externalSystem.ProductServiceHostProvider;
+import ru.sinitsynme.logistapi.config.externalSystem.ExternalSystemHostProvider;
+import ru.sinitsynme.logistapi.config.externalSystem.ProductServiceHostProperties;
 
 import java.util.UUID;
 
@@ -24,16 +25,22 @@ public class ProductClient {
     private static final String GET_PRODUCT_PATH = "/rest/api/v1/product/{productId}";
 
     private final RestTemplate restTemplate;
-    private final ProductServiceHostProvider hostProvider;
+    private final ProductServiceHostProperties productServiceHostProperties;
+    private final ExternalSystemHostProvider hostProvider;
     private final Logger logger = LoggerFactory.getLogger(ProductClient.class);
 
-    public ProductClient(RestTemplate restTemplate, ProductServiceHostProvider hostProvider) {
+    public ProductClient(
+            RestTemplate restTemplate,
+            ProductServiceHostProperties productServiceHostProperties,
+            ExternalSystemHostProvider hostProvider
+    ) {
         this.restTemplate = restTemplate;
+        this.productServiceHostProperties = productServiceHostProperties;
         this.hostProvider = hostProvider;
     }
 
     public ProductResponseDto getProduct(UUID productId) throws BadRequestException {
-        String host = hostProvider.provideHost();
+        String host = getProductHost();
 
         logger.info("HTTP Request - GET Product with ID = {}", productId);
 
@@ -65,5 +72,12 @@ public class ProductClient {
             );
         }
 
+    }
+
+    private String getProductHost() {
+        return hostProvider.provideHost(
+                productServiceHostProperties.getProductServiceName(),
+                productServiceHostProperties.getProductServiceUrl()
+        );
     }
 }

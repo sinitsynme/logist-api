@@ -21,7 +21,7 @@ services:
     networks:
       - internal
     profiles:
-      - qa
+      - prod
   mongo-order:
     image: mongo:5.0.22
     ports:
@@ -39,7 +39,7 @@ services:
     networks:
       - internal
     profiles:
-      - qa
+      - prod
   product:
     build:
       context: ./product
@@ -62,6 +62,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - test
       - qa
   postgres-product:
@@ -76,6 +77,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - test
       - qa
     healthcheck:
@@ -105,6 +107,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - qa
   postgres-warehouse:
     image: postgres:13.3
@@ -117,6 +120,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - qa
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d logist-api-warehouse -U logistapi"]
@@ -146,6 +150,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - test
       - qa
   postgres-users:
@@ -164,6 +169,7 @@ services:
       timeout: 3s
       retries: 3
     profiles:
+      - prod
       - test
       - qa
   eureka:
@@ -178,6 +184,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - test
       - qa
   gateway:
@@ -197,6 +204,7 @@ services:
     networks:
       - internal
     profiles:
+      - prod
       - test
       - qa
 networks:

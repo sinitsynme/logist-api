@@ -19,7 +19,7 @@ import ru.sinitsynme.logistapi.config.properties.JwtProperties;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.entity.UserRefreshToken;
 import ru.sinitsynme.logistapi.repository.UserRefreshTokenRepository;
-import ru.sinitsynme.logistapi.rest.dto.token.JwtTokenPair;
+import security.token.JwtTokenPair;
 
 import javax.crypto.SecretKey;
 import java.time.Clock;

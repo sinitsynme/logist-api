@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -63,6 +64,7 @@ public class ProductCategoryResource {
 
     @PostMapping
     @Operation(summary = "Создать категорию")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductCategoryDto> createProductCategory(
             @RequestBody @Valid ProductCategoryDto requestDto) {
         ProductCategory productCategory = productCategoryService.saveProductCategory(requestDto);
@@ -72,6 +74,7 @@ public class ProductCategoryResource {
 
     @PutMapping("/{categoryCode}")
     @Operation(summary = "Редактировать категорию по коду")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductCategoryDto> editProductCategoryByCode(
             @RequestBody @Valid ProductCategoryDto requestDto,
             @PathVariable String categoryCode) {
@@ -82,6 +85,7 @@ public class ProductCategoryResource {
 
     @DeleteMapping("/{categoryCode}")
     @Operation(summary = "Удалить категорию по коду")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable String categoryCode
     ) {

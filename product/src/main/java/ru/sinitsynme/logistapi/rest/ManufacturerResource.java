@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -56,6 +57,7 @@ public class ManufacturerResource {
 
     @PostMapping
     @Operation(summary = "Создать производителя")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ManufacturerResponseDto> createManufacturer(
             @RequestBody @Valid ManufacturerRequestDto requestDto) {
         Manufacturer manufacturer = manufacturerService.saveManufacturer(requestDto);
@@ -65,6 +67,7 @@ public class ManufacturerResource {
 
     @PutMapping("/{id}")
     @Operation(summary = "Редактировать производителя по ID")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ManufacturerResponseDto> editManufacturerById(
             @RequestBody @Valid ManufacturerRequestDto requestDto,
             @PathVariable("id") Long id) {
@@ -75,6 +78,7 @@ public class ManufacturerResource {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить производителя")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable("id") long manufacturerId
     ) {

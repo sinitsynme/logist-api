@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -33,6 +34,7 @@ public class OrganizationResource {
 
     @Operation(summary = "Создать предприятие")
     @PostMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<OrganizationResponseDto> createOrganization(
             @RequestBody @Valid OrganizationRequestDto organizationRequestDto) {
         Organization organization = organizationService.addOrganization(organizationRequestDto);
@@ -45,6 +47,7 @@ public class OrganizationResource {
 
     @Operation(summary = "Редактировать предприятие")
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<OrganizationResponseDto> editOrganization(@RequestBody @Valid OrganizationRequestDto organizationRequestDto,
                                                                     @PathVariable Long id) {
         Organization editedOrganization = organizationService.editOrganization(organizationRequestDto, id);
@@ -77,6 +80,7 @@ public class OrganizationResource {
 
     @Operation(summary = "Удалить предприятие")
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> deleteOrganization(@PathVariable Long id) {
         organizationService.deleteOrganization(id);
         logger.info("Deleted organization and all warehouses with ID {}", id);

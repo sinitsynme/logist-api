@@ -30,3 +30,8 @@ external-system:
   product:
     service-name: ${PRODUCT_SERVICE_NAME}
     url: ${PRODUCT_SERVICE_URL}
+  auth:
+    service-name: ${AUTH_SERVICE_NAME}
+    url: ${AUTH_SERVICE_URL}
+    username: ${AUTH_SERVICE_USERNAME}
+    password: ${AUTH_SERVICE_PASSWORD}

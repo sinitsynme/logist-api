@@ -1,6 +1,5 @@
 package ru.sinitsynme.logistapi.config.externalSystem;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
@@ -9,19 +8,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Optional;
 
 @Component
-public class ProductServiceHostProvider {
-    @Value("${external-system.product.service-name}")
-    private String productServiceName;
-    @Value("${external-system.product.url}")
-    private String productServiceUrl;
+public class ExternalSystemHostProvider {
+
     private final DiscoveryClient discoveryClient;
 
-    public ProductServiceHostProvider(DiscoveryClient discoveryClient) {
+    public ExternalSystemHostProvider(DiscoveryClient discoveryClient) {
         this.discoveryClient = discoveryClient;
     }
 
-    public String provideHost() {
-        Optional<ServiceInstance> instance = discoveryClient.getInstances(productServiceName)
+    public String provideHost(String serviceName, String defaultUrl) {
+        Optional<ServiceInstance> instance = discoveryClient.getInstances(serviceName)
                 .stream()
                 .findAny();
 
@@ -30,6 +26,6 @@ public class ProductServiceHostProvider {
                     .fromHttpUrl(instance.get().getUri().toString());
             return uriComponentsBuilder.toUriString();
 
-        } else return productServiceUrl;
+        } else return defaultUrl;
     }
 }
