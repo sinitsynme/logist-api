@@ -1,5 +1,7 @@
 package security.token;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -18,7 +20,8 @@ public class TokenInterceptor implements ClientHttpRequestInterceptor {
     private final Clock clock;
 
     public TokenInterceptor(ServiceCredentials serviceCredentials,
-                            AuthServiceClient authServiceClient, Clock clock) {
+                            AuthServiceClient authServiceClient,
+                            Clock clock) {
         this.serviceCredentials = serviceCredentials;
         this.authServiceClient = authServiceClient;
         this.clock = clock;
@@ -43,7 +46,7 @@ public class TokenInterceptor implements ClientHttpRequestInterceptor {
         return execution.execute(request, body);
     }
 
-    private void refreshTokenIfExpired() {
+    private void refreshTokenIfExpired() throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now(clock);
         if (now.isAfter(jwtTokenPair.getAccessTokenExpiresAt())) {
 
@@ -54,5 +57,4 @@ public class TokenInterceptor implements ClientHttpRequestInterceptor {
             jwtTokenPair = authServiceClient.refreshToken(jwtTokenPair.getRefreshToken());
         }
     }
-
 }

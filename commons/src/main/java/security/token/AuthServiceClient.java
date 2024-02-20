@@ -1,7 +1,11 @@
 package security.token;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import exception.service.BadRequestException;
 import exception.service.ServerErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,6 +17,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class AuthServiceClient {
     private static final String REQUEST_TOKEN_PATH = "/token";
     private static final String REFRESH_TOKEN_PATH = "/token/refresh";
+    private final Logger log = LoggerFactory.getLogger(AuthServiceClient.class);
     private final RestTemplate restTemplate;
     private final String authServerHost;
 
@@ -21,13 +26,18 @@ public class AuthServiceClient {
         this.authServerHost = authServerHost;
     }
 
-    public JwtTokenPair requestToken(ServiceCredentials credentials) {
+    public JwtTokenPair requestToken(ServiceCredentials credentials) throws JsonProcessingException {
         try {
-            return restTemplate.getForObject(
+            HttpEntity<ServiceCredentials> credentialsEntity = new HttpEntity<>(credentials);
+            JwtTokenPair response = restTemplate.postForObject(
                     authServerHost + REQUEST_TOKEN_PATH,
-                    JwtTokenPair.class,
-                    credentials
+                    credentialsEntity,
+                    JwtTokenPair.class
             );
+
+            log.info("Successfully requested token pair in AuthService");
+            return response;
+
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().is4xxClientError()) {
                 throw new BadRequestException(
@@ -48,13 +58,17 @@ public class AuthServiceClient {
     }
 
 
-    public JwtTokenPair refreshToken(String refreshToken) {
+    public JwtTokenPair refreshToken(String refreshToken) throws JsonProcessingException {
         try {
-            return restTemplate.getForObject(
+            JwtTokenPair response =  restTemplate.postForObject(
                     authServerHost + REFRESH_TOKEN_PATH,
-                    JwtTokenPair.class,
-                    refreshToken
-            );
+                    refreshToken,
+                    JwtTokenPair.class
+                    );
+
+            log.info("Successfully requested token pair in AuthService");
+            return response;
+
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().is4xxClientError()) {
                 throw new BadRequestException(

@@ -39,8 +39,8 @@ public class MasterUserConfiguration {
 
             try {
                 User user = userService.getUserByEmail(masterUserProperties.getEmail());
-                if (user.getAuthorities().stream().anyMatch(it ->
-                        !it.getName().equals(BaseAuthorities.ROLE_ADMIN.name()))
+                if (user.getAuthorities().stream().noneMatch(it ->
+                        it.getName().equals(BaseAuthorities.ROLE_ADMIN.name()))
                 ) {
                     log.error("User with given email exists in another role. Application is stopped");
                     throw new IllegalArgumentException("User with given email is registered. Application is stopped");

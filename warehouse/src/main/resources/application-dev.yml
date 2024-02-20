@@ -20,5 +20,10 @@ spring:
 
 external-system:
   auth:
+    service-name: logistapi-auth
+    url: http://auth-server:8083
     username: warehouse@skladlain.ru
     password: warehouse
+  product:
+    service-name: logistapi-product
+    url: http://product:8081

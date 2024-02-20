@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import ru.sinitsynme.logistapi.config.externalSystem.AuthServiceHostProperties;
 import ru.sinitsynme.logistapi.config.externalSystem.ExternalSystemHostProvider;
 import security.JwtAuthenticationFilter;
-import security.token.AuthServerRestTemplate;
 import security.token.AuthServiceClient;
 import security.token.ServiceCredentials;
 import security.token.TokenInterceptor;
@@ -34,21 +33,18 @@ public class SecurityConfiguration {
     private final RestTemplate restTemplate;
     private final ExternalSystemHostProvider externalSystemHostProvider;
     private final AuthServiceHostProperties authServiceHostProperties;
-    private final ObjectMapper objectMapper;
     private final PermittedPaths permittedPaths;
     private final Clock clock;
-
     @Autowired
     public SecurityConfiguration(
             @Lazy RestTemplate restTemplate,
             ExternalSystemHostProvider externalSystemHostProvider,
             AuthServiceHostProperties authServiceHostProperties,
-            ObjectMapper objectMapper, PermittedPaths permittedPaths,
-            Clock clock) {
+            PermittedPaths permittedPaths,
+            Clock clock, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.externalSystemHostProvider = externalSystemHostProvider;
         this.authServiceHostProperties = authServiceHostProperties;
-        this.objectMapper = objectMapper;
         this.permittedPaths = permittedPaths;
         this.clock = clock;
     }
@@ -66,17 +62,12 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    @Bean
-    @Order(1)
-    public AuthServerRestTemplate authServerRestTemplate() {
-        return new AuthServerRestTemplate(new RestTemplate());
-    }
 
     @Bean
-    @Order(2)
+    @Order(1)
     public AuthServiceClient authServiceClient() {
         return new AuthServiceClient(
-                authServerRestTemplate().restTemplate(),
+                restTemplate,
                 externalSystemHostProvider.provideHost(
                         authServiceHostProperties.getServiceName(),
                         authServiceHostProperties.getUrl()
@@ -84,7 +75,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(3)
+    @Order(2)
     public TokenInterceptor tokenInterceptor() {
         return new TokenInterceptor(
                 new ServiceCredentials(

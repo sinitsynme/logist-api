@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 import ru.sinitsynme.logistapi.config.externalSystem.AuthServiceHostProperties;
 
 import java.time.Clock;
@@ -24,10 +23,5 @@ public class WarehouseConfiguration {
     @Bean
     public Clock clock() {
         return Clock.system(ZoneId.of(appProperties.getClockZoneId()));
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 }

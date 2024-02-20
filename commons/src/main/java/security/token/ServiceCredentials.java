@@ -1,12 +1,17 @@
 package security.token;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ServiceCredentials {
 
-    private String username;
+    private String email;
     private String password;
 
-    public ServiceCredentials(String username, String password) {
-        this.username = username;
+    public ServiceCredentials(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 }
