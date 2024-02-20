@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -70,6 +71,7 @@ public class ProductResource {
 
     @PostMapping
     @Operation(summary = "Сохранить товар")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductResponseDto> createProduct(
             @RequestBody @Valid ProductRequestDto productRequestDto) {
         Product product = productService.saveProduct(productRequestDto);
@@ -88,6 +90,7 @@ public class ProductResource {
 
     @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавить изображение к товару")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> addImageToProduct(
             @RequestPart MultipartFile productImageFile,
             @PathVariable("id") UUID productId) {
@@ -98,6 +101,7 @@ public class ProductResource {
 
     @PutMapping("/{id}")
     @Operation(summary = "Редактировать товар")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductResponseDto> editProduct(@RequestBody ProductRequestDto productRequestDto,
                                                           @PathVariable("id") UUID productId) {
         Product product = productService.editProduct(productId, productRequestDto);
@@ -107,6 +111,7 @@ public class ProductResource {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить товар")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") UUID productId) {
         productService.deleteProduct(productId);
         logger.info("Deleted product with ID = {}", productId);
