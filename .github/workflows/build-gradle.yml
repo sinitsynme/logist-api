@@ -24,7 +24,7 @@ jobs:
         with:
           arguments: build
       - name: docker compose up -d
-        run: docker compose --profile qa up -d
+        run: docker compose --profile prod up -d
       - name: Check state
         run: docker ps -a
       - name: Wait 30 sec
@@ -32,4 +32,4 @@ jobs:
       - name: Check state again
         run: docker ps -a
       - name: Docker Compose down
-        run: docker compose --profile qa down
+        run: docker compose --profile prod down
