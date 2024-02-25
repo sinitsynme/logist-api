@@ -14,7 +14,7 @@ import ru.sinitsynme.logistapi.config.ServiceNameProperties;
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-    private static final String VALIDATE_TOKEN_PATH = "/token/validate";
+    private static final String VALIDATE_TOKEN_PATH = "/rest/api/v1/token/validate";
     private static final String TOKEN_PARAM = "token";
     private static final String BEARER_PREFIX = "Bearer ";
     private final WebClient webClient;

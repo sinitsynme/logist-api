@@ -15,8 +15,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class AuthServiceClient {
-    private static final String REQUEST_TOKEN_PATH = "/token";
-    private static final String REFRESH_TOKEN_PATH = "/token/refresh";
+    private static final String REQUEST_TOKEN_PATH = "/rest/api/v1/token";
+    private static final String REFRESH_TOKEN_PATH = "/rest/api/v1/token/refresh";
     private final Logger log = LoggerFactory.getLogger(AuthServiceClient.class);
     private final RestTemplate restTemplate;
     private final String authServerHost;

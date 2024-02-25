@@ -20,7 +20,7 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionMessageTemplates
 
 @Tag(name = "Сервис токенов")
 @RestController
-@RequestMapping("/token")
+@RequestMapping("rest/api/v1/token")
 public class TokenResource {
 
     private final JwtService jwtService;
