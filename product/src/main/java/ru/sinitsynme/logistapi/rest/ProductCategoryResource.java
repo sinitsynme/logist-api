@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,12 +8,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.ProductCategory;
 import ru.sinitsynme.logistapi.mapper.ProductCategoryMapper;
 import ru.sinitsynme.logistapi.rest.dto.ProductCategoryDto;
 import ru.sinitsynme.logistapi.service.ProductCategoryService;
+import security.annotations.AdminAccess;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,21 +53,20 @@ public class ProductCategoryResource {
 
     @GetMapping
     @Operation(summary = "Получить список категорий")
-    public ResponseEntity<List<ProductCategoryDto>> findPageOfProductCategory(
-            @RequestParam @Valid @Min(1) int size,
-            @RequestParam @Valid @Min(0) int page) {
-        List<ProductCategory> productCategories = productCategoryService.getPageOfProductCategories(size, page);
+    public ResponseEntity<Page<ProductCategoryDto>> findPageOfProductCategory(
+            @Valid PageRequestDto pageRequestDto) {
+        Page<ProductCategory> productCategories = productCategoryService
+                .getPageOfProductCategories(pageRequestDto.toPageable());
+
         return ResponseEntity.ok(
-                productCategories
-                        .stream()
-                        .map(productCategoryMapper::toDto)
-                        .collect(Collectors.toList())
+                productCategories.map(productCategoryMapper::toDto)
         );
     }
 
     @PostMapping
     @Operation(summary = "Создать категорию")
     @SecurityRequirement(name = "Bearer Authentication")
+    @AdminAccess
     public ResponseEntity<ProductCategoryDto> createProductCategory(
             @RequestBody @Valid ProductCategoryDto requestDto) {
         ProductCategory productCategory = productCategoryService.saveProductCategory(requestDto);
@@ -75,6 +77,7 @@ public class ProductCategoryResource {
     @PutMapping("/{categoryCode}")
     @Operation(summary = "Редактировать категорию по коду")
     @SecurityRequirement(name = "Bearer Authentication")
+    @AdminAccess
     public ResponseEntity<ProductCategoryDto> editProductCategoryByCode(
             @RequestBody @Valid ProductCategoryDto requestDto,
             @PathVariable String categoryCode) {
@@ -86,6 +89,7 @@ public class ProductCategoryResource {
     @DeleteMapping("/{categoryCode}")
     @Operation(summary = "Удалить категорию по коду")
     @SecurityRequirement(name = "Bearer Authentication")
+    @AdminAccess
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable String categoryCode
     ) {
