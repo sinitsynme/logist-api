@@ -5,6 +5,7 @@ import exception.service.BadRequestException;
 import exception.service.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Organization;
@@ -77,9 +78,7 @@ public class OrganizationService {
         organizationRepository.deleteById(organizationId);
     }
 
-    public List<Organization> getPageOfOrganizations(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
-        Page<Organization> organizationPage = organizationRepository.findAll(pageRequest);
-        return organizationPage.getContent();
+    public Page<Organization> getPageOfOrganizations(Pageable pageable) {
+        return organizationRepository.findAll(pageable);
     }
 }

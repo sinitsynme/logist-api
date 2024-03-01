@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.StoredProduct;
@@ -82,15 +84,22 @@ public class StoredProductResource {
 
 
     @GetMapping
-    @Operation(summary = "Получить товары на складе")
-    public ResponseEntity<List<StoredProductResponseDto>> getProductsFromWarehouse(
-            @Valid @Min(0) int page, @Valid @Min(1) int size, @Valid @Min(1) Long warehouseId
+    @Operation(summary = "Получить страницу товаров на складе")
+    public ResponseEntity<Page<StoredProductResponseDto>> getProductsFromWarehouse(
+            @Valid PageRequestDto pageRequestDto,
+            @Valid @Min(1) Long warehouseId
     ) {
-        List<StoredProductResponseDto> responseDtoList = service
-                .getListOfStoredProductsAtWarehouse(page, size, warehouseId)
-                .stream()
-                .map(storedProductMapper::toResponseDto)
-                .toList();
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
+        Page<StoredProductResponseDto> responseDtoList = service
+                .getListOfStoredProductsAtWarehouse(pageRequestDto.toPageable(), warehouseId)
+                .map(storedProductMapper::toResponseDto);
         return ResponseEntity.ok(responseDtoList);
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"warehouse_code"});
+        }
     }
 }

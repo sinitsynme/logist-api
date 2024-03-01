@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Organization;
@@ -18,7 +20,7 @@ import ru.sinitsynme.logistapi.service.OrganizationService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name="Управление организациями")
+@Tag(name="Управление предприятиями")
 @RestController
 @RequestMapping("/rest/api/v1/organization")
 public class OrganizationResource {
@@ -65,15 +67,16 @@ public class OrganizationResource {
                 .organizationToResponseDto(organization));
     }
 
-    @Operation(summary = "Получить список предприятий")
+    @Operation(summary = "Получить страницу предприятий")
     @GetMapping
-    public ResponseEntity<List<OrganizationResponseDto>> getOrganizationPaged(@RequestParam @Valid @Min(0) int page, @RequestParam @Valid @Min(1) int size) {
+    public ResponseEntity<Page<OrganizationResponseDto>> getOrganizationPaged(
+            @Valid PageRequestDto pageRequestDto
+    ) {
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
 
-        List<OrganizationResponseDto> organizationList = organizationService
-                .getPageOfOrganizations(page, size)
-                .stream()
-                .map(organizationMapper::organizationToResponseDto)
-                .collect(Collectors.toList());
+        Page<OrganizationResponseDto> organizationList = organizationService
+                .getPageOfOrganizations(pageRequestDto.toPageable())
+                .map(organizationMapper::organizationToResponseDto);
 
         return ResponseEntity.ok(organizationList);
     }
@@ -86,5 +89,11 @@ public class OrganizationResource {
         logger.info("Deleted organization and all warehouses with ID {}", id);
 
         return ResponseEntity.ok().build();
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"name"});
+        }
     }
 }

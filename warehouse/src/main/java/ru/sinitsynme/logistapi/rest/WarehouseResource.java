@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Warehouse;
@@ -64,14 +66,15 @@ public class WarehouseResource {
         return ResponseEntity.ok(responseDto);
     }
 
-    @Operation(summary = "Получить список складов")
+    @Operation(summary = "Получить страницу складов")
     @GetMapping
-    public ResponseEntity<List<WarehouseResponseDto>> getWarehouse(@RequestParam @Min(value = 0) int page, @RequestParam @Min(value = 1) int size) {
-        List<WarehouseResponseDto> organizationList = warehouseService
-                .getPageOfWarehouse(page, size)
-                .stream()
-                .map(warehouseMapper::warehouseToResponseDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<WarehouseResponseDto>> getWarehouse(
+            @Valid PageRequestDto pageRequestDto) {
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
+        Page<WarehouseResponseDto> organizationList = warehouseService
+                .getPageOfWarehouse(pageRequestDto.toPageable())
+                .map(warehouseMapper::warehouseToResponseDto);
 
         return ResponseEntity.ok(organizationList);
     }
@@ -84,5 +87,11 @@ public class WarehouseResource {
 
         logger.info("Deleted warehouse with ID {}", id);
         return ResponseEntity.ok().build();
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"name"});
+        }
     }
 }
