@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.FeatureSetting;
 import ru.sinitsynme.logistapi.rest.dto.FeatureSettingDto;
 import ru.sinitsynme.logistapi.service.FeatureSettingService;
+import security.annotations.AdminAccess;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/rest/api/v1/feature-setting")
 @SecurityRequirement(name = "Bearer Authentication")
+@AdminAccess
 public class FeatureSettingResource {
 
     private final FeatureSettingService featureSettingService;
