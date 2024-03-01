@@ -1,10 +1,10 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,27 +37,30 @@ public class ProductResource {
     }
 
     @GetMapping
-    @Operation(summary = "Получить список товаров")
+    @Operation(summary = "Получить страницу товаров")
     public ResponseEntity<Page<ProductResponseDto>> getPageOfProducts(
-            @RequestParam @Valid @Min(0) int page,
-            @RequestParam @Valid @Min(1) int size,
-            @RequestParam(required = false) List<String> sortByFields,
+            @Valid PageRequestDto pageRequestDto,
             @RequestParam(required = false) List<String> categoryCodes) {
+
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
         Page<ProductResponseDto> responseDtos = productService
-                .getProductsPage(page, size, categoryCodes, sortByFields)
+                .getProductsPage(pageRequestDto.toPageable(), categoryCodes)
                 .map(productMapper::toResponseDto);
 
         return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Получить список товаров по поисковому запросу")
+    @Operation(summary = "Получить страницу товаров по поисковому запросу")
     public ResponseEntity<Page<ProductResponseDto>> getPageOfProductsWithNameContaining(
-            @RequestParam @Valid @Min(0) int page,
-            @RequestParam @Valid @Min(1) int size,
+            @Valid PageRequestDto pageRequestDto,
             @RequestParam @Valid @Size(min = 3, max = 100) String query) {
+
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
         Page<ProductResponseDto> responseDtos = productService
-                .getProductsPageWithNameContaining(page, size, query)
+                .getProductsPageWithNameContaining(pageRequestDto.toPageable(), query)
                 .map(productMapper::toResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
@@ -116,5 +119,11 @@ public class ProductResource {
         productService.deleteProduct(productId);
         logger.info("Deleted product with ID = {}", productId);
         return ResponseEntity.ok().build();
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"name"});
+        }
     }
 }

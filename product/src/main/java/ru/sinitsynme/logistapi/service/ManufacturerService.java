@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Manufacturer;
@@ -57,10 +58,8 @@ public class ManufacturerService {
                 .orElseThrow(() -> notFoundException(manufacturerId));
     }
 
-    public List<Manufacturer> getManufacturerPage(int size, int page) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
-        Page<Manufacturer> manufacturerPage = manufacturerRepository.findAll(pageRequest);
-        return manufacturerPage.getContent();
+    public Page<Manufacturer> getManufacturerPage(Pageable pageable) {
+        return manufacturerRepository.findAll(pageable);
     }
 
     private NotFoundException notFoundException(Long manufacturerId) {

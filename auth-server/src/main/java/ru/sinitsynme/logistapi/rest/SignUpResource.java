@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
+import security.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.entity.BaseAuthorities;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.rest.dto.user.SignUpAuthorityDto;

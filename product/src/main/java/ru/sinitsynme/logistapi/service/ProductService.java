@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,30 +136,22 @@ public class ProductService {
                 .orElseThrow(() -> notFoundException(productId));
     }
 
-    public Page<Product> getProductsPage(int page, int size, List<String> categoryCodes, List<String> sortByFields) {
-        Sort sort;
-        if (sortByFields == null || sortByFields.isEmpty()) sort = Sort.by("name");
-        else sort = Sort.by(sortByFields.toArray(new String[0]));
-
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-
+    public Page<Product> getProductsPage(Pageable pageable, List<String> categoryCodes) {
         Page<Product> productsPage;
+
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
             List<ProductCategory> listOfCategories = categoryCodes.stream()
                     .map(productCategoryService::getProductCategoryByCategoryCode)
                     .toList();
-            productsPage = productRepository.findByProductCategoryIn(listOfCategories, pageRequest);
+            productsPage = productRepository.findByProductCategoryIn(listOfCategories, pageable);
 
-        } else productsPage = productRepository.findAll(pageRequest);
+        } else productsPage = productRepository.findAll(pageable);
 
         return productsPage;
     }
 
-    public Page<Product> getProductsPageWithNameContaining(int page, int size, String query) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
-
-        Page<Product> productsPage = productRepository.findByNameContainingIgnoreCase(query, pageRequest);
-        return productsPage;
+    public Page<Product> getProductsPageWithNameContaining(Pageable pageable, String query) {
+        return productRepository.findByNameContainingIgnoreCase(query, pageable);
     }
 
     private void addManufacturerAndCategoryToProduct(Product product, Long manufacturerId, String categoryCode) {

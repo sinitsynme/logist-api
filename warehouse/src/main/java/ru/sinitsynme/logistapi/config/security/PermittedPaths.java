@@ -18,9 +18,8 @@ public class PermittedPaths {
             "/rest/api/v1/warehouse/**",
             "/rest/api/v1/warehouse/product",
             "/rest/api/v1/warehouse/product/**",
-            "/rest/api/v1/warehouse/organization",
-            "/rest/api/v1/warehouse/organization/**",
+            "/rest/api/v1/organization",
+            "/rest/api/v1/organization/**",
             "/rest/api/v1/address/**",
-
     };
 }

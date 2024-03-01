@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -132,10 +133,8 @@ public class StoredProductService {
         }
     }
 
-    public List<StoredProduct> getListOfStoredProductsAtWarehouse(int page, int size, Long warehouseId) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("warehouse_code"));
-        Page<StoredProduct> storedProducts = storedProductRepository.findByWarehouseId(warehouseId, pageRequest);
-        return storedProducts.getContent();
+    public Page<StoredProduct> getListOfStoredProductsAtWarehouse(Pageable pageable, Long warehouseId) {
+        return storedProductRepository.findByWarehouseId(warehouseId, pageable);
     }
 
     public StoredProduct getStoredProduct(UUID productId, Long warehouseId) {

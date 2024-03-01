@@ -1,5 +1,7 @@
-package dto;
+package dto.business;
 
+import dto.business.ManufacturerResponseDto;
+import dto.business.ProductCategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

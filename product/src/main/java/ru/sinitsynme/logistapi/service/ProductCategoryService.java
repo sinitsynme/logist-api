@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -81,10 +82,8 @@ public class ProductCategoryService {
         productCategoryRepository.deleteById(productCategory.getId());
     }
 
-    public List<ProductCategory> getPageOfProductCategories(int size, int page) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("categoryCode"));
-        Page<ProductCategory> productCategoryPage = productCategoryRepository.findAll(pageRequest);
-        return productCategoryPage.getContent();
+    public Page<ProductCategory> getPageOfProductCategories(Pageable pageable) {
+        return productCategoryRepository.findAll(pageable);
     }
 
     public ProductCategory getProductCategoryByCategoryCode(String categoryCode) {

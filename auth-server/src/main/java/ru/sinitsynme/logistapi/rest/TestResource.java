@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sinitsynme.logistapi.config.annotations.AdminAccess;
+import security.annotations.AdminAccess;
 import ru.sinitsynme.logistapi.config.tasks.ClearRefreshTokenRepositoryTask;
 
 @Tag(name = "Таск-адаптеры")

@@ -1,7 +1,5 @@
 package dto;
 
-import exception.ExceptionSeverity;
-import exception.service.BadRequestException;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor

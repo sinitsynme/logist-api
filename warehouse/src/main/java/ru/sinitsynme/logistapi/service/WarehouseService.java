@@ -6,6 +6,7 @@ import exception.service.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.config.AppProperties;
@@ -104,10 +105,8 @@ public class WarehouseService {
         );
     }
 
-    public List<Warehouse> getPageOfWarehouse(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name"));
-        Page<Warehouse> warehousePage = warehouseRepository.findAll(pageRequest);
-        return warehousePage.getContent();
+    public Page<Warehouse> getPageOfWarehouse(Pageable pageable) {
+        return warehouseRepository.findAll(pageable);
     }
 
     public void deleteWarehouse(Long warehouseId) {
