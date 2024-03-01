@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.Manufacturer;
@@ -42,16 +44,16 @@ public class ManufacturerResource {
     }
 
     @GetMapping
-    @Operation(summary = "Получить список производителей")
-    public ResponseEntity<List<ManufacturerResponseDto>> findPageOfManufacturer(
-            @RequestParam @Valid @Min(1) int size,
-            @RequestParam @Valid @Min(0) int page) {
-        List<Manufacturer> manufacturersList = manufacturerService.getManufacturerPage(size, page);
+    @Operation(summary = "Получить страницу производителей")
+    public ResponseEntity<Page<ManufacturerResponseDto>> findPageOfManufacturer(
+            @Valid PageRequestDto pageRequestDto) {
+
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
+        Page<Manufacturer> manufacturersList = manufacturerService.getManufacturerPage(pageRequestDto.toPageable());
         return ResponseEntity.ok(
                 manufacturersList
-                        .stream()
                         .map(manufacturerMapper::toResponseDto)
-                        .collect(Collectors.toList())
         );
     }
 
@@ -85,5 +87,11 @@ public class ManufacturerResource {
         manufacturerService.deleteManufacturer(manufacturerId);
         logger.info("Manufactuter with ID = {} deleted", manufacturerId);
         return ResponseEntity.ok().build();
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"name"});
+        }
     }
 }

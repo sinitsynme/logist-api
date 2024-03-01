@@ -52,9 +52,12 @@ public class ProductCategoryResource {
     }
 
     @GetMapping
-    @Operation(summary = "Получить список категорий")
+    @Operation(summary = "Получить страницу категорий")
     public ResponseEntity<Page<ProductCategoryDto>> findPageOfProductCategory(
             @Valid PageRequestDto pageRequestDto) {
+
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
         Page<ProductCategory> productCategories = productCategoryService
                 .getPageOfProductCategories(pageRequestDto.toPageable());
 
@@ -96,5 +99,11 @@ public class ProductCategoryResource {
         productCategoryService.deleteProductCategory(categoryCode);
         logger.info("Product category with code {} deleted", categoryCode);
         return ResponseEntity.ok().build();
+    }
+
+    private void updatePageRequestDtoIfSortIsEmpty(PageRequestDto pageRequestDto) {
+        if (pageRequestDto.getSortByFields() == null || pageRequestDto.getSortByFields().length == 0) {
+            pageRequestDto.setSortByFields(new String[]{"categoryCode"});
+        }
     }
 }
