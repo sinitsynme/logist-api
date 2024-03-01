@@ -16,6 +16,7 @@ import ru.sinitsynme.logistapi.mapper.ManufacturerMapper;
 import ru.sinitsynme.logistapi.rest.dto.ManufacturerRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ManufacturerResponseDto;
 import ru.sinitsynme.logistapi.service.ManufacturerService;
+import security.annotations.AdminAccess;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,6 +82,7 @@ public class ManufacturerResource {
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить производителя")
     @SecurityRequirement(name = "Bearer Authentication")
+    @AdminAccess
     public ResponseEntity<?> deleteManufacturerById(
             @PathVariable("id") long manufacturerId
     ) {
