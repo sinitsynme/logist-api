@@ -6,9 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +16,9 @@ import ru.sinitsynme.logistapi.entity.StoredProductId;
 import ru.sinitsynme.logistapi.entity.Warehouse;
 import ru.sinitsynme.logistapi.mapper.StoredProductMapper;
 import ru.sinitsynme.logistapi.repository.StoredProductRepository;
+import ru.sinitsynme.logistapi.rest.dto.StoredProductActionRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.StoredProductRequestDto;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,10 +45,8 @@ public class StoredProductService {
     }
 
     @Transactional
-    public StoredProduct addStoredProductToWarehouse(StoredProductRequestDto requestDto) {
-
+    public StoredProduct registerProductInWarehouse(StoredProductRequestDto requestDto) {
         Warehouse warehouse = warehouseService.getWarehouse(requestDto.getWarehouseId());
-        productClient.getProduct(requestDto.getProductId());
 
         StoredProductId possiblyExistingStoredProductId = new StoredProductId(
                 requestDto.getProductId(),
@@ -61,23 +57,43 @@ public class StoredProductService {
                 .findById(possiblyExistingStoredProductId);
 
         if (possiblyExistingStoredProduct.isPresent()) {
-            StoredProduct storedProductFromDb = possiblyExistingStoredProduct.get();
-            storedProductFromDb.setQuantity(storedProductFromDb.getQuantity() + requestDto.getQuantity());
-            return storedProductRepository.save(storedProductFromDb);
-        } else {
-            StoredProduct storedProduct = storedProductMapper.toEntity(requestDto);
-            storedProduct.setWarehouseCode(warehouse.getStoredProductsCodeCounterString());
+            throw new BadRequestException(
+                    String.format(
+                            "Stored product with id = %s exists in warehouse with id = %s",
+                            requestDto.getProductId(),
+                            requestDto.getWarehouseId()),
+                    null,
+                    HttpStatus.BAD_REQUEST,
+                    STORED_PRODUCT_EXISTS,
+                    ExceptionSeverity.WARN
+            );
+        }
 
-            warehouseService.increaseWarehouseProductCodeCounter(warehouse.getId());
+        productClient.getProduct(requestDto.getProductId());
 
-            StoredProductId id = new StoredProductId(requestDto.getProductId(), warehouse);
-            storedProduct.setId(id);
+        StoredProduct storedProduct = storedProductMapper.toEntity(requestDto);
+        storedProduct.setQuantity(0);
+        storedProduct.setWarehouseCode(warehouse.getStoredProductsCodeCounterString());
 
+        warehouseService.increaseWarehouseProductCodeCounter(warehouse.getId());
+
+        StoredProductId id = new StoredProductId(requestDto.getProductId(), warehouse);
+        storedProduct.setId(id);
+
+        return storedProductRepository.save(storedProduct);
+    }
+
+    @Transactional
+    public StoredProduct addStoredProductToWarehouse(StoredProductActionRequestDto requestDto) {
+        StoredProduct storedProduct = getStoredProduct(requestDto.getProductId(), requestDto.getWarehouseId());
+
+        synchronized (this) {
+            storedProduct.setQuantity(storedProduct.getQuantity() + requestDto.getQuantity());
             return storedProductRepository.save(storedProduct);
         }
     }
 
-    public StoredProduct reserveProductInWarehouse(StoredProductRequestDto requestDto) {
+    public StoredProduct reserveProductInWarehouse(StoredProductActionRequestDto requestDto) {
         StoredProduct storedProduct = getStoredProduct(requestDto.getProductId(), requestDto.getWarehouseId());
         int requestedReservedQuantity = requestDto.getQuantity();
         int availableQuantity = storedProduct.getQuantity();
@@ -105,32 +121,48 @@ public class StoredProductService {
         }
     }
 
-    public StoredProduct removeReservedProductFromWarehouse(StoredProductRequestDto requestDto) {
+    public StoredProduct removeReservedProductFromWarehouse(StoredProductActionRequestDto requestDto) {
         StoredProduct storedProduct = getStoredProduct(requestDto.getProductId(), requestDto.getWarehouseId());
         int reservedQuantity = storedProduct.getReservedQuantity();
-        int requestedToRemoveQuantity = requestDto.getQuantity();
+        int requestedToCancelReserveQuantity = requestDto.getQuantity();
 
         synchronized (this) {
-            if (reservedQuantity < requestedToRemoveQuantity) {
+            if (reservedQuantity < requestedToCancelReserveQuantity) {
                 throw new BadRequestException
                         (
                                 String.format(
-                                        "Not enough reserved products with ID = %s to remove in warehouse with ID = %d. " +
-                                                "Available: %d; Requested: %d",
+                                        "Not enough reserved products with ID = %s to cancel reserve in warehouse with ID = %d. " +
+                                                "Available reserved: %d; Requested to cancel: %d",
                                         requestDto.getProductId(),
                                         requestDto.getWarehouseId(),
                                         reservedQuantity,
-                                        requestedToRemoveQuantity),
+                                        requestedToCancelReserveQuantity),
                                 null,
                                 HttpStatus.BAD_REQUEST,
                                 NOT_ENOUGH_RESERVED_STORED_PRODUCT_TO_REMOVE,
                                 ExceptionSeverity.WARN
                         );
             }
-            storedProduct.setReservedQuantity(reservedQuantity - requestedToRemoveQuantity);
-            storedProduct.setQuantity(storedProduct.getQuantity() - requestedToRemoveQuantity);
+            storedProduct.setReservedQuantity(reservedQuantity - requestedToCancelReserveQuantity);
             return storedProductRepository.save(storedProduct);
         }
+    }
+
+    public StoredProduct updateStoredProductPriceAndQuantum(StoredProductRequestDto requestDto) {
+        StoredProduct storedProduct = getStoredProduct(requestDto.getProductId(), requestDto.getWarehouseId());
+
+        storedProduct.setPrice(requestDto.getPrice());
+        storedProduct.setQuantum(requestDto.getQuantum());
+
+        storedProductRepository.save(storedProduct);
+
+        logger.info("Product with id = {} at warehouse with id = {} was updated: price now is {}, quantum now is {}",
+                requestDto.getProductId(),
+                requestDto.getWarehouseId(),
+                requestDto.getPrice(),
+                requestDto.getQuantum()
+        );
+        return storedProduct;
     }
 
     public Page<StoredProduct> getListOfStoredProductsAtWarehouse(Pageable pageable, Long warehouseId) {
@@ -142,7 +174,7 @@ public class StoredProductService {
                 .findByProductAndWarehouse(productId, warehouseId)
                 .orElseThrow(() -> new BadRequestException
                         (
-                                String.format("Product with id = %s not found in warehouse with id = %d",
+                                String.format("Product with id = %s wasn't registered in warehouse with id = %d",
                                         productId,
                                         warehouseId),
                                 null,
@@ -152,6 +184,5 @@ public class StoredProductService {
                         )
                 );
     }
-
 
 }

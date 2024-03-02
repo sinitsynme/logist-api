@@ -1,12 +1,9 @@
 package dto.business;
 
-import dto.business.ManufacturerResponseDto;
-import dto.business.ProductCategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -18,9 +15,6 @@ public class ProductResponseDto {
     private String description;
     private ProductCategoryDto productCategory;
     private ManufacturerResponseDto manufacturer;
-    private BigDecimal price;
     private double weight;
     private double volume;
-    private boolean isPackaged;
-    private int quantityInPackage;
 }
