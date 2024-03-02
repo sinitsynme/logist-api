@@ -1,7 +1,6 @@
 package ru.sinitsynme.logistapi.rest;
 
 import dto.PageRequestDto;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.entity.Product;
+import ru.sinitsynme.logistapi.entity.enums.ProductStatus;
 import ru.sinitsynme.logistapi.mapper.ProductMapper;
 import ru.sinitsynme.logistapi.rest.dto.ChangeProductStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductImageLinkResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
 import ru.sinitsynme.logistapi.service.ProductService;
+import security.annotations.SupportAccess;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class ProductResource {
     }
 
     @GetMapping
-    @Operation(summary = "Получить страницу товаров")
+    @Operation(summary = "Получить страницу товаров со статусом APPROVED")
     public ResponseEntity<Page<ProductResponseDto>> getPageOfProducts(
             @Valid PageRequestDto pageRequestDto,
             @RequestParam(required = false) List<String> categoryCodes) {
@@ -47,14 +48,37 @@ public class ProductResource {
         updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
 
         Page<ProductResponseDto> responseDtos = productService
-                .getProductsPage(pageRequestDto.toPageable(), categoryCodes)
+                .getProductsPage(
+                        ProductStatus.APPROVED,
+                        pageRequestDto.toPageable(),
+                        categoryCodes)
+                .map(productMapper::toResponseDto);
+
+        return ResponseEntity.ok(responseDtos);
+    }
+
+
+    @GetMapping("/admin")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @SupportAccess
+    @Operation(summary = "Получить страницу товаров по статусу [SUPPORT+]")
+    public ResponseEntity<Page<ProductResponseDto>> getPageOfProductsAdmin(
+            @RequestParam String status,
+            @Valid PageRequestDto pageRequestDto,
+            @RequestParam(required = false) List<String> categoryCodes) {
+
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+        ProductStatus productStatus = productService.parseProductStatusFromString(status);
+
+        Page<ProductResponseDto> responseDtos = productService
+                .getProductsPage(productStatus, pageRequestDto.toPageable(), categoryCodes)
                 .map(productMapper::toResponseDto);
 
         return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Получить страницу товаров по поисковому запросу")
+    @Operation(summary = "Получить страницу APPROVED товаров по поисковому запросу")
     public ResponseEntity<Page<ProductResponseDto>> getPageOfProductsWithNameContaining(
             @Valid PageRequestDto pageRequestDto,
             @RequestParam @Valid @Size(min = 3, max = 100) String query) {
@@ -62,7 +86,25 @@ public class ProductResource {
         updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
 
         Page<ProductResponseDto> responseDtos = productService
-                .getProductsPageWithNameContaining(pageRequestDto.toPageable(), query)
+                .getProductsBySearchQueryInStatus(pageRequestDto.toPageable(), query, ProductStatus.APPROVED)
+                .map(productMapper::toResponseDto);
+        return ResponseEntity.ok(responseDtos);
+    }
+
+    @GetMapping("/search/admin")
+    @SupportAccess
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Получить страницу товаров по поисковому запросу [SUPPORT+]")
+    public ResponseEntity<Page<ProductResponseDto>> getPageOfProductsWithNameContainingApproved(
+            @RequestParam String status,
+            @Valid PageRequestDto pageRequestDto,
+            @RequestParam @Valid @Size(min = 3, max = 100) String query) {
+
+        ProductStatus productStatus = productService.parseProductStatusFromString(status);
+        updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
+
+        Page<ProductResponseDto> responseDtos = productService
+                .getProductsBySearchQueryInStatus(pageRequestDto.toPageable(), query, productStatus)
                 .map(productMapper::toResponseDto);
         return ResponseEntity.ok(responseDtos);
     }

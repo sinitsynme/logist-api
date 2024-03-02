@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -73,17 +75,7 @@ public class ProductService {
                                        String authHeader) {
 
         Product productFromDb = getProductById(productId);
-        ProductStatus newStatus;
-        try {
-            newStatus = ProductStatus.valueOf(requestDto.getStatus());
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(
-                    String.format("Status with name = %s doesn't exist", requestDto.getStatus()),
-                    e,
-                    BAD_REQUEST,
-                    PRODUCT_STATUS_NOT_FOUND_CODE,
-                    ExceptionSeverity.WARN);
-        }
+        ProductStatus newStatus = parseProductStatusFromString(requestDto.getStatus());
         productFromDb.setStatus(newStatus);
 
         productRepository.save(productFromDb);
@@ -164,22 +156,47 @@ public class ProductService {
                 .orElseThrow(() -> notFoundException(productId));
     }
 
-    public Page<Product> getProductsPage(Pageable pageable, List<String> categoryCodes) {
+    public Page<Product> getProductsPage(ProductStatus productStatus, Pageable pageable, List<String> categoryCodes) {
         Page<Product> productsPage;
 
         if (categoryCodes != null && !categoryCodes.isEmpty()) {
             List<ProductCategory> listOfCategories = categoryCodes.stream()
                     .map(productCategoryService::getProductCategoryByCategoryCode)
                     .toList();
-            productsPage = productRepository.findByProductCategoryIn(listOfCategories, pageable);
+            productsPage = productRepository.findByStatusAndProductCategoryIn(
+                    productStatus,
+                    listOfCategories,
+                    pageable);
 
-        } else productsPage = productRepository.findAll(pageable);
+        } else productsPage = productRepository.findByStatus(productStatus, pageable);
 
         return productsPage;
     }
 
-    public Page<Product> getProductsPageWithNameContaining(Pageable pageable, String query) {
-        return productRepository.findByNameContainingIgnoreCase(query, pageable);
+
+    public Page<Product> getProductsBySearchQueryInStatus(
+            Pageable pageable,
+            String query,
+            ProductStatus productStatus) {
+        List<Product> products = productRepository
+                .findByNameContainingIgnoreCase(query, pageable)
+                .stream()
+                .filter(it -> it.getStatus().equals(productStatus))
+                .toList();
+
+        return new PageImpl<>(products);
+    }
+
+    public ProductStatus parseProductStatusFromString(String status) {
+        try {
+            return ProductStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
+                    String.format("Status with name = %s doesn't exist", status),
+                    e,
+                    BAD_REQUEST,
+                    PRODUCT_STATUS_NOT_FOUND_CODE,
+                    ExceptionSeverity.WARN);        }
     }
 
     private void addManufacturerAndCategoryToProduct(Product product, Long manufacturerId, String categoryCode) {
@@ -220,6 +237,7 @@ public class ProductService {
                 PRODUCT_NOT_FOUND_CODE,
                 ExceptionSeverity.WARN);
     }
+
 
 
 }
