@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -27,17 +28,29 @@ public class StoredProduct {
 
     private int reservedQuantity;
 
+    @Column(nullable = false)
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private int quantum;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StoredProduct that = (StoredProduct) o;
-        return quantity == that.quantity && reservedQuantity == that.reservedQuantity && Objects.equals(id, that.id) && Objects.equals(warehouseCode, that.warehouseCode);
+        return quantity == that.quantity &&
+                reservedQuantity == that.reservedQuantity &&
+                quantum == that.quantum &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(warehouseCode, that.warehouseCode) &&
+                Objects.equals(price, that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, warehouseCode, quantity, reservedQuantity);
+        return Objects.hash(id, warehouseCode, quantity,
+                reservedQuantity, price, quantum);
     }
 
     @Override
@@ -47,6 +60,8 @@ public class StoredProduct {
                 ", warehouseCode='" + warehouseCode + '\'' +
                 ", quantity=" + quantity +
                 ", reservedQuantity=" + reservedQuantity +
+                ", price=" + price +
+                ", quantum=" + quantum +
                 '}';
     }
 }
