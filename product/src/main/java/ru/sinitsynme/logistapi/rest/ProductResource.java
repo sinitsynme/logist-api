@@ -137,6 +137,7 @@ public class ProductResource {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Изменить статус товара")
+    @SupportAccess
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductResponseDto> changeProductStatus(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
