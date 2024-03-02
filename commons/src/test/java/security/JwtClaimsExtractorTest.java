@@ -13,13 +13,11 @@ class JwtClaimsExtractorTest {
     private static final List<String> TEST_AUTHORITIES = List.of("ROLE_CLIENT");
     @Test
     void getAuthorities() {
-        JwtClaimsExtractor jwtClaimsExtractor = new JwtClaimsExtractor();
-        assertIterableEquals(TEST_AUTHORITIES, jwtClaimsExtractor.getAuthorities(TEST_JWT));
+        assertIterableEquals(TEST_AUTHORITIES, JwtClaimsExtractor.getAuthorities(TEST_JWT));
     }
 
     @Test
     void getSubject() {
-        JwtClaimsExtractor jwtClaimsExtractor = new JwtClaimsExtractor();
-        assertEquals(TEST_SUBJECT, jwtClaimsExtractor.getSubject(TEST_JWT));
+        assertEquals(TEST_SUBJECT, JwtClaimsExtractor.getSubject(TEST_JWT));
     }
 }

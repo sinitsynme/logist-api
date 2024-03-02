@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final JwtClaimsExtractor JWT_CLAIMS_EXTRACTOR = new JwtClaimsExtractor();
-    private static final String BEARER_PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -33,11 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwtToken = extractTokenWithoutSignature(authHeader);
+        String jwtToken = JwtClaimsExtractor.extractTokenWithoutSignature(authHeader);
 
         try {
-            String subject = JWT_CLAIMS_EXTRACTOR.getSubject(jwtToken);
-            List<String> authorityNames = JWT_CLAIMS_EXTRACTOR.getAuthorities(jwtToken);
+            String subject = JwtClaimsExtractor.getSubject(jwtToken);
+            List<String> authorityNames = JwtClaimsExtractor.getAuthorities(jwtToken);
             List<SimpleGrantedAuthority> authorities = authorityNames
                     .stream()
                     .map(SimpleGrantedAuthority::new)
@@ -57,10 +55,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return header.startsWith("Bearer ");
     }
 
-    private String extractTokenWithoutSignature(String header) {
-        String token = header.replace(BEARER_PREFIX, "");
 
-        int signatureDelimiter = token.lastIndexOf('.');
-        return token.substring(0, signatureDelimiter + 1);
-    }
 }
