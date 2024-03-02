@@ -18,14 +18,8 @@ public class ProductRequestDto {
     private String description;
     private Long manufacturerId;
     private String categoryCode;
-    @DecimalMin(value = "0.01", message = "Price be more than 0")
-    private BigDecimal price;
     @DecimalMin(value = "0.001", message = "Weight should be more than 0 kg")
     private double weight;
     @DecimalMin(value = "0.001", message = "Volume should be more than 0 dm3")
     private double volume;
-    @Schema(example = "false", type = "boolean")
-    private boolean isPackaged;
-    @Schema(example = "1", type = "int")
-    private int quantityInPackage;
 }

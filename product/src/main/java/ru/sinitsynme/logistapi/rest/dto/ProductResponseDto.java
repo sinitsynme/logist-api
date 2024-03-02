@@ -16,9 +16,6 @@ public class ProductResponseDto {
     private String description;
     private ProductCategoryDto productCategory;
     private ManufacturerResponseDto manufacturer;
-    private BigDecimal price;
     private double weight;
     private double volume;
-    private boolean isPackaged;
-    private int quantityInPackage;
 }

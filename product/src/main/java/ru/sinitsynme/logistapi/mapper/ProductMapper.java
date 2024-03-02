@@ -12,7 +12,6 @@ import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
 
-    @Mapping(expression = "java(requestDto.isPackaged())", target = "isPackaged")
     Product fromRequestDto(ProductRequestDto requestDto);
 
     ProductResponseDto toResponseDto(Product product);
