@@ -7,17 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.entity.Manufacturer;
 import ru.sinitsynme.logistapi.entity.Product;
 import ru.sinitsynme.logistapi.entity.ProductCategory;
+import ru.sinitsynme.logistapi.entity.enums.ProductStatus;
 import ru.sinitsynme.logistapi.exception.service.GetFileFromRootException;
 import ru.sinitsynme.logistapi.exception.service.IllegalFileUploadException;
 import ru.sinitsynme.logistapi.mapper.ProductMapper;
 import ru.sinitsynme.logistapi.repository.ProductRepository;
+import ru.sinitsynme.logistapi.rest.dto.ChangeProductStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 
 import java.util.List;
@@ -54,6 +55,7 @@ public class ProductService {
 
     public Product saveProduct(ProductRequestDto productRequestDto) {
         Product product = productMapper.fromRequestDto(productRequestDto);
+        product.setStatus(ProductStatus.NEW);
 
         addManufacturerAndCategoryToProduct(
                 product,
@@ -62,6 +64,26 @@ public class ProductService {
 
         return productRepository.save(product);
     }
+
+    public Product changeProductStatus(UUID productId, ChangeProductStatusRequestDto requestDto) {
+        Product productFromDb = getProductById(productId);
+        try {
+            productFromDb.setStatus(ProductStatus.valueOf(requestDto.getStatus()));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
+                    String.format("Status with name = %s doesn't exist", requestDto.getStatus()),
+                    e,
+                    BAD_REQUEST,
+                    PRODUCT_STATUS_NOT_FOUND_CODE,
+                    ExceptionSeverity.WARN);
+        }
+        productRepository.save(productFromDb);
+        logger.info("Status of product with id = {} changed to {}", productId, requestDto.getStatus());
+
+        //todo add event
+        return productFromDb;
+    }
+
 
     public Product editProduct(UUID productId, ProductRequestDto productRequestDto) {
         Product productFromDb = getProductById(productId);

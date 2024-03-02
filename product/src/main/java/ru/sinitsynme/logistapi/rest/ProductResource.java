@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sinitsynme.logistapi.entity.Product;
 import ru.sinitsynme.logistapi.mapper.ProductMapper;
+import ru.sinitsynme.logistapi.rest.dto.ChangeProductStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductImageLinkResponseDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
@@ -89,6 +90,16 @@ public class ProductResource {
         String link = productService.getLinkToProductImage(productId);
         ProductImageLinkResponseDto responseDto = new ProductImageLinkResponseDto(link);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Изменить статус товара")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<ProductResponseDto> changeProductStatus(
+            @PathVariable("id") UUID productId,
+            @RequestBody ChangeProductStatusRequestDto requestDto) {
+        Product product = productService.changeProductStatus(productId, requestDto);
+        return ResponseEntity.ok(productMapper.toResponseDto(product));
     }
 
     @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -2,6 +2,7 @@ package ru.sinitsynme.logistapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sinitsynme.logistapi.entity.enums.ProductStatus;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -19,6 +20,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     private String name;
     private String description;
@@ -54,12 +58,15 @@ public class Product {
                 manufacturer, weight, volume);
     }
 
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
+                ", status=" + status +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", pathToImage='" + pathToImage + '\'' +
                 ", productCategory=" + productCategory +
                 ", manufacturer=" + manufacturer +
                 ", weight=" + weight +
