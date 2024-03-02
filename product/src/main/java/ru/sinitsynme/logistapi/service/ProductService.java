@@ -37,6 +37,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ManufacturerService manufacturerService;
     private final ProductCategoryService productCategoryService;
+    private final ProductEventService productEventService;
     private final FileService fileService;
     private final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
@@ -45,11 +46,13 @@ public class ProductService {
                           ProductRepository productRepository,
                           ManufacturerService manufacturerService,
                           ProductCategoryService productCategoryService,
+                          ProductEventService productEventService,
                           FileService fileService) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.manufacturerService = manufacturerService;
         this.productCategoryService = productCategoryService;
+        this.productEventService = productEventService;
         this.fileService = fileService;
     }
 
@@ -65,10 +68,14 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product changeProductStatus(UUID productId, ChangeProductStatusRequestDto requestDto) {
+    public Product changeProductStatus(UUID productId,
+                                       ChangeProductStatusRequestDto requestDto,
+                                       String authHeader) {
+
         Product productFromDb = getProductById(productId);
+        ProductStatus newStatus;
         try {
-            productFromDb.setStatus(ProductStatus.valueOf(requestDto.getStatus()));
+            newStatus = ProductStatus.valueOf(requestDto.getStatus());
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(
                     String.format("Status with name = %s doesn't exist", requestDto.getStatus()),
@@ -77,10 +84,13 @@ public class ProductService {
                     PRODUCT_STATUS_NOT_FOUND_CODE,
                     ExceptionSeverity.WARN);
         }
+        productFromDb.setStatus(newStatus);
+
         productRepository.save(productFromDb);
+        productEventService.saveProductEvent(productId, newStatus, authHeader);
+
         logger.info("Status of product with id = {} changed to {}", productId, requestDto.getStatus());
 
-        //todo add event
         return productFromDb;
     }
 

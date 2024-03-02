@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.rest;
 
 import dto.PageRequestDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -96,9 +97,10 @@ public class ProductResource {
     @Operation(summary = "Изменить статус товара")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductResponseDto> changeProductStatus(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable("id") UUID productId,
             @RequestBody ChangeProductStatusRequestDto requestDto) {
-        Product product = productService.changeProductStatus(productId, requestDto);
+        Product product = productService.changeProductStatus(productId, requestDto, authHeader);
         return ResponseEntity.ok(productMapper.toResponseDto(product));
     }
 

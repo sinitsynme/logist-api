@@ -9,10 +9,13 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 public class JwtClaimsExtractor {
+
+    private static final String BEARER_PREFIX = "Bearer ";
     private static final String AUTHORITIES_CLAIM = "authorities";
     private static final String SUBJECT_CLAIM = "sub";
+    private static final String USER_ID_CLAIM = "user_id";
 
-    public List<String> getAuthorities(final String token) {
+    public static List<String> getAuthorities(final String token) {
         try {
             return (List<String>) Jwts.parserBuilder().build()
                     .parseClaimsJwt(token)
@@ -29,7 +32,7 @@ public class JwtClaimsExtractor {
         }
     }
 
-    public String getSubject(final String token) {
+    public static String getSubject(final String token) {
         try {
             return Jwts.parserBuilder().build()
                     .parseClaimsJwt(token)
@@ -44,5 +47,29 @@ public class JwtClaimsExtractor {
                     ExceptionSeverity.WARN
             );
         }
+    }
+
+    public static String getUserId(final String token) {
+        try {
+            return Jwts.parserBuilder().build()
+                    .parseClaimsJwt(token)
+                    .getBody()
+                    .get(USER_ID_CLAIM, String.class);
+        } catch (JwtException ex) {
+            throw new UnauthorizedException(
+                    ex.getMessage(),
+                    null,
+                    UNAUTHORIZED,
+                    "Invalid JWT",
+                    ExceptionSeverity.WARN
+            );
+        }
+    }
+
+    public static String extractTokenWithoutSignature(String header) {
+        String token = header.replace(BEARER_PREFIX, "");
+
+        int signatureDelimiter = token.lastIndexOf('.');
+        return token.substring(0, signatureDelimiter + 1);
     }
 }
