@@ -153,6 +153,10 @@ public class ProductService {
     public Product getProductById(UUID productId) {
         return productRepository
                 .findById(productId)
+                .map(it -> {
+                    addImageLinkToProduct(it);
+                    return it;
+                })
                 .orElseThrow(() -> notFoundException(productId));
     }
 
@@ -199,7 +203,8 @@ public class ProductService {
                     e,
                     BAD_REQUEST,
                     PRODUCT_STATUS_NOT_FOUND_CODE,
-                    ExceptionSeverity.WARN);        }
+                    ExceptionSeverity.WARN);
+        }
     }
 
     private void addManufacturerAndCategoryToProduct(Product product, Long manufacturerId, String categoryCode) {
@@ -246,7 +251,6 @@ public class ProductService {
             product.setPathToImage(fileService.getLinkToResource(product.getPathToImage()));
         }
     }
-
 
 
 }
