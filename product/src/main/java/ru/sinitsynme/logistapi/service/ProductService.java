@@ -170,7 +170,7 @@ public class ProductService {
 
         } else productsPage = productRepository.findByStatus(productStatus, pageable);
 
-        productsPage.forEach(it -> it.setPathToImage(fileService.getLinkToResource(it.getPathToImage())));
+        productsPage.forEach(this::addImageLinkToProduct);
 
         return productsPage;
     }
@@ -186,7 +186,7 @@ public class ProductService {
                 .filter(it -> it.getStatus().equals(productStatus))
                 .toList();
 
-        products.forEach(it -> it.setPathToImage(fileService.getLinkToResource(it.getPathToImage())));
+        products.forEach(this::addImageLinkToProduct);
         return new PageImpl<>(products);
     }
 
@@ -239,6 +239,12 @@ public class ProductService {
                 NOT_FOUND,
                 PRODUCT_NOT_FOUND_CODE,
                 ExceptionSeverity.WARN);
+    }
+
+    private void addImageLinkToProduct(Product product) {
+        if (product.getPathToImage() != null && !product.getPathToImage().isEmpty()) {
+            product.setPathToImage(fileService.getLinkToResource(product.getPathToImage()));
+        }
     }
 
 
