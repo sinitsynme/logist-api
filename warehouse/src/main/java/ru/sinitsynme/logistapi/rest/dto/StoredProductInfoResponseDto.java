@@ -14,7 +14,7 @@ import java.util.UUID;
 public class StoredProductInfoResponseDto {
 
     private UUID productId;
-    private boolean isAvailable = false;
+    private boolean isAvailable;
     private BigDecimal minimalPrice;
     private List<SupplyResponseDto> supplyList;
 }
