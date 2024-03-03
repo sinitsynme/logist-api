@@ -13,11 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.StoredProduct;
 import ru.sinitsynme.logistapi.mapper.StoredProductMapper;
-import ru.sinitsynme.logistapi.rest.dto.StoredProductActionRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.StoredProductRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.StoredProductResponseDto;
+import ru.sinitsynme.logistapi.rest.dto.*;
 import ru.sinitsynme.logistapi.service.StoredProductService;
+import ru.sinitsynme.logistapi.service.SupplyService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Управление товарами на складах")
@@ -26,11 +26,15 @@ import java.util.UUID;
 public class StoredProductResource {
 
     private final Logger logger = LoggerFactory.getLogger(StoredProductResource.class);
-    private final StoredProductService service;
+    private final StoredProductService storedProductService;
+    private final SupplyService supplyService;
     private final StoredProductMapper storedProductMapper;
 
-    public StoredProductResource(StoredProductService service, StoredProductMapper storedProductMapper) {
-        this.service = service;
+    public StoredProductResource(StoredProductService service,
+                                 SupplyService supplyService,
+                                 StoredProductMapper storedProductMapper) {
+        this.storedProductService = service;
+        this.supplyService = supplyService;
         this.storedProductMapper = storedProductMapper;
     }
 
@@ -39,7 +43,7 @@ public class StoredProductResource {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> registerProductInWarehouse(
             @RequestBody @Valid StoredProductRequestDto requestDto) {
-        StoredProduct storedProduct = service.registerProductInWarehouse(requestDto);
+        StoredProduct storedProduct = storedProductService.registerProductInWarehouse(requestDto);
         logger.info("Product {} registered to warehouse {} with warehouseCode {}, now quantity {}",
                 storedProduct.getId().getProductId(),
                 storedProduct.getId().getWarehouse().getId(),
@@ -55,7 +59,7 @@ public class StoredProductResource {
     public ResponseEntity<StoredProductResponseDto> updatePriceAndQuantumOfProductInWarehouse(
             @RequestBody @Valid StoredProductRequestDto requestDto
     ) {
-        StoredProduct storedProduct = service.updateStoredProductPriceAndQuantum(requestDto);
+        StoredProduct storedProduct = storedProductService.updateStoredProductPriceAndQuantum(requestDto);
         return ResponseEntity.ok(storedProductMapper.toResponseDto(storedProduct));
     }
 
@@ -64,7 +68,7 @@ public class StoredProductResource {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> addProductToWarehouse(
             @RequestBody @Valid StoredProductActionRequestDto requestDto) {
-        StoredProduct storedProduct = service.addStoredProductToWarehouse(requestDto);
+        StoredProduct storedProduct = storedProductService.addStoredProductToWarehouse(requestDto);
         logger.info("Product {} added to warehouse {}, now quantity {}",
                 storedProduct.getId().getProductId(),
                 storedProduct.getId().getWarehouse().getId(),
@@ -78,8 +82,24 @@ public class StoredProductResource {
     public ResponseEntity<StoredProductResponseDto> getProductFromWarehouse(
             @RequestParam UUID productId,
             @RequestParam @Valid @Min(1) Long warehouseId) {
-        StoredProduct storedProduct = service.getStoredProduct(productId, warehouseId);
+        StoredProduct storedProduct = storedProductService.getStoredProduct(productId, warehouseId);
         return ResponseEntity.ok(storedProductMapper.toResponseDto(storedProduct));
+    }
+
+    @GetMapping("/minimalPrice")
+    @Operation(summary = "Получить информацию о минимальной стоимости товаров по ID")
+    public ResponseEntity<List<AvailableStoredProductMinPricesDto>> getStoredProductsMinPrice(
+            @RequestParam List<UUID> productIds
+    ) {
+        return ResponseEntity.ok(supplyService.getAvailableStoredProductsMinPrices(productIds));
+    }
+
+    @GetMapping("/{id}/info")
+    @Operation(summary = "Получить информацию о наличии на складах товара по ID")
+    public ResponseEntity<StoredProductInfoResponseDto> getFullStoredProductInfo(
+            @PathVariable("id") UUID productId
+    ) {
+        return ResponseEntity.ok(supplyService.getFullStoredProductInfo(productId));
     }
 
     @PatchMapping("/reserve")
@@ -87,7 +107,7 @@ public class StoredProductResource {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> reserveProductInWarehouse(
             @RequestBody @Valid StoredProductActionRequestDto requestDto) {
-        StoredProduct storedProduct = service.reserveProductInWarehouse(requestDto);
+        StoredProduct storedProduct = storedProductService.reserveProductInWarehouse(requestDto);
         logger.info("Products with ID = {} reserved at warehouse with ID = {} in quantity {}",
                 requestDto.getProductId(),
                 requestDto.getWarehouseId(),
@@ -101,7 +121,7 @@ public class StoredProductResource {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> removeProductFromWarehouse(
             @RequestBody @Valid StoredProductActionRequestDto requestDto) {
-        StoredProduct storedProduct = service.removeReservedProductFromWarehouse(requestDto);
+        StoredProduct storedProduct = storedProductService.removeReservedProductFromWarehouse(requestDto);
         logger.info("Reserved products with ID = {} removed from warehouse with ID = {} in quantity {}",
                 requestDto.getProductId(),
                 requestDto.getWarehouseId(),
@@ -115,7 +135,7 @@ public class StoredProductResource {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<StoredProductResponseDto> cancelReserveFromProductInWarehouse(
             @RequestBody @Valid StoredProductActionRequestDto requestDto) {
-        StoredProduct storedProduct = service.removeReservedProductFromWarehouse(requestDto);
+        StoredProduct storedProduct = storedProductService.removeReservedProductFromWarehouse(requestDto);
         logger.info("Reserve for products with ID = {} from warehouse with ID = {} in quantity {} was canceled",
                 requestDto.getProductId(),
                 requestDto.getWarehouseId(),
@@ -133,7 +153,7 @@ public class StoredProductResource {
     ) {
         updatePageRequestDtoIfSortIsEmpty(pageRequestDto);
 
-        Page<StoredProductResponseDto> responseDtoList = service
+        Page<StoredProductResponseDto> responseDtoList = storedProductService
                 .getListOfStoredProductsAtWarehouse(pageRequestDto.toPageable(), warehouseId)
                 .map(storedProductMapper::toResponseDto);
         return ResponseEntity.ok(responseDtoList);
