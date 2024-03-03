@@ -6,6 +6,7 @@ import org.mapstruct.ReportingPolicy;
 import ru.sinitsynme.logistapi.entity.StoredProduct;
 import ru.sinitsynme.logistapi.rest.dto.StoredProductRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.StoredProductResponseDto;
+import ru.sinitsynme.logistapi.rest.dto.SupplyResponseDto;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StoredProductMapper {
@@ -19,4 +20,11 @@ public interface StoredProductMapper {
     @Mapping(expression = "java(storedProduct.getId().getWarehouse().getId())", target = "warehouseId")
     @Mapping(expression = "java(storedProduct.getId().getProductId())", target = "productId")
     StoredProductResponseDto toResponseDto(StoredProduct storedProduct);
+
+    @Mapping(
+            expression = "java(storedProduct.getQuantity() - storedProduct.getReservedQuantity())",
+            target = "availableForReserveQuantity"
+    )
+    @Mapping(expression = "java(storedProduct.getId().getWarehouse().getId())", target = "warehouseId")
+    SupplyResponseDto toSupplyResponseDto(StoredProduct storedProduct);
 }
