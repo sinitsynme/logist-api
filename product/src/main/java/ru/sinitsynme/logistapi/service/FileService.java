@@ -7,4 +7,6 @@ public interface FileService {
     String getLinkToResource(String fileName);
 
     String saveImage(MultipartFile multipartFile);
+
+    void deleteImage(String fileName);
 }

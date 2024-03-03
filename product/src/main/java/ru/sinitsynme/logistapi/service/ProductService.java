@@ -21,10 +21,10 @@ import ru.sinitsynme.logistapi.mapper.ProductMapper;
 import ru.sinitsynme.logistapi.repository.ProductRepository;
 import ru.sinitsynme.logistapi.rest.dto.ChangeProductStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -112,6 +112,9 @@ public class ProductService {
         Product product = getProductById(productId);
         if (productImageFile != null) {
             try {
+                if (product.getPathToImage() != null && !product.getPathToImage().isEmpty()) {
+                    fileService.deleteImage(product.getPathToImage());
+                }
                 String newFileName = fileService.saveImage(productImageFile);
                 product.setPathToImage(newFileName);
             } catch (IllegalFileUploadException e) {
@@ -196,7 +199,8 @@ public class ProductService {
                     e,
                     BAD_REQUEST,
                     PRODUCT_STATUS_NOT_FOUND_CODE,
-                    ExceptionSeverity.WARN);        }
+                    ExceptionSeverity.WARN);
+        }
     }
 
     private void addManufacturerAndCategoryToProduct(Product product, Long manufacturerId, String categoryCode) {
@@ -238,6 +242,11 @@ public class ProductService {
                 ExceptionSeverity.WARN);
     }
 
+    public void addImageLinkToProductResponseDto(ProductResponseDto responseDto) {
+        if (responseDto.getLink() != null && !responseDto.getLink().isEmpty()) {
+            responseDto.setLink(fileService.getLinkToResource(responseDto.getLink()));
+        }
+    }
 
 
 }

@@ -39,6 +39,11 @@ public class FileS3Service implements FileService {
     }
 
     @Override
+    public void deleteImage(String fileName) {
+        s3Client.deleteObject(objectStorageProperties.getBucketName(), fileName);
+    }
+
+    @Override
     public String saveImage(MultipartFile file) {
         if (file.getContentType() == null) {
             throw new IllegalFileUploadException("Broken file type!");
@@ -69,7 +74,7 @@ public class FileS3Service implements FileService {
     }
 
     private String saveFile(MultipartFile file) throws IOException {
-        String maskedFileName = UUID.randomUUID() + file.getOriginalFilename();
+        String maskedFileName = UUID.randomUUID().toString();
 
         ObjectMetadata data = new ObjectMetadata();
         data.setContentType(file.getContentType());

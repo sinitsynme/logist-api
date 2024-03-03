@@ -14,5 +14,6 @@ public interface ProductMapper {
 
     Product fromRequestDto(ProductRequestDto requestDto);
 
+    @Mapping(source = "pathToImage", target = "link")
     ProductResponseDto toResponseDto(Product product);
 }
