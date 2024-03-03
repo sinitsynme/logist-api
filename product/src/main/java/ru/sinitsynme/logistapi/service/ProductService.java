@@ -21,10 +21,10 @@ import ru.sinitsynme.logistapi.mapper.ProductMapper;
 import ru.sinitsynme.logistapi.repository.ProductRepository;
 import ru.sinitsynme.logistapi.rest.dto.ChangeProductStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.ProductRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.ProductResponseDto;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -112,6 +112,9 @@ public class ProductService {
         Product product = getProductById(productId);
         if (productImageFile != null) {
             try {
+                if (product.getPathToImage() != null && !product.getPathToImage().isEmpty()) {
+                    fileService.deleteImage(product.getPathToImage());
+                }
                 String newFileName = fileService.saveImage(productImageFile);
                 product.setPathToImage(newFileName);
             } catch (IllegalFileUploadException e) {
@@ -153,10 +156,6 @@ public class ProductService {
     public Product getProductById(UUID productId) {
         return productRepository
                 .findById(productId)
-                .map(it -> {
-                    addImageLinkToProduct(it);
-                    return it;
-                })
                 .orElseThrow(() -> notFoundException(productId));
     }
 
@@ -174,8 +173,6 @@ public class ProductService {
 
         } else productsPage = productRepository.findByStatus(productStatus, pageable);
 
-        productsPage.forEach(this::addImageLinkToProduct);
-
         return productsPage;
     }
 
@@ -190,7 +187,6 @@ public class ProductService {
                 .filter(it -> it.getStatus().equals(productStatus))
                 .toList();
 
-        products.forEach(this::addImageLinkToProduct);
         return new PageImpl<>(products);
     }
 
@@ -246,9 +242,9 @@ public class ProductService {
                 ExceptionSeverity.WARN);
     }
 
-    private void addImageLinkToProduct(Product product) {
-        if (product.getPathToImage() != null && !product.getPathToImage().isEmpty()) {
-            product.setPathToImage(fileService.getLinkToResource(product.getPathToImage()));
+    public void addImageLinkToProductResponseDto(ProductResponseDto responseDto) {
+        if (responseDto.getLink() != null && !responseDto.getLink().isEmpty()) {
+            responseDto.setLink(fileService.getLinkToResource(responseDto.getLink()));
         }
     }
 

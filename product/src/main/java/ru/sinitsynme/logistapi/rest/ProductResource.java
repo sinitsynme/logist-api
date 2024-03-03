@@ -54,6 +54,7 @@ public class ProductResource {
                         categoryCodes)
                 .map(productMapper::toResponseDto);
 
+        responseDtos.forEach(productService::addImageLinkToProductResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
 
@@ -74,6 +75,7 @@ public class ProductResource {
                 .getProductsPage(productStatus, pageRequestDto.toPageable(), categoryCodes)
                 .map(productMapper::toResponseDto);
 
+        responseDtos.forEach(productService::addImageLinkToProductResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
 
@@ -88,6 +90,7 @@ public class ProductResource {
         Page<ProductResponseDto> responseDtos = productService
                 .getProductsBySearchQueryInStatus(pageRequestDto.toPageable(), query, ProductStatus.APPROVED)
                 .map(productMapper::toResponseDto);
+        responseDtos.forEach(productService::addImageLinkToProductResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
 
@@ -106,6 +109,7 @@ public class ProductResource {
         Page<ProductResponseDto> responseDtos = productService
                 .getProductsBySearchQueryInStatus(pageRequestDto.toPageable(), query, productStatus)
                 .map(productMapper::toResponseDto);
+        responseDtos.forEach(productService::addImageLinkToProductResponseDto);
         return ResponseEntity.ok(responseDtos);
     }
 
@@ -113,7 +117,9 @@ public class ProductResource {
     @Operation(summary = "Получить товар по ID")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable("id") UUID productId) {
         Product product = productService.getProductById(productId);
-        return ResponseEntity.ok(productMapper.toResponseDto(product));
+        ProductResponseDto responseDto = productMapper.toResponseDto(product);
+        productService.addImageLinkToProductResponseDto(responseDto);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping
@@ -148,7 +154,7 @@ public class ProductResource {
     }
 
     @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Добавить изображение к товару")
+    @Operation(summary = "Изменить изображение товара")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> addImageToProduct(
             @RequestPart MultipartFile productImageFile,
