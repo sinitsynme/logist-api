@@ -170,6 +170,8 @@ public class ProductService {
 
         } else productsPage = productRepository.findByStatus(productStatus, pageable);
 
+        productsPage.forEach(it -> it.setPathToImage(fileService.getLinkToResource(it.getPathToImage())));
+
         return productsPage;
     }
 
@@ -184,6 +186,7 @@ public class ProductService {
                 .filter(it -> it.getStatus().equals(productStatus))
                 .toList();
 
+        products.forEach(it -> it.setPathToImage(fileService.getLinkToResource(it.getPathToImage())));
         return new PageImpl<>(products);
     }
 

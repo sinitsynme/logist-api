@@ -131,7 +131,7 @@ public class ProductResource {
     @ResponseBody
     public ResponseEntity<ProductImageLinkResponseDto> getProductImage(@PathVariable("id") UUID productId) {
         String link = productService.getLinkToProductImage(productId);
-        ProductImageLinkResponseDto responseDto = new ProductImageLinkResponseDto(link);
+        ProductImageLinkResponseDto responseDto = new ProductImageLinkResponseDto(productId, link);
         return ResponseEntity.ok(responseDto);
     }
 

@@ -20,4 +20,5 @@ public class ProductResponseDto {
     private ManufacturerResponseDto manufacturer;
     private double weight;
     private double volume;
+    private String link;
 }
