@@ -4,10 +4,15 @@ management:
       enabled: true
 
 spring:
-  data:
-    mongodb:
-      username: ${DB_USERNAME}
-      password: ${DB_PASSWORD}
-      host: ${DB_HOST}
-      port: ${DB_PORT}
-      database: logist-api-order
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_URL}/logist-api-order
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    #   open when want to fetch new migrations data
+    show-sql: false

@@ -5,41 +5,46 @@ services:
       context: ./order
     mem_limit: 512m
     ports:
-      - "8100-8102:8080"
+      - "8500-8502:8084"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - DB_USERNAME=logistapi
       - DB_PASSWORD=logistapi
-      - DB_HOST=mongo-order
-      - DB_PORT=27017
-      - SERVER_PORT=8080
+      - DB_URL=postgres-order:5432
+      - SERVER_PORT=8084
     env_file:
       - var.env
     depends_on:
-      - mongo-order
-      - eureka
+      postgres-order:
+        condition: service_healthy
+      eureka:
+        condition: service_started
     networks:
       - internal
     profiles:
       - prod
-  mongo-order:
-    image: mongo:5.0.22
-    ports:
-      - '27020:27017'
-    restart: always
-    logging:
-      options:
-        max-size: 1g
+      - test
+      - qa
+  postgres-order:
+    container_name: postgres-order
+    image: postgres:13.3
     environment:
-      - MONGO_INITDB_DATABASE=logist-api-order
-      - MONGO_INITDB_ROOT_USERNAME=logistapi
-      - MONGO_INITDB_ROOT_PASSWORD=logistapi
-    volumes:
-      - ./order/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      POSTGRES_DB: "logist-api-order"
+      POSTGRES_USER: "logistapi"
+      POSTGRES_PASSWORD: "logistapi"
+    ports:
+      - "5436:5432"
     networks:
       - internal
     profiles:
       - prod
+      - test
+      - qa
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d logist-api-order -U logistapi"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
   product:
     build:
       context: ./product
@@ -78,7 +83,6 @@ services:
       - internal
     profiles:
       - prod
-      - test
       - qa
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d logist-api-product -U logistapi"]
