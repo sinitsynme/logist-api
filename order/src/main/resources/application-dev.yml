@@ -15,4 +15,18 @@ spring:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     #   open when want to fetch new migrations data
-    show-sql: true
+    show-sql: false
+
+
+external-system:
+  auth:
+    service-name: logistapi-order
+    url: http://auth-server:8083
+    username: order@skladlain.ru
+    password: logistapi-order
+  product:
+    service-name: logistapi-product
+    url: http://product:8081
+  warehouse:
+    service-name: logistapi-warehouse
+    url: http://warehouse:8082
