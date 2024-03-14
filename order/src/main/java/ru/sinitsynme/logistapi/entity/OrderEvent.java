@@ -2,6 +2,7 @@ package ru.sinitsynme.logistapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sinitsynme.logistapi.entity.enums.OrderEventType;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 
@@ -30,6 +31,8 @@ public class OrderEvent {
     private OrderStatus newStatus;
     @Enumerated(EnumType.STRING)
     private PaymentStatus newPaymentStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderEventType type;
     private UUID initiatorId;
 
     @Override

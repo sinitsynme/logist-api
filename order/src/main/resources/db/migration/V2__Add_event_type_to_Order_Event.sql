@@ -1,0 +1,1 @@
+alter table order_event add column type varchar(255) check (type in ('ORDER_STATUS_CHANGED', 'PAYMENT_STATUS_CHANGED'));
