@@ -35,10 +35,11 @@ public class Order {
     @OneToOne(fetch = FetchType.EAGER, optional = false)
     private Address actualOrderAddress;
 
-    private UUID warehouseId;
+    @Column(nullable = false)
+    private Long warehouseId;
 
     @OneToMany(mappedBy = "id.order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderedProduct> orderedProductList;
+    private List<OrderItem> orderItemList;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Document> documentsList;
@@ -48,12 +49,12 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) && status == order.status && paymentStatus == order.paymentStatus && Objects.equals(actualOrderAddress, order.actualOrderAddress) && Objects.equals(warehouseId, order.warehouseId);
+        return Objects.equals(id, order.id) && status == order.status && paymentStatus == order.paymentStatus && Objects.equals(clientOrganization, order.clientOrganization) && Objects.equals(actualOrderAddress, order.actualOrderAddress) && Objects.equals(warehouseId, order.warehouseId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, status, paymentStatus, actualOrderAddress, warehouseId);
+        return Objects.hash(id, status, paymentStatus, clientOrganization, actualOrderAddress, warehouseId);
     }
 
     @Override
@@ -63,7 +64,6 @@ public class Order {
                 ", status=" + status +
                 ", paymentStatus=" + paymentStatus +
                 ", clientOrganization=" + clientOrganization.getClientId() +
-                ", actualOrderAddress=" + actualOrderAddress +
                 ", warehouseId=" + warehouseId +
                 '}';
     }

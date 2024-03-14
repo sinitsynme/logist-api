@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Embeddable
-public class OrderedProductId implements Serializable {
+public class OrderItemId implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 4344609258075581567L;
@@ -34,7 +34,7 @@ public class OrderedProductId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderedProductId that = (OrderedProductId) o;
+        OrderItemId that = (OrderItemId) o;
         return Objects.equals(productId, that.productId) && Objects.equals(order, that.order);
     }
 
