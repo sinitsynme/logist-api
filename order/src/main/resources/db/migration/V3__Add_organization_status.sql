@@ -1,0 +1,1 @@
+alter table client_organization add column organization_status varchar(255) check (organization_status in ('NEW', 'APPROVED', 'REJECTED', 'CLOSED'));

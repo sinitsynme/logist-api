@@ -2,6 +2,7 @@ package ru.sinitsynme.logistapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -16,14 +17,18 @@ import java.util.UUID;
 public class ClientOrganization {
 
     @Id
+    private String inn;
+
     private UUID clientId;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Enumerated(EnumType.STRING)
+    private OrganizationStatus organizationStatus;
+
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
     private String name;
-    private String inn;
     private String bik;
     private String clientAccount;
     private String bankName;
@@ -34,21 +39,24 @@ public class ClientOrganization {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientOrganization that = (ClientOrganization) o;
-        return Objects.equals(clientId, that.clientId) && Objects.equals(address, that.address) && Objects.equals(name, that.name) && Objects.equals(inn, that.inn) && Objects.equals(bik, that.bik) && Objects.equals(clientAccount, that.clientAccount) && Objects.equals(bankName, that.bankName) && Objects.equals(correspondentAccount, that.correspondentAccount);
+        return Objects.equals(inn, that.inn) && Objects.equals(clientId, that.clientId) && organizationStatus == that.organizationStatus
+                && Objects.equals(address, that.address) && Objects.equals(name, that.name) && Objects.equals(bik, that.bik) && Objects.equals(clientAccount, that.clientAccount)
+                && Objects.equals(bankName, that.bankName) && Objects.equals(correspondentAccount, that.correspondentAccount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientId, address, name, inn, bik, clientAccount, bankName, correspondentAccount);
+        return Objects.hash(inn, clientId, organizationStatus, address, name, bik, clientAccount, bankName, correspondentAccount);
     }
 
     @Override
     public String toString() {
         return "ClientOrganization{" +
-                "clientId=" + clientId +
+                "inn='" + inn + '\'' +
+                ", clientId=" + clientId +
+                ", organizationStatus=" + organizationStatus +
                 ", address=" + address +
                 ", name='" + name + '\'' +
-                ", inn='" + inn + '\'' +
                 ", bik='" + bik + '\'' +
                 ", clientAccount='" + clientAccount + '\'' +
                 ", bankName='" + bankName + '\'' +
