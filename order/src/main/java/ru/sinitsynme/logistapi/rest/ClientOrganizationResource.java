@@ -9,12 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
-import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 import ru.sinitsynme.logistapi.mapper.ClientOrganizationMapper;
-import ru.sinitsynme.logistapi.rest.dto.ChangeClientOrganizationStatusRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationEditRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationResponseDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ChangeClientOrganizationStatusRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationResponseDto;
 import ru.sinitsynme.logistapi.service.ClientOrganizationService;
 
 import java.util.UUID;

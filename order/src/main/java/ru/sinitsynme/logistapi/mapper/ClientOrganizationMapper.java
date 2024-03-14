@@ -4,9 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationEditRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationRequestDto;
-import ru.sinitsynme.logistapi.rest.dto.ClientOrganizationResponseDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationResponseDto;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {AddressMapper.class})
 public interface ClientOrganizationMapper {

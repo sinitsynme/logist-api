@@ -1,9 +1,10 @@
-package ru.sinitsynme.logistapi.rest.dto;
+package ru.sinitsynme.logistapi.rest.dto.clientOrganization;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
 
 import java.util.UUID;
 
