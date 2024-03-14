@@ -23,4 +23,11 @@ public class PageRequestDto {
         return PageRequest.of(page, size, Sort.by(sortByFields));
     }
 
+    // TODO migrate to this way of setting default sorting column
+    public void updatePageRequestDtoIfSortIsEmpty(String defaultSortColumn) {
+        if (sortByFields == null || sortByFields.length == 0) {
+            sortByFields = new String[]{defaultSortColumn};
+        }
+    }
+
 }
