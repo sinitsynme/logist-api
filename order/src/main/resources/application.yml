@@ -1,6 +1,17 @@
 spring:
   application:
     name: logistapi-order
+  flyway:
+    locations:
+      - classpath:/db/migration
+
+springdoc:
+  default-support-form-data: false
+  swagger-ui:
+    path: /swagger-ui
+
+logist-api:
+  clock-zone-id: Europe/Moscow
 
 logging:
   charset:
@@ -11,3 +22,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
+
+
+
