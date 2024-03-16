@@ -15,7 +15,6 @@ import java.util.UUID;
 public class ClientOrganizationEditRequestDto {
 
     private UUID clientId;
-    private AddressRequestDto addressRequestDto;
     private String name;
     private String bik;
     private String clientAccount;

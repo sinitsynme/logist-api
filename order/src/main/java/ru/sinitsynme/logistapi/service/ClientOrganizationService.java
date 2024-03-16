@@ -15,10 +15,12 @@ import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 import ru.sinitsynme.logistapi.mapper.AddressMapper;
 import ru.sinitsynme.logistapi.mapper.ClientOrganizationMapper;
 import ru.sinitsynme.logistapi.repository.ClientOrganizationRepository;
+import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -67,6 +69,20 @@ public class ClientOrganizationService {
         return clientOrganization;
     }
 
+    public ClientOrganization addAddressToClientOrganization(AddressRequestDto requestDto, String inn) {
+        ClientOrganization clientOrganizationFromDb = getClientOrganization(inn);
+
+        Address newAddress =  addressMapper.requestDtoToAddress(requestDto);
+        newAddress.setClientOrganization(clientOrganizationFromDb);
+        clientOrganizationFromDb.getAddressList().add(newAddress);
+
+        clientOrganizationFromDb = clientOrganizationRepository.save(clientOrganizationFromDb);
+
+        logger.info("Added new address to client organization with inn = {}", inn);
+
+        return clientOrganizationFromDb;
+    }
+
 
     public ClientOrganization editClientOrganization(ClientOrganizationEditRequestDto requestDto, String inn) {
         ClientOrganization clientOrganizationFromDb = getClientOrganization(inn);
@@ -77,11 +93,6 @@ public class ClientOrganizationService {
         clientOrganizationFromDb.setBankName(requestDto.getBankName());
         clientOrganizationFromDb.setCorrespondentAccount(requestDto.getCorrespondentAccount());
         clientOrganizationFromDb.setClientId(requestDto.getClientId());
-
-        Address newAddress = addressMapper.requestDtoToAddress(requestDto.getAddressRequestDto());
-        if (!newAddress.equals(clientOrganizationFromDb.getAddress())) {
-            clientOrganizationFromDb.setAddress(newAddress);
-        }
 
         clientOrganizationFromDb = clientOrganizationRepository.save(clientOrganizationFromDb);
 

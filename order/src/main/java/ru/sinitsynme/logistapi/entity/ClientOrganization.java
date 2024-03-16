@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,9 +26,8 @@ public class ClientOrganization {
     @Enumerated(EnumType.STRING)
     private OrganizationStatus organizationStatus;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "clientOrganization")
+    private List<Address> addressList = new ArrayList<>();
 
     private String name;
     private String bik;
@@ -40,27 +41,13 @@ public class ClientOrganization {
         if (o == null || getClass() != o.getClass()) return false;
         ClientOrganization that = (ClientOrganization) o;
         return Objects.equals(inn, that.inn) && Objects.equals(clientId, that.clientId) && organizationStatus == that.organizationStatus
-                && Objects.equals(address, that.address) && Objects.equals(name, that.name) && Objects.equals(bik, that.bik) && Objects.equals(clientAccount, that.clientAccount)
-                && Objects.equals(bankName, that.bankName) && Objects.equals(correspondentAccount, that.correspondentAccount);
+                && Objects.equals(name, that.name) && Objects.equals(bik, that.bik)
+                && Objects.equals(clientAccount, that.clientAccount) && Objects.equals(bankName, that.bankName)
+                && Objects.equals(correspondentAccount, that.correspondentAccount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inn, clientId, organizationStatus, address, name, bik, clientAccount, bankName, correspondentAccount);
-    }
-
-    @Override
-    public String toString() {
-        return "ClientOrganization{" +
-                "inn='" + inn + '\'' +
-                ", clientId=" + clientId +
-                ", organizationStatus=" + organizationStatus +
-                ", address=" + address +
-                ", name='" + name + '\'' +
-                ", bik='" + bik + '\'' +
-                ", clientAccount='" + clientAccount + '\'' +
-                ", bankName='" + bankName + '\'' +
-                ", correspondentAccount='" + correspondentAccount + '\'' +
-                '}';
+        return Objects.hash(inn, clientId, organizationStatus, name, bik, clientAccount, bankName, correspondentAccount);
     }
 }

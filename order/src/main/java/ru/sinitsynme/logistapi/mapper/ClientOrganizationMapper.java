@@ -11,12 +11,10 @@ import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRes
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {AddressMapper.class})
 public interface ClientOrganizationMapper {
 
-    @Mapping(source = "addressRequestDto", target = "address")
     ClientOrganization fromRequestDto(ClientOrganizationRequestDto requestDto);
 
-    @Mapping(source = "addressRequestDto", target = "address")
     ClientOrganization fromEditRequestDto(ClientOrganizationEditRequestDto requestDto);
 
-    @Mapping(source = "address", target = "addressResponseDto")
+    @Mapping(source = "addressList", target = "addressResponseDto")
     ClientOrganizationResponseDto toResponseDto(ClientOrganization clientOrganization);
 }

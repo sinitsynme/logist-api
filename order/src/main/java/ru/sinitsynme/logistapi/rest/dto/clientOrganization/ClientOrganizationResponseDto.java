@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 import ru.sinitsynme.logistapi.rest.dto.AddressResponseDto;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class ClientOrganizationResponseDto {
 
     private UUID clientId;
-    private AddressResponseDto addressResponseDto;
+    private List<AddressResponseDto> addressResponseDto;
     private String name;
     private String inn;
     private String bik;

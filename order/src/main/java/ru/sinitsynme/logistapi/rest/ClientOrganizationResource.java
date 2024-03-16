@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
 import ru.sinitsynme.logistapi.mapper.ClientOrganizationMapper;
+import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ChangeClientOrganizationStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;
@@ -62,7 +63,7 @@ public class ClientOrganizationResource {
         return ResponseEntity.ok(page);
     }
 
-    @GetMapping("/inn/{inn}")
+    @GetMapping("/{inn}")
     @Operation(summary = "Получить организацию клиента по ИНН")
     public ResponseEntity<ClientOrganizationResponseDto> getClientOrganizationByInn(
             @PathVariable String inn
@@ -79,7 +80,7 @@ public class ClientOrganizationResource {
         return ResponseEntity.ok(clientOrganizationMapper.toResponseDto(savedOrganization));
     }
 
-    @PutMapping("/inn/{inn}")
+    @PutMapping("/{inn}")
     @Operation(summary = "Обновить организацию клиента по ИНН")
     public ResponseEntity<ClientOrganizationResponseDto> editClientOrganization(
             @PathVariable String inn,
@@ -92,12 +93,24 @@ public class ClientOrganizationResource {
         return ResponseEntity.ok(clientOrganizationMapper.toResponseDto(editedOrganization));
     }
 
-    @PatchMapping("/inn/{inn}/status")
+    @PatchMapping("/{inn}/address")
+    @Operation(summary = "Добавить адрес организации по ИНН")
+    public ResponseEntity<ClientOrganizationResponseDto> addOrganizationAddress(
+            @PathVariable String inn,
+            @RequestBody AddressRequestDto requestDto
+    ) {
+        ClientOrganization clientOrganization = clientOrganizationService
+                .addAddressToClientOrganization(requestDto, inn);
+
+        return ResponseEntity.ok(clientOrganizationMapper.toResponseDto(clientOrganization));
+    }
+
+    @PatchMapping("/{inn}/status")
     @Operation(summary = "Обновить статус организации клиента по ИНН")
     public ResponseEntity<?> changeClientOrganizationStatus(
             @PathVariable String inn,
             @RequestBody ChangeClientOrganizationStatusRequestDto requestDto
-            ) {
+    ) {
         clientOrganizationService.changeOrganizationStatus(inn, requestDto.getStatus());
         return ResponseEntity.ok().build();
     }
