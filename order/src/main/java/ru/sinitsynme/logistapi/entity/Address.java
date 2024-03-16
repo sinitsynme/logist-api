@@ -20,6 +20,10 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
+    private ClientOrganization clientOrganization;
+
     @Column(nullable = false)
     private double latitude;
     @Column(nullable = false)
