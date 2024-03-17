@@ -15,12 +15,11 @@ import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
 import ru.sinitsynme.logistapi.mapper.AddressMapper;
 import ru.sinitsynme.logistapi.mapper.ClientOrganizationMapper;
 import ru.sinitsynme.logistapi.repository.ClientOrganizationRepository;
-import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.address.AddressRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;

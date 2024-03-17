@@ -5,12 +5,12 @@ import lombok.*;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
 @Getter
 @Setter
@@ -32,17 +32,18 @@ public class Order {
     @JoinColumn(name = "organization_id")
     private ClientOrganization clientOrganization;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE}, optional = false)
+    @JoinColumn(name = "actual_order_address_id")
     private Address actualOrderAddress;
 
     @Column(nullable = false)
     private Long warehouseId;
 
     @OneToMany(mappedBy = "id.order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderItem> orderItemList;
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Document> documentsList;
+    private List<Document> documentsList = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

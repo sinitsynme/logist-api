@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.sinitsynme.logistapi.entity.enums.OrganizationStatus;
-import ru.sinitsynme.logistapi.rest.dto.AddressResponseDto;
+import ru.sinitsynme.logistapi.rest.dto.address.AddressResponseDto;
 
 import java.util.List;
 import java.util.UUID;

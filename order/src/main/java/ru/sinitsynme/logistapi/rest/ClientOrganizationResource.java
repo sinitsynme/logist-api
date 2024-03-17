@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
 import ru.sinitsynme.logistapi.mapper.ClientOrganizationMapper;
-import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.address.AddressRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ChangeClientOrganizationStatusRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationEditRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.clientOrganization.ClientOrganizationRequestDto;

@@ -19,7 +19,7 @@ public class OrderItem {
 
     @EmbeddedId
     private OrderItemId id;
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
     private int quantity;
     private int returnedQuantity;
 

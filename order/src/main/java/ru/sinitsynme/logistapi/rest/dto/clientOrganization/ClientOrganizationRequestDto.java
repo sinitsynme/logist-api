@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
 
 import java.util.UUID;
 

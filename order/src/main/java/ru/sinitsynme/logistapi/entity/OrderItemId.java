@@ -26,8 +26,8 @@ public class OrderItemId implements Serializable {
 
     private UUID productId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", nullable = false, insertable = false, updatable = false)
     private Order order;
 
     @Override

@@ -1,0 +1,1 @@
+alter table order_document add column path varchar(255);

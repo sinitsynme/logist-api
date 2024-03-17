@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.sinitsynme.logistapi.entity.Address;
 import ru.sinitsynme.logistapi.mapper.AddressMapper;
 import ru.sinitsynme.logistapi.repository.AddressRepository;
-import ru.sinitsynme.logistapi.rest.dto.AddressRequestDto;
+import ru.sinitsynme.logistapi.rest.dto.address.AddressRequestDto;
 
 import java.util.UUID;
 
