@@ -7,7 +7,7 @@ import ru.sinitsynme.logistapi.entity.Order;
 import ru.sinitsynme.logistapi.rest.dto.order.OrderRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.order.OrderResponseDto;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {AddressMapper.class, })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {AddressMapper.class, OrderItemMapper.class})
 public interface OrderMapper {
 
     Order fromRequestDto(OrderRequestDto requestDto);

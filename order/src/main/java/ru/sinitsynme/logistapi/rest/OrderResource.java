@@ -1,7 +1,9 @@
 package ru.sinitsynme.logistapi.rest;
 
+import dto.PageRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,7 @@ public class OrderResource {
     @PostMapping
     @Operation(summary = "Сохранить заказ")
     public ResponseEntity<OrderResponseDto> createOrder(
-            @RequestBody OrderRequestDto orderRequestDto) {
+            @RequestBody @Valid OrderRequestDto orderRequestDto) {
         Order order = orderService.saveOrder(orderRequestDto);
 
         return ResponseEntity.ok(orderMapper.toResponseDto(order));
@@ -42,24 +44,48 @@ public class OrderResource {
     @Operation(summary = "Получить страницу заказов по ID склада и по статусам")
     public ResponseEntity<Page<OrderResponseDto>> getPageOfWarehouseOrdersByStatuses(
             @PathVariable Long warehouseId,
-            @RequestParam List<String> statuses
+            @RequestParam List<String> statuses,
+            @Valid PageRequestDto pageRequestDto
     ) {
-        return null;
+
+        pageRequestDto.updatePageRequestDtoIfSortIsEmpty("createdAt");
+        Page<Order> orders = orderService.getPageOfWarehouseOrdersByStatuses(warehouseId, statuses, pageRequestDto.toPageable());
+
+        return ResponseEntity.ok(orders.map(orderMapper::toResponseDto));
     }
 
-    @GetMapping("/clientId/{clientId}")
-    @Operation(summary = "Получить страницу заказов по ID клиента и по статусам")
-    public ResponseEntity<Page<OrderResponseDto>> getPageOfClientOrdersByStatuses(
-            @PathVariable UUID clientId,
-            @RequestParam List<String> statuses
+    @GetMapping("/inn/{inn}")
+    @Operation(summary = "Получить страницу заказов по ИНН организации и по статусам")
+    public ResponseEntity<Page<OrderResponseDto>> getPageOfClientOrganizationOrdersByStatuses(
+            @PathVariable String inn,
+            @RequestParam List<String> statuses,
+            @Valid PageRequestDto pageRequestDto
     ) {
-        return null;
+        pageRequestDto.updatePageRequestDtoIfSortIsEmpty("createdAt");
+        Page<Order> orders = orderService.getPageOfClientOrdersByStatuses(inn,
+                statuses, pageRequestDto.toPageable());
+
+        return ResponseEntity.ok(orders.map(orderMapper::toResponseDto));
+    }
+
+    @GetMapping("/address/{addressId}")
+    @Operation(summary = "Получить страницу заказов по адресу организации и по статусам")
+    public ResponseEntity<Page<OrderResponseDto>> getPageOfClientOrganizationOrdersByStatuses(
+            @PathVariable UUID addressId,
+            @RequestParam List<String> statuses,
+            @Valid PageRequestDto pageRequestDto
+    ) {
+        pageRequestDto.updatePageRequestDtoIfSortIsEmpty("createdAt");
+        Page<Order> orders = orderService.getPageOfAddressOrdersByStatuses(addressId, statuses, pageRequestDto.toPageable());
+
+        return ResponseEntity.ok(orders.map(orderMapper::toResponseDto));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить заказ по ID")
     public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable UUID id) {
-        return null;
+        Order order = orderService.getOrderById(id);
+        return ResponseEntity.ok(orderMapper.toResponseDto(order));
     }
 
     @PatchMapping("/{id}/status")

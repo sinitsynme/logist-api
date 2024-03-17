@@ -18,9 +18,12 @@ public class PageRequestDto {
     @Min(1)
     private int size;
     private String[] sortByFields;
+    private boolean sortFromMaxToMin = false;
 
     public Pageable toPageable() {
-        return PageRequest.of(page, size, Sort.by(sortByFields));
+        Sort.Direction direction = sortFromMaxToMin ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        return  PageRequest.of(page, size, Sort.by(direction, sortByFields));
     }
 
     // TODO migrate to this way of setting default sorting column

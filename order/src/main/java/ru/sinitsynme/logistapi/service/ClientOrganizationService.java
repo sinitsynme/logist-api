@@ -57,6 +57,8 @@ public class ClientOrganizationService {
     }
 
     public ClientOrganization saveClientOrganization(ClientOrganizationRequestDto requestDto) {
+
+        // TODO check if user exists in auth service
         ClientOrganization clientOrganization = clientOrganizationMapper.fromRequestDto(requestDto);
         clientOrganization.setOrganizationStatus(OrganizationStatus.NEW);
 
@@ -126,7 +128,7 @@ public class ClientOrganizationService {
                 String.format("Client organization client with inn = %s not found", inn),
                 null,
                 NOT_FOUND,
-                CLIENT_ORGANIZATION_NOT_FOUND,
+                CLIENT_ORGANIZATION_NOT_FOUND_CODE,
                 ExceptionSeverity.WARN);
     }
 
@@ -136,7 +138,7 @@ public class ClientOrganizationService {
                     String.format("Client organization with inn = %s exists", inn),
                     null,
                     BAD_REQUEST,
-                    CLIENT_ORGANIZATION_EXISTS_BY_INN,
+                    CLIENT_ORGANIZATION_EXISTS_BY_INN_CODE,
                     ExceptionSeverity.WARN);
         }
     }

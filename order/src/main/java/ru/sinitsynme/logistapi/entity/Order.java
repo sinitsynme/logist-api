@@ -5,6 +5,8 @@ import lombok.*;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +40,10 @@ public class Order {
 
     @Column(nullable = false)
     private Long warehouseId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime finishedAt;
 
     @OneToMany(mappedBy = "id.order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItem> orderItemList = new ArrayList<>();
