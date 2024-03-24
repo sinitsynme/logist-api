@@ -74,6 +74,13 @@ spring:
           filters:
             - StripPrefix=1
             - AuthenticationFilter
+        - id: logistapi-order
+          uri: lb://${ORDER_SERVICE_NAME}
+          predicates:
+            - Path=/order/**
+          filters:
+            - StripPrefix=1
+            - AuthenticationFilter
         - id: eureka-web-page
           uri: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}
           predicates:
