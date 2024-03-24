@@ -1,6 +1,8 @@
 package ru.sinitsynme.logistapi.client;
 
+import dto.business.warehouse.StoredProductActionRequestDto;
 import dto.business.warehouse.StoredProductResponseDto;
+import dto.business.warehouse.WarehouseResponseDto;
 import exception.service.BadRequestException;
 import exception.service.ServerErrorException;
 import org.slf4j.Logger;
@@ -25,6 +27,10 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.SERVER_ERRO
 public class WarehouseClient {
 
     private static final String GET_STORED_PRODUCT_PATH = "/rest/api/v1/warehouse/product/id?productId={productId}&warehouseId={warehouseId}";
+    private static final String RESERVE_STORED_PRODUCT_PATH = "/rest/api/v1/warehouse/product/reserve";
+    private static final String CANCEL_RESERVE_STORED_PRODUCT_PATH = "/rest/api/v1/warehouse/product/reserve/cancel";
+    private static final String REMOVE_STORED_PRODUCT_PATH = "/rest/api/v1/warehouse/product/remove";
+    private static final String GET_WAREHOUSE_PATH = "/rest/api/v1/warehouse/{warehouseId}";
     private final RestTemplate restTemplate;
     private final WarehouseServiceHostProperties hostProperties;
     private final ExternalSystemHostProvider hostProvider;
@@ -75,7 +81,155 @@ public class WarehouseClient {
                     ERROR
             );
         }
+    }
 
+    public StoredProductResponseDto reserveStoredProduct(UUID productId, Long warehouseId, int quantity) {
+        String host = getWarehouseHost();
+
+        StoredProductActionRequestDto requestDto = new StoredProductActionRequestDto(productId, warehouseId, quantity);
+
+        logger.info("[Warehouse] HTTP Request - PATCH reserve StoredProduct with body {}",
+                requestDto);
+
+        try {
+            StoredProductResponseDto responseDto = restTemplate.patchForObject(
+                    host + RESERVE_STORED_PRODUCT_PATH,
+                    requestDto,
+                    StoredProductResponseDto.class,
+                    productId.toString()
+            );
+
+            logger.info("[Warehouse] HTTP Response - {}", responseDto);
+
+            return responseDto;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) {
+                throw new BadRequestException(
+                        e.getMessage(),
+                        e,
+                        BAD_REQUEST,
+                        EXTERNAL_RESOURCE_NOT_FOUND_CODE,
+                        WARN
+                );
+            } else throw new ServerErrorException(
+                    e.getMessage(),
+                    e,
+                    INTERNAL_SERVER_ERROR,
+                    SERVER_ERROR_CODE,
+                    ERROR
+            );
+        }
+    }
+
+    public StoredProductResponseDto cancelReserveOfStoredProduct(UUID productId, Long warehouseId, int quantity) {
+        String host = getWarehouseHost();
+
+        StoredProductActionRequestDto requestDto = new StoredProductActionRequestDto(productId, warehouseId, quantity);
+
+        logger.info("[Warehouse] HTTP Request - PATCH cancel reserve of StoredProduct with body {}",
+                requestDto);
+
+        try {
+            StoredProductResponseDto responseDto = restTemplate.patchForObject(
+                    host + CANCEL_RESERVE_STORED_PRODUCT_PATH,
+                    requestDto,
+                    StoredProductResponseDto.class,
+                    productId.toString()
+            );
+
+            logger.info("[Warehouse] HTTP Response - {}", responseDto);
+
+            return responseDto;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) {
+                throw new BadRequestException(
+                        e.getMessage(),
+                        e,
+                        BAD_REQUEST,
+                        EXTERNAL_RESOURCE_NOT_FOUND_CODE,
+                        WARN
+                );
+            } else throw new ServerErrorException(
+                    e.getMessage(),
+                    e,
+                    INTERNAL_SERVER_ERROR,
+                    SERVER_ERROR_CODE,
+                    ERROR
+            );
+        }
+    }
+
+    public StoredProductResponseDto removeStoredProduct(UUID productId, Long warehouseId, int quantity) {
+        String host = getWarehouseHost();
+
+        StoredProductActionRequestDto requestDto = new StoredProductActionRequestDto(productId, warehouseId, quantity);
+
+        logger.info("[Warehouse] HTTP Request - PATCH remove StoredProduct with body {}",
+                requestDto);
+
+        try {
+            StoredProductResponseDto responseDto = restTemplate.patchForObject(
+                    host + REMOVE_STORED_PRODUCT_PATH,
+                    requestDto,
+                    StoredProductResponseDto.class,
+                    productId.toString()
+            );
+
+            logger.info("[Warehouse] HTTP Response - {}", responseDto);
+
+            return responseDto;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) {
+                throw new BadRequestException(
+                        e.getMessage(),
+                        e,
+                        BAD_REQUEST,
+                        EXTERNAL_RESOURCE_NOT_FOUND_CODE,
+                        WARN
+                );
+            } else throw new ServerErrorException(
+                    e.getMessage(),
+                    e,
+                    INTERNAL_SERVER_ERROR,
+                    SERVER_ERROR_CODE,
+                    ERROR
+            );
+        }
+    }
+
+    public WarehouseResponseDto getWarehouse(Long warehouseId) {
+        String host = getWarehouseHost();
+
+        logger.info("[Warehouse] HTTP Request - GET warehouse with ID = {}",
+                warehouseId);
+
+        try {
+            WarehouseResponseDto responseDto = restTemplate.getForObject(
+                    host + GET_WAREHOUSE_PATH,
+                    WarehouseResponseDto.class,
+                    warehouseId.toString()
+            );
+
+            logger.info("[Warehouse] HTTP Response - {}", responseDto);
+
+            return responseDto;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) {
+                throw new BadRequestException(
+                        e.getMessage(),
+                        e,
+                        BAD_REQUEST,
+                        EXTERNAL_RESOURCE_NOT_FOUND_CODE,
+                        WARN
+                );
+            } else throw new ServerErrorException(
+                    e.getMessage(),
+                    e,
+                    INTERNAL_SERVER_ERROR,
+                    SERVER_ERROR_CODE,
+                    ERROR
+            );
+        }
     }
 
 

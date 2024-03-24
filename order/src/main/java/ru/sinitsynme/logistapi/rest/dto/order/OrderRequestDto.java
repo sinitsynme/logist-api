@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.rest.dto.order;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class OrderRequestDto {
 
     private String clientOrganizationInn;
+    @Min(1)
     private Long warehouseId;
 
     @Size(min = 1)

@@ -1,6 +1,7 @@
 package ru.sinitsynme.logistapi.service;
 
 import dto.business.warehouse.StoredProductResponseDto;
+import dto.business.warehouse.WarehouseResponseDto;
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
@@ -65,10 +66,7 @@ public class OrderService {
                 requestDto.getClientOrganizationInn());
         Address address = addressService.getAddress(requestDto.getAddressId());
 
-        //TODO add integration with WarehouseService - getWarehouse
-        //TODO add integration with ProductService - getProduct
-
-        //TODO add integration with WarehouseService - reserve stored product
+        WarehouseResponseDto warehouseResponseDto = warehouseClient.getWarehouse(order.getWarehouseId());
 
         order.setClientOrganization(clientOrganization);
         order.setActualOrderAddress(address);
@@ -88,6 +86,8 @@ public class OrderService {
         ) {
             item.getId().setOrder(order);
         }
+
+        reserveItemsInOrder(order);
 
         order = orderRepository.save(order);
 
@@ -150,6 +150,15 @@ public class OrderService {
         }
     }
 
+    private void reserveItemsInOrder(Order order) {
+        for (OrderItem orderItem : order.getOrderItemList()) {
+            StoredProductResponseDto storedProductResponseDto = warehouseClient.reserveStoredProduct(
+                    orderItem.getId().getProductId(),
+                    order.getWarehouseId(),
+                    orderItem.getQuantity()
+            );
+        }
+    }
 
     private List<OrderStatus> convertStatusesString(List<String> statusStrings) {
         try {
