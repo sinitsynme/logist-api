@@ -1,10 +1,9 @@
-package dto.business;
+package dto.business.product;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import jakarta.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
