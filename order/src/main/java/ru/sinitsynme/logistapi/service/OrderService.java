@@ -1,12 +1,12 @@
 package ru.sinitsynme.logistapi.service;
 
 import dto.business.warehouse.StoredProductResponseDto;
-import dto.business.warehouse.WarehouseResponseDto;
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import ru.sinitsynme.logistapi.entity.Address;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
 import ru.sinitsynme.logistapi.entity.Order;
 import ru.sinitsynme.logistapi.entity.OrderItem;
+import ru.sinitsynme.logistapi.entity.enums.OrderEventType;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 import ru.sinitsynme.logistapi.mapper.OrderItemMapper;
@@ -40,6 +41,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final AddressService addressService;
     private final ClientOrganizationService clientOrganizationService;
+    private final OrderEventService orderEventService;
     private final WarehouseClient warehouseClient;
     private final Clock clock;
     private final Logger logger = LoggerFactory.getLogger(OrderService.class);
@@ -49,24 +51,27 @@ public class OrderService {
                         OrderRepository orderRepository,
                         AddressService addressService,
                         ClientOrganizationService clientOrganizationService,
-                        WarehouseClient warehouseClient, Clock clock) {
+                        @Lazy OrderEventService orderEventService,
+                        WarehouseClient warehouseClient,
+                        Clock clock) {
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
         this.orderRepository = orderRepository;
         this.addressService = addressService;
         this.clientOrganizationService = clientOrganizationService;
+        this.orderEventService = orderEventService;
         this.warehouseClient = warehouseClient;
         this.clock = clock;
     }
 
-    public Order saveOrder(OrderRequestDto requestDto) {
+    public Order saveOrder(OrderRequestDto requestDto, UUID initiatorId) {
         Order order = orderMapper.fromRequestDto(requestDto);
 
         ClientOrganization clientOrganization = clientOrganizationService.getClientOrganization(
                 requestDto.getClientOrganizationInn());
         Address address = addressService.getAddress(requestDto.getAddressId());
 
-        WarehouseResponseDto warehouseResponseDto = warehouseClient.getWarehouse(order.getWarehouseId());
+        warehouseClient.getWarehouse(order.getWarehouseId());
 
         order.setClientOrganization(clientOrganization);
         order.setActualOrderAddress(address);
@@ -90,8 +95,10 @@ public class OrderService {
         reserveItemsInOrder(order);
 
         order = orderRepository.save(order);
-
         logger.info("Registered order with ID = {}", order.getId());
+
+        orderEventService.saveOrderEvent(order, OrderEventType.ORDER_STATUS_CHANGED, initiatorId);
+
         return order;
     }
 
