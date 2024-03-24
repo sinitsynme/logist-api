@@ -23,5 +23,16 @@ eureka:
     service-url:
       defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka
 
-
+external-system:
+  warehouse:
+    service-name: ${WAREHOUSE_SERVICE_NAME}
+    url: ${WAREHOUSE_SERVICE_URL}
+  product:
+    service-name: ${PRODUCT_SERVICE_NAME}
+    url: ${PRODUCT_SERVICE_URL}
+  auth:
+    service-name: ${AUTH_SERVICE_NAME}
+    url: ${AUTH_SERVICE_URL}
+    username: ${AUTH_SERVICE_USERNAME}
+    password: ${AUTH_SERVICE_PASSWORD}
 

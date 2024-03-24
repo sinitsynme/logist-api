@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import ru.sinitsynme.logistapi.config.externalSystem.AuthServiceHostProperties;
 import ru.sinitsynme.logistapi.config.externalSystem.ExternalSystemHostProvider;
 import security.JwtAuthenticationFilter;
+import security.token.AuthServerRestTemplate;
 import security.token.AuthServiceClient;
 import security.token.ServiceCredentials;
 import security.token.TokenInterceptor;
@@ -53,7 +53,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers(HttpMethod.GET, permittedPaths.getPaths()).permitAll()
+                .requestMatchers("/**").permitAll()
+//                .requestMatchers(HttpMethod.GET, permittedPaths.getPaths()).permitAll()
                 .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -62,12 +63,17 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-
     @Bean
     @Order(1)
+    public AuthServerRestTemplate authServerRestTemplate() {
+        return new AuthServerRestTemplate(new RestTemplate());
+    }
+
+    @Bean
+    @Order(2)
     public AuthServiceClient authServiceClient() {
         return new AuthServiceClient(
-                restTemplate,
+                authServerRestTemplate().restTemplate(),
                 externalSystemHostProvider.provideHost(
                         authServiceHostProperties.getServiceName(),
                         authServiceHostProperties.getUrl()
@@ -75,7 +81,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     public TokenInterceptor tokenInterceptor() {
         return new TokenInterceptor(
                 new ServiceCredentials(

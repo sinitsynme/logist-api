@@ -1,5 +1,6 @@
 package ru.sinitsynme.logistapi.service;
 
+import dto.business.warehouse.StoredProductResponseDto;
 import exception.ExceptionSeverity;
 import exception.service.BadRequestException;
 import exception.service.NotFoundException;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.sinitsynme.logistapi.client.WarehouseClient;
 import ru.sinitsynme.logistapi.entity.Address;
 import ru.sinitsynme.logistapi.entity.ClientOrganization;
 import ru.sinitsynme.logistapi.entity.Order;
@@ -19,7 +21,6 @@ import ru.sinitsynme.logistapi.mapper.OrderMapper;
 import ru.sinitsynme.logistapi.repository.OrderRepository;
 import ru.sinitsynme.logistapi.rest.dto.order.OrderRequestDto;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,8 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.ORDER_NOT_FOUND_CODE;
-import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.WRONG_ORDER_STATUS_CODE;
+import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.*;
 
 @Service
 public class OrderService {
@@ -39,6 +39,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final AddressService addressService;
     private final ClientOrganizationService clientOrganizationService;
+    private final WarehouseClient warehouseClient;
     private final Clock clock;
     private final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
@@ -47,12 +48,13 @@ public class OrderService {
                         OrderRepository orderRepository,
                         AddressService addressService,
                         ClientOrganizationService clientOrganizationService,
-                        Clock clock) {
+                        WarehouseClient warehouseClient, Clock clock) {
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
         this.orderRepository = orderRepository;
         this.addressService = addressService;
         this.clientOrganizationService = clientOrganizationService;
+        this.warehouseClient = warehouseClient;
         this.clock = clock;
     }
 
@@ -65,6 +67,7 @@ public class OrderService {
 
         //TODO add integration with WarehouseService - getWarehouse
         //TODO add integration with ProductService - getProduct
+
         //TODO add integration with WarehouseService - reserve stored product
 
         order.setClientOrganization(clientOrganization);
@@ -79,10 +82,11 @@ public class OrderService {
                 .collect(Collectors.toList())
         );
 
+        checkIfItemsAreAvailableAndSetPrice(order);
+
         for (OrderItem item : order.getOrderItemList()
         ) {
             item.getId().setOrder(order);
-            item.setPrice(BigDecimal.TEN); // remove
         }
 
         order = orderRepository.save(order);
@@ -120,6 +124,30 @@ public class OrderService {
                         ORDER_NOT_FOUND_CODE,
                         ExceptionSeverity.WARN)
         );
+    }
+
+    private void checkIfItemsAreAvailableAndSetPrice(Order order) {
+        for (OrderItem orderItem : order.getOrderItemList()
+        ) {
+            StoredProductResponseDto storedProductResponseDto = warehouseClient.getStoredProduct(
+                    orderItem.getId().getProductId(),
+                    order.getWarehouseId()
+            );
+
+            if (orderItem.getQuantity() > storedProductResponseDto.getAvailableForReserveQuantity()) {
+                throw new BadRequestException(
+                        String.format("Not enough available stored product with ID = %s to reserve at warehouse with ID = %d",
+                                orderItem.getId().getProductId(),
+                                order.getWarehouseId()),
+                        null,
+                        BAD_REQUEST,
+                        NOT_ENOUGH_AVAILABLE_STORED_PRODUCT_TO_RESERVE_CODE,
+                        ExceptionSeverity.WARN
+                );
+            }
+
+            orderItem.setPrice(storedProductResponseDto.getPrice());
+        }
     }
 
 

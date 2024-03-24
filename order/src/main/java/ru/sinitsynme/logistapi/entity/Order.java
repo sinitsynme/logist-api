@@ -1,11 +1,13 @@
 package ru.sinitsynme.logistapi.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +58,12 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) && status == order.status && paymentStatus == order.paymentStatus && Objects.equals(clientOrganization, order.clientOrganization) && Objects.equals(actualOrderAddress, order.actualOrderAddress) && Objects.equals(warehouseId, order.warehouseId);
+        return Objects.equals(id, order.id) && status == order.status && paymentStatus == order.paymentStatus && Objects.equals(actualOrderAddress, order.actualOrderAddress) && Objects.equals(warehouseId, order.warehouseId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, status, paymentStatus, clientOrganization, actualOrderAddress, warehouseId);
+        return Objects.hash(id, status, paymentStatus, actualOrderAddress, warehouseId);
     }
 
     @Override
@@ -70,7 +72,6 @@ public class Order {
                 "id=" + id +
                 ", status=" + status +
                 ", paymentStatus=" + paymentStatus +
-                ", clientOrganization=" + clientOrganization.getClientId() +
                 ", warehouseId=" + warehouseId +
                 '}';
     }

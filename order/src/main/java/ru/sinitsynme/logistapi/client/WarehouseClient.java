@@ -1,15 +1,16 @@
 package ru.sinitsynme.logistapi.client;
 
-import dto.business.product.ProductResponseDto;
+import dto.business.warehouse.StoredProductResponseDto;
 import exception.service.BadRequestException;
 import exception.service.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.sinitsynme.logistapi.config.externalSystem.ExternalSystemHostProvider;
-import ru.sinitsynme.logistapi.config.externalSystem.ProductServiceHostProperties;
+import ru.sinitsynme.logistapi.config.externalSystem.WarehouseServiceHostProperties;
 
 import java.util.UUID;
 
@@ -21,37 +22,40 @@ import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.EXTERNAL_RE
 import static ru.sinitsynme.logistapi.exception.ServiceExceptionCode.SERVER_ERROR_CODE;
 
 @Component
-public class ProductClient {
-    private static final String GET_PRODUCT_PATH = "/rest/api/v1/product/{productId}";
+public class WarehouseClient {
 
+    private static final String GET_STORED_PRODUCT_PATH = "/rest/api/v1/warehouse/product/id?productId={productId}&warehouseId={warehouseId}";
     private final RestTemplate restTemplate;
-    private final ProductServiceHostProperties productServiceHostProperties;
+    private final WarehouseServiceHostProperties hostProperties;
     private final ExternalSystemHostProvider hostProvider;
-    private final Logger logger = LoggerFactory.getLogger(ProductClient.class);
+    private final Logger logger = LoggerFactory.getLogger(WarehouseClient.class);
 
-    public ProductClient(
+    @Autowired
+    public WarehouseClient(
             RestTemplate restTemplate,
-            ProductServiceHostProperties productServiceHostProperties,
-            ExternalSystemHostProvider hostProvider
-    ) {
+            WarehouseServiceHostProperties warehouseServiceHostProperties,
+            ExternalSystemHostProvider externalSystemHostProvider) {
         this.restTemplate = restTemplate;
-        this.productServiceHostProperties = productServiceHostProperties;
-        this.hostProvider = hostProvider;
+        this.hostProperties = warehouseServiceHostProperties;
+        this.hostProvider = externalSystemHostProvider;
     }
 
-    public ProductResponseDto getProduct(UUID productId) throws BadRequestException {
-        String host = getProductHost();
+    public StoredProductResponseDto getStoredProduct(UUID productId, Long warehouseId) {
+        String host = getWarehouseHost();
 
-        logger.info("HTTP Request - GET Product with ID = {}", productId);
+        logger.info("[Warehouse] HTTP Request - GET StoredProduct with productId = {}, warehouseId = {}",
+                productId,
+                warehouseId);
 
         try {
-            ProductResponseDto responseDto = restTemplate.getForObject(
-                    host + GET_PRODUCT_PATH,
-                    ProductResponseDto.class,
-                    productId.toString()
+            StoredProductResponseDto responseDto = restTemplate.getForObject(
+                    host + GET_STORED_PRODUCT_PATH,
+                    StoredProductResponseDto.class,
+                    productId.toString(),
+                    warehouseId.toString()
             );
 
-            logger.info("HTTP Response - {}", responseDto);
+            logger.info("[Warehouse] HTTP Response - {}", responseDto);
 
             return responseDto;
         } catch (HttpClientErrorException e) {
@@ -74,10 +78,11 @@ public class ProductClient {
 
     }
 
-    private String getProductHost() {
+
+    private String getWarehouseHost() {
         return hostProvider.provideHost(
-                productServiceHostProperties.getProductServiceName(),
-                productServiceHostProperties.getProductServiceUrl()
+                hostProperties.getServiceName(),
+                hostProperties.getUrl()
         );
     }
 }
