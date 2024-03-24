@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import security.annotations.AdminAccess;
-import security.annotations.SupportAccess;
 import ru.sinitsynme.logistapi.entity.User;
 import ru.sinitsynme.logistapi.mapper.UserMapper;
 import ru.sinitsynme.logistapi.rest.dto.user.ChangePasswordRequestDto;
@@ -19,6 +17,8 @@ import ru.sinitsynme.logistapi.rest.dto.user.UserRoleRequestDto;
 import ru.sinitsynme.logistapi.rest.dto.user.UserUpdateDto;
 import ru.sinitsynme.logistapi.service.PrincipalService;
 import ru.sinitsynme.logistapi.service.UserService;
+import security.annotations.AdminAccess;
+import security.annotations.SupportAccess;
 
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +47,7 @@ public class UserResource {
     @GetMapping
     @SupportAccess
     public ResponseEntity<Page<UserDataDto>> getUserDataPage(@Valid PageRequestDto pageRequestDto) {
+        pageRequestDto.updatePageRequestDtoIfSortIsEmpty("email");
         Page<UserDataDto> userDataDtoPage = userService
                 .getUsers(pageRequestDto.toPageable())
                 .map(userMapper::toDataDto);

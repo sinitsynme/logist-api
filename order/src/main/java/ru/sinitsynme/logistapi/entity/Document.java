@@ -26,6 +26,7 @@ public class Document {
 
     private DocumentType type;
     private String name;
+    private String path;
 
     @Override
     public boolean equals(Object o) {

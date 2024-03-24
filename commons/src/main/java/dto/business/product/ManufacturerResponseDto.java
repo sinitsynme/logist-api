@@ -1,4 +1,4 @@
-package dto.business;
+package dto.business.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

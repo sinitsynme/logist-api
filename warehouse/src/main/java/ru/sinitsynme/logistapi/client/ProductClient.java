@@ -1,6 +1,6 @@
 package ru.sinitsynme.logistapi.client;
 
-import dto.business.ProductResponseDto;
+import dto.business.product.ProductResponseDto;
 import exception.service.BadRequestException;
 import exception.service.ServerErrorException;
 import org.slf4j.Logger;

@@ -14,12 +14,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table
-public class OrderedProduct {
+@Table(name = "ordered_product")
+public class OrderItem {
 
     @EmbeddedId
-    private OrderedProductId id;
-    private BigDecimal price;
+    private OrderItemId id;
+    private BigDecimal price = BigDecimal.ZERO;
     private int quantity;
     private int returnedQuantity;
 
@@ -27,7 +27,7 @@ public class OrderedProduct {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderedProduct that = (OrderedProduct) o;
+        OrderItem that = (OrderItem) o;
         return quantity == that.quantity && returnedQuantity == that.returnedQuantity && Objects.equals(id, that.id) && Objects.equals(price, that.price);
     }
 

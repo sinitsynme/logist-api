@@ -114,7 +114,7 @@ public class AuthorityService {
             );
         }
 
-        Pageable pageable = new PageRequestDto(0, 1, new String[]{}).toPageable();
+        Pageable pageable = new PageRequestDto(0, 1, new String[]{}, false).toPageable();
 
         Page<User> usersWithThisAuthority = userService.getUsersByAuthority(authority, pageable);
 

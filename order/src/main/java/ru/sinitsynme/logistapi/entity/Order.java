@@ -1,16 +1,20 @@
 package ru.sinitsynme.logistapi.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.sinitsynme.logistapi.entity.enums.OrderStatus;
 import ru.sinitsynme.logistapi.entity.enums.PaymentStatus;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
 @Getter
 @Setter
@@ -32,16 +36,22 @@ public class Order {
     @JoinColumn(name = "organization_id")
     private ClientOrganization clientOrganization;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE}, optional = false)
+    @JoinColumn(name = "actual_order_address_id")
     private Address actualOrderAddress;
 
-    private UUID warehouseId;
+    @Column(nullable = false)
+    private Long warehouseId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime finishedAt;
 
     @OneToMany(mappedBy = "id.order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderedProduct> orderedProductList;
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Document> documentsList;
+    private List<Document> documentsList = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -62,8 +72,6 @@ public class Order {
                 "id=" + id +
                 ", status=" + status +
                 ", paymentStatus=" + paymentStatus +
-                ", clientOrganization=" + clientOrganization.getClientId() +
-                ", actualOrderAddress=" + actualOrderAddress +
                 ", warehouseId=" + warehouseId +
                 '}';
     }
