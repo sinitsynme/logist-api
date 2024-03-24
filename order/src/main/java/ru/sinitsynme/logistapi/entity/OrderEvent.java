@@ -34,6 +34,7 @@ public class OrderEvent {
     @Enumerated(EnumType.STRING)
     private OrderEventType type;
     private UUID initiatorId;
+    private String comment;
 
     @Override
     public boolean equals(Object o) {
